@@ -32,9 +32,6 @@ export const useSectionScrolling = () => {
 
       isScrolling = true;
 
-      // Ensure normal scrolling is prevented during animation
-      document.body.style.overflow = "hidden";
-
       // Smooth scroll to the next section with enhanced animation
       window.scrollTo({
         top: nextSection.offsetTop,
@@ -65,7 +62,7 @@ export const useSectionScrolling = () => {
         // If user tries to scroll within hero section, snap back to top
         window.scrollTo({
           top: 0,
-          behavior: "instant",
+          behavior: "smooth",
         });
       }
     }
@@ -116,45 +113,20 @@ export const useSectionScrolling = () => {
       }
     }
 
-    // Scroll to section on hash change (for nav links)
-    function handleHashChange() {
-      const hash = window.location.hash.substring(1);
-      if (hash) {
-        const targetSection = sections.find((section) => section.id === hash);
-        if (targetSection) {
-          isScrolling = true;
-          window.scrollTo({
-            top: targetSection.offsetTop,
-            behavior: "smooth",
-          });
-          setTimeout(() => {
-            isScrolling = false;
-          }, scrollAnimationDuration);
-        }
-      }
-    }
-
     // Add event listeners
     window.addEventListener("scroll", handleScroll, { passive: true });
     window.addEventListener("wheel", handleWheel, { passive: false });
     window.addEventListener("keydown", handleKeyDown);
-    window.addEventListener("hashchange", handleHashChange);
     document.addEventListener("touchstart", handleTouchStart, {
       passive: true,
     });
     document.addEventListener("touchend", handleTouchEnd, { passive: true });
-
-    // Handle direct link to a section
-    if (window.location.hash) {
-      handleHashChange();
-    }
 
     // Clean up event listeners on unmount
     return () => {
       window.removeEventListener("scroll", handleScroll);
       window.removeEventListener("wheel", handleWheel);
       window.removeEventListener("keydown", handleKeyDown);
-      window.removeEventListener("hashchange", handleHashChange);
       document.removeEventListener("touchstart", handleTouchStart);
       document.removeEventListener("touchend", handleTouchEnd);
     };

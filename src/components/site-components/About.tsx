@@ -1,6 +1,6 @@
 export function About() {
   return (
-    <section id="about" className="w-full h-dvh flex  items-center">
+    <section id="about" className="w-full min-h-dvh flex items-center py-16">
       <div className="section w-full px-4 sm:px-8 md:px-16">
         <div className="max-w-7xl mx-auto">
           <h2 className="text-center uppercase text-3xl sm:text-4xl md:text-6xl pt-6 md:pt-0 font-bold mb-6 sm:mb-10 md:mb-16 uppercase tracking-wide">
@@ -17,19 +17,19 @@ export function About() {
             <p className="text-base sm:text-lg md:text-xl text-gray-300 mb-6 sm:mb-8">
               I believe in building differently. I look for what feels missing,
               for what could exist if we dared to think a little further. It is
-              not about inventing a new world from scratch. It is about
-              streamlining the way people interact with technology and solving
-              real pain points with elegance and purpose.
+              not necessarily about inventing a new world from scratch. It is
+              about streamlining the way people interact with technology and
+              solving real pain points with elegance and purpose.
             </p>
             <p className="text-base sm:text-lg md:text-xl text-gray-300">
-              My vision is to build something that leaves the world better, even
-              in a small but meaningful way. I want to create software that
-              becomes invisible in its simplicity, yet powerful in its impact. I
-              want to build tools that people trust, love, and seamlessly weave
-              into their daily lives. Technology should not overwhelm, impress
-              for its own sake, or come at an unreasonable cost. It should
-              serve, elevate, and inspire. It should reach and be accessible to
-              everyone, everywhere. That is the future I am here to build.
+              My vision is to build something that leaves the world better, in
+              meaningful way. I want to create software that becomes invisible
+              in its simplicity, yet powerful in its impact. I want to build
+              tools that people trust, love, and seamlessly weave into their
+              daily lives. Technology should not overwhelm, impress for its own
+              sake, or come at an unreasonable cost. It should serve, elevate,
+              and inspire. It should reach and be accessible to everyone,
+              everywhere. That is the future I am here to build.
             </p>
           </div>
         </div>

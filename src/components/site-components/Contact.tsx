@@ -2,7 +2,7 @@ import { Github, Linkedin } from "lucide-react";
 
 export function Contact() {
   return (
-    <section id="contact" className="section h-dvh flex flex-col">
+    <section id="contact" className="min-h-dvh flex flex-col">
       <div className="flex-grow flex items-center">
         <div className="w-full px-4 sm:px-8 md:px-16">
           <div className="w-full max-w-7xl mx-auto">
