@@ -32,9 +32,12 @@ export const useSectionScrolling = () => {
 
       isScrolling = true;
 
+      // Calculate exact position to ensure consistent landing point
+      const exactScrollTarget = nextSection.offsetTop;
+
       // Smooth scroll to the next section with enhanced animation
       window.scrollTo({
-        top: nextSection.offsetTop,
+        top: exactScrollTarget,
         behavior: "smooth",
       });
 
@@ -42,6 +45,14 @@ export const useSectionScrolling = () => {
       setTimeout(() => {
         isScrolling = false;
         document.body.style.overflow = "";
+
+        // Ensure we're exactly at the target position after animation
+        if (Math.abs(window.scrollY - exactScrollTarget) > 5) {
+          window.scrollTo({
+            top: exactScrollTarget,
+            behavior: "auto",
+          });
+        }
       }, scrollAnimationDuration);
     }
 
@@ -81,11 +92,34 @@ export const useSectionScrolling = () => {
 
     // Touch handling for mobile
     let touchStartY = 0;
+    let touchStartX = 0;
+    let isTouchMoving = false;
 
     function handleTouchStart(e: TouchEvent) {
       // Only track touch start if in hero section
       if (isInHeroSection()) {
         touchStartY = e.touches[0].clientY;
+        touchStartX = e.touches[0].clientX;
+        isTouchMoving = false;
+      }
+    }
+
+    function handleTouchMove(e: TouchEvent) {
+      // Only handle in hero section
+      if (!isInHeroSection() || isScrolling) return;
+
+      const touchY = e.touches[0].clientY;
+      const touchX = e.touches[0].clientX;
+      const diffY = touchY - touchStartY;
+      const diffX = touchX - touchStartX;
+
+      // If primarily vertical movement and downward swipe
+      if (Math.abs(diffY) > Math.abs(diffX) && diffY < -10) {
+        isTouchMoving = true;
+        // Prevent default only for significant vertical scrolls to avoid interrupting other touch interactions
+        if (Math.abs(diffY) > 30) {
+          e.preventDefault();
+        }
       }
     }
 
@@ -96,10 +130,14 @@ export const useSectionScrolling = () => {
       const touchEndY = e.changedTouches[0].clientY;
       const touchDiff = touchEndY - touchStartY;
 
-      // Swipe up with enough force, go to next section
-      if (touchDiff < -30) {
+      // Only trigger section change if we detected movement in touchMove
+      // and if the swipe was significant enough
+      if (isTouchMoving && touchDiff < -30) {
+        e.preventDefault();
         scrollToNextSection();
       }
+
+      isTouchMoving = false;
     }
 
     // Keyboard navigation from hero section
@@ -120,7 +158,12 @@ export const useSectionScrolling = () => {
     document.addEventListener("touchstart", handleTouchStart, {
       passive: true,
     });
-    document.addEventListener("touchend", handleTouchEnd, { passive: true });
+    document.addEventListener("touchmove", handleTouchMove, {
+      passive: false, // Need non-passive to call preventDefault()
+    });
+    document.addEventListener("touchend", handleTouchEnd, {
+      passive: false, // Need non-passive to call preventDefault()
+    });
 
     // Clean up event listeners on unmount
     return () => {
@@ -128,6 +171,7 @@ export const useSectionScrolling = () => {
       window.removeEventListener("wheel", handleWheel);
       window.removeEventListener("keydown", handleKeyDown);
       document.removeEventListener("touchstart", handleTouchStart);
+      document.removeEventListener("touchmove", handleTouchMove);
       document.removeEventListener("touchend", handleTouchEnd);
     };
   }, []);
