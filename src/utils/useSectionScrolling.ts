@@ -12,10 +12,6 @@ export const useSectionScrolling = () => {
     );
 
     if (!sections.length) return;
-    console.log(
-      `Found ${sections.length} sections:`,
-      sections.map((s) => s.id).join(", ")
-    );
 
     // Track if we're currently in a scroll transition
     let isScrolling = false;
@@ -40,7 +36,6 @@ export const useSectionScrolling = () => {
       return 0; // Default to first section
     }
 
-    // Smooth scroll to a specific section by index
     function scrollToSection(index: number) {
       if (index < 0 || index >= sections.length || isScrolling) return;
 
@@ -48,24 +43,18 @@ export const useSectionScrolling = () => {
       const targetSection = sections[index];
       const targetPosition = targetSection.offsetTop;
 
-      // Display the section being scrolled to
-      console.log(`Scrolling to section: ${targetSection.id}`);
-
       // Smooth scroll to section
       window.scrollTo({
         top: targetPosition,
         behavior: "smooth",
       });
 
-      // Reset scrolling flag after animation completes
       setTimeout(() => {
         isScrolling = false;
       }, 800);
     }
 
-    // Wheel event handler
     function handleWheel(e: WheelEvent) {
-      // If already scrolling, prevent default behavior
       if (isScrolling) {
         e.preventDefault();
         return;
