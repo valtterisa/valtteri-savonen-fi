@@ -15,20 +15,21 @@ export function About() {
               is how I give form to ideas that matter.
             </p>
             <p className="text-base sm:text-lg md:text-xl text-gray-300 mb-6 sm:mb-8">
-              I believe in building differently. Not by chasing what is trending
-              today, but by approaching problems from angles others overlook. I
-              look for what feels missing, for what could exist if we dared to
-              think a little further. It is not about inventing a new world from
-              scratch, but about creating products that feel natural, necessary,
-              and unmistakably original.
+              I believe in building differently. I look for what feels missing,
+              for what could exist if we dared to think a little further. It is
+              not about inventing a new world from scratch. It is about
+              streamlining the way people interact with technology and solving
+              real pain points with elegance and purpose.
             </p>
             <p className="text-base sm:text-lg md:text-xl text-gray-300">
-              My vision is to create work that stands the test of time. I want
-              to build software that becomes invisible in its simplicity yet
-              powerful in its impact — tools that people trust, love, and weave
-              into their daily lives. Technology should not overwhelm or impress
-              for its own sake. It should serve, elevate, and inspire. That is
-              the future I am here to build.
+              My vision is to build something that leaves the world better, even
+              in a small but meaningful way. I want to create software that
+              becomes invisible in its simplicity, yet powerful in its impact. I
+              want to build tools that people trust, love, and seamlessly weave
+              into their daily lives. Technology should not overwhelm, impress
+              for its own sake, or come at an unreasonable cost. It should
+              serve, elevate, and inspire. It should reach and be accessible to
+              everyone, everywhere. That is the future I am here to build.
             </p>
           </div>
         </div>

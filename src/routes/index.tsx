@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Hero } from "../components/site-components/Hero";
-import { ThreeBackground } from "../components/site-components/ThreeBackground";
+import { ThreeBackground } from "../components/site-components/BackgroundAnimation";
 import { Contact } from "~/components/site-components/Contact";
 import { About } from "~/components/site-components/About";
 import { Currently } from "~/components/site-components/Currently";

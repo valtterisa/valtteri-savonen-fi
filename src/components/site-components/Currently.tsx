@@ -16,19 +16,22 @@ export function Currently() {
               <ul className="list-disc pl-5 space-y-4">
                 <li className="pl-2">
                   <p className="text-base sm:text-lg md:text-xl text-gray-300">
-                    Co-founder of software agency.{" "}
+                    Co-founder of{"  "}
                     <a
                       className="text-gray-300 underline"
                       href="https://bittive.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
                     >
                       Bittive LLC
                     </a>
+                    , a software agency.
                   </p>
                 </li>
                 <li className="pl-2">
                   <p className="text-base sm:text-lg md:text-xl text-gray-300">
-                    Building a new product that makes Wordpress obsolete. Coming
-                    soon.
+                    Building a new product designed to make WordPress obsolete.
+                    Coming soon.
                   </p>
                 </li>
               </ul>
@@ -39,19 +42,21 @@ export function Currently() {
               <ul className="list-disc pl-5 space-y-4">
                 <li className="pl-2">
                   <p className="text-base sm:text-lg md:text-xl text-gray-300">
-                    Reading books to educate myself.
+                    Reading books. Mostly business/tech and true crime.
                   </p>
                 </li>
                 <li className="pl-2">
                   <p className="text-base sm:text-lg md:text-xl text-gray-300">
-                    Co-founder of pre-loved luxury clothing and accessories
-                    brand. <br />
+                    Co-founder of{" "}
                     <a
                       className="text-gray-300 underline"
                       href="https://www.instagram.com/luxmarketfin/"
+                      target="_blank"
+                      rel="noopener noreferrer"
                     >
                       Luxmarketfin Clothing & Accessories LLC
                     </a>
+                    , a pre-loved luxury clothing and accessories brand.
                   </p>
                 </li>
                 <li className="pl-2">

@@ -16,6 +16,7 @@ export function Contact() {
               <a
                 href="mailto:valtteri@bittive.com"
                 className="underline inline-block hover:text-gray-400 transition-colors"
+                rel="noopener noreferrer"
               >
                 valtteri@bittive.com
               </a>
@@ -26,6 +27,7 @@ export function Contact() {
                   className="text-white hover:text-gray-400 transition-colors"
                   title="X / Twitter"
                   target="_blank"
+                  rel="noopener noreferrer"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -46,6 +48,7 @@ export function Contact() {
                   className="text-white hover:text-gray-400 transition-colors"
                   title="GitHub"
                   target="_blank"
+                  rel="noopener noreferrer"
                 >
                   <Github size={24} />
                 </a>
@@ -54,6 +57,7 @@ export function Contact() {
                   className="text-white hover:text-gray-400 transition-colors"
                   title="LinkedIn"
                   target="_blank"
+                  rel="noopener noreferrer"
                 >
                   <Linkedin size={24} />
                 </a>
@@ -72,6 +76,8 @@ export function Contact() {
               <a
                 className="pr-1 font-bold hover:underline"
                 href="https://tanstack.com/start/latest"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 TanStack{" "}
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-500 to-cyan-500">
