@@ -2,7 +2,7 @@ export const seo = ({
   title,
   description,
   keywords,
-  image = "/public/og-image.png",
+  image = "/og-image.png",
   url = "https://valtterisavonen.fi",
   author = "Valtteri Savonen",
 }: {
