@@ -11,36 +11,9 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as InfoImport } from './routes/info'
-import { Route as DeferredImport } from './routes/deferred'
-import { Route as ContactImport } from './routes/contact'
-import { Route as PathlessLayoutImport } from './routes/_pathlessLayout'
 import { Route as IndexImport } from './routes/index'
 
 // Create/Update Routes
-
-const InfoRoute = InfoImport.update({
-  id: '/info',
-  path: '/info',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const DeferredRoute = DeferredImport.update({
-  id: '/deferred',
-  path: '/deferred',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const ContactRoute = ContactImport.update({
-  id: '/contact',
-  path: '/contact',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const PathlessLayoutRoute = PathlessLayoutImport.update({
-  id: '/_pathlessLayout',
-  getParentRoute: () => rootRoute,
-} as any)
 
 const IndexRoute = IndexImport.update({
   id: '/',
@@ -59,34 +32,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
-    '/_pathlessLayout': {
-      id: '/_pathlessLayout'
-      path: ''
-      fullPath: ''
-      preLoaderRoute: typeof PathlessLayoutImport
-      parentRoute: typeof rootRoute
-    }
-    '/contact': {
-      id: '/contact'
-      path: '/contact'
-      fullPath: '/contact'
-      preLoaderRoute: typeof ContactImport
-      parentRoute: typeof rootRoute
-    }
-    '/deferred': {
-      id: '/deferred'
-      path: '/deferred'
-      fullPath: '/deferred'
-      preLoaderRoute: typeof DeferredImport
-      parentRoute: typeof rootRoute
-    }
-    '/info': {
-      id: '/info'
-      path: '/info'
-      fullPath: '/info'
-      preLoaderRoute: typeof InfoImport
-      parentRoute: typeof rootRoute
-    }
   }
 }
 
@@ -94,52 +39,32 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '': typeof PathlessLayoutRoute
-  '/contact': typeof ContactRoute
-  '/deferred': typeof DeferredRoute
-  '/info': typeof InfoRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '': typeof PathlessLayoutRoute
-  '/contact': typeof ContactRoute
-  '/deferred': typeof DeferredRoute
-  '/info': typeof InfoRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
-  '/_pathlessLayout': typeof PathlessLayoutRoute
-  '/contact': typeof ContactRoute
-  '/deferred': typeof DeferredRoute
-  '/info': typeof InfoRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '' | '/contact' | '/deferred' | '/info'
+  fullPaths: '/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '' | '/contact' | '/deferred' | '/info'
-  id: '__root__' | '/' | '/_pathlessLayout' | '/contact' | '/deferred' | '/info'
+  to: '/'
+  id: '__root__' | '/'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  PathlessLayoutRoute: typeof PathlessLayoutRoute
-  ContactRoute: typeof ContactRoute
-  DeferredRoute: typeof DeferredRoute
-  InfoRoute: typeof InfoRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  PathlessLayoutRoute: PathlessLayoutRoute,
-  ContactRoute: ContactRoute,
-  DeferredRoute: DeferredRoute,
-  InfoRoute: InfoRoute,
 }
 
 export const routeTree = rootRoute
@@ -152,27 +77,11 @@ export const routeTree = rootRoute
     "__root__": {
       "filePath": "__root.tsx",
       "children": [
-        "/",
-        "/_pathlessLayout",
-        "/contact",
-        "/deferred",
-        "/info"
+        "/"
       ]
     },
     "/": {
       "filePath": "index.tsx"
-    },
-    "/_pathlessLayout": {
-      "filePath": "_pathlessLayout.tsx"
-    },
-    "/contact": {
-      "filePath": "contact.tsx"
-    },
-    "/deferred": {
-      "filePath": "deferred.tsx"
-    },
-    "/info": {
-      "filePath": "info.tsx"
     }
   }
 }

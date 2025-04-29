@@ -3,28 +3,22 @@ import { useEffect, useRef, useState } from "react";
 /**
  * A custom hook for smooth section-by-section scrolling using GSAP
  * Shows one section at a time with smooth transitions
- * Optimized for both desktop and mobile
+ * Optimized for both desktop and mobile using media queries
  */
 export const useSectionScrolling = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [currentSection, setCurrentSection] = useState(0);
-  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     // Avoid running on server
     if (typeof window === "undefined") return;
     if (!containerRef.current) return;
 
-    // Check if device is mobile
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
+    // Use matchMedia for efficient mobile detection
+    const mobileMediaQuery = window.matchMedia("(max-width: 767px)");
 
-    // Initial check
-    checkMobile();
-
-    // Listen for resize to update mobile state
-    window.addEventListener("resize", checkMobile);
+    // Function to check if mobile view
+    const isMobile = () => mobileMediaQuery.matches;
 
     // Dynamic import to avoid SSR issues
     const setupScrolling = async () => {
@@ -90,7 +84,7 @@ export const useSectionScrolling = () => {
       // Track scroll accumulation to require more deliberate scrolling
       let scrollAccumulator = 0;
       // Use smaller threshold on mobile for easier scrolling
-      const getScrollThreshold = () => (isMobile ? 80 : 150);
+      const getScrollThreshold = () => (isMobile() ? 80 : 150);
       let isTransitioning = false;
       let lastScrollTime = 0;
       const SCROLL_TIMEOUT = 300; // Reset accumulator after this many ms of no scrolling
@@ -129,12 +123,12 @@ export const useSectionScrolling = () => {
 
             // Calculate offset for mobile to ensure title visibility
             let offsetY = 0;
-            if (isMobile && sections[newIndex].id === "about") {
+            if (isMobile() && sections[newIndex].id === "about") {
               offsetY = 20; // Add offset for "About" section on mobile
             }
 
             gsap.to(window, {
-              duration: isMobile ? 0.7 : 0.9, // Faster on mobile
+              duration: isMobile() ? 0.7 : 0.9, // Faster on mobile
               scrollTo: { y: sections[newIndex], offsetY: offsetY },
               ease: "power2.inOut",
               onComplete: () => {
@@ -151,7 +145,7 @@ export const useSectionScrolling = () => {
       let touchStartX = 0;
       let touchMoved = false;
       // Lower threshold on mobile for easier swiping
-      const getTouchThreshold = () => (isMobile ? 60 : 80);
+      const getTouchThreshold = () => (isMobile() ? 60 : 80);
 
       const handleTouchStart = (e: TouchEvent) => {
         touchStartY = e.touches[0].clientY;
@@ -205,12 +199,12 @@ export const useSectionScrolling = () => {
 
           // Calculate offset for mobile to ensure title visibility
           let offsetY = 0;
-          if (isMobile && sections[newIndex].id === "about") {
+          if (isMobile() && sections[newIndex].id === "about") {
             offsetY = 20; // Add offset for "About" section on mobile
           }
 
           gsap.to(window, {
-            duration: isMobile ? 0.7 : 0.9, // Faster on mobile
+            duration: isMobile() ? 0.7 : 0.9, // Faster on mobile
             scrollTo: { y: sections[newIndex], offsetY: offsetY },
             ease: "power2.inOut",
             onComplete: () => {
@@ -249,13 +243,13 @@ export const useSectionScrolling = () => {
 
             // Calculate offset for mobile to ensure title visibility
             let offsetY = 0;
-            if (isMobile && sections[currentSection + 1].id === "about") {
+            if (isMobile() && sections[currentSection + 1].id === "about") {
               offsetY = 20; // Add offset for "About" section on mobile
             }
 
             const nextSection = sections[currentSection + 1];
             gsap.to(window, {
-              duration: isMobile ? 0.7 : 0.9, // Faster on mobile
+              duration: isMobile() ? 0.7 : 0.9, // Faster on mobile
               scrollTo: { y: nextSection, offsetY: offsetY },
               ease: "power2.inOut",
               onComplete: () => {
@@ -274,7 +268,7 @@ export const useSectionScrolling = () => {
             isTransitioning = true;
             const prevSection = sections[currentSection - 1];
             gsap.to(window, {
-              duration: isMobile ? 0.7 : 0.9, // Faster on mobile
+              duration: isMobile() ? 0.7 : 0.9, // Faster on mobile
               scrollTo: { y: prevSection, offsetY: 0 },
               ease: "power2.inOut",
               onComplete: () => {
@@ -293,7 +287,6 @@ export const useSectionScrolling = () => {
         ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
         window.removeEventListener("wheel", handleWheel);
         window.removeEventListener("keydown", handleKeyDown);
-        window.removeEventListener("resize", checkMobile);
         document.removeEventListener("touchstart", handleTouchStart);
         document.removeEventListener("touchmove", handleTouchMove);
         document.removeEventListener("touchend", handleTouchEnd);
@@ -311,7 +304,7 @@ export const useSectionScrolling = () => {
         }
       });
     };
-  }, [currentSection, isMobile]);
+  }, [currentSection]);
 
   return containerRef;
 };
