@@ -11,105 +11,80 @@ export const useSectionScrolling = () => {
       document.querySelectorAll<HTMLElement>("section")
     );
 
-    if (!sections.length) return;
+    console.log("Sections found:", sections);
 
-    // Track if we're currently in a scroll transition
+    if (sections.length < 2) return; // Need at least 2 sections (hero + next)
+
+    // Only control scrolling for the hero section (first section)
+    const heroSection = sections[0];
+    const nextSection = sections[1];
+
+    console.log("Hero section:", heroSection);
+    console.log("Next section:", nextSection);
+
+    // Track if animation is in progress
     let isScrolling = false;
-    let lastScrollTop = window.scrollY;
-    let lastScrollDirection = 0; // 0: none, 1: down, -1: up
+    let lastScrollTime = 0;
+    const scrollAnimationDuration = 1000; // ms
 
-    // Get the currently visible section based on scroll position
-    function getCurrentSectionIndex() {
-      const scrollPosition = window.scrollY;
-      
-      // For sections taller than the viewport, we need to determine
-      // which section covers the majority of the viewport
-      for (let i = 0; i < sections.length; i++) {
-        const section = sections[i];
-        const sectionTop = section.offsetTop;
-        const sectionBottom = sectionTop + section.offsetHeight;
-        
-        // If section is taller than viewport
-        if (section.offsetHeight > window.innerHeight) {
-          // If we're scrolled within this tall section
-          if (scrollPosition >= sectionTop && scrollPosition < sectionBottom - (window.innerHeight / 2)) {
-            return i;
-          }
-        } else {
-          // Standard section height check - use the midpoint of the viewport
-          const viewportMidpoint = scrollPosition + (window.innerHeight / 2);
-          if (viewportMidpoint >= sectionTop && viewportMidpoint < sectionBottom) {
-            return i;
-          }
-        }
-      }
+    // Scroll from hero to next section with animation
+    function scrollToNextSection() {
+      if (isScrolling) return;
 
-      // If we're near the bottom of the page
-      if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 50) {
-        return sections.length - 1;
-      }
-
-      return 0; // Default to first section
-    }
-
-    function scrollToSection(index: number) {
-      if (index < 0 || index >= sections.length || isScrolling) return;
+      const now = Date.now();
+      if (now - lastScrollTime < 100) return; // Prevent rapid fire scrolls
+      lastScrollTime = now;
 
       isScrolling = true;
-      const targetSection = sections[index];
-      
-      // For tall sections, we need special handling
-      const targetPosition = targetSection.offsetTop;
-      
-      // If we're already in a tall section and moving within it, handle differently
-      const currentIndex = getCurrentSectionIndex();
-      if (currentIndex === index && targetSection.offsetHeight > window.innerHeight) {
-        // If already in the tall section, allow normal scrolling
-        isScrolling = false;
-        return;
-      }
+      console.log("Scrolling to next section with animation");
 
-      // Smooth scroll to section
+      // Ensure normal scrolling is prevented during animation
+      document.body.style.overflow = "hidden";
+
+      // Smooth scroll to the next section with enhanced animation
       window.scrollTo({
-        top: targetPosition,
+        top: nextSection.offsetTop,
         behavior: "smooth",
       });
 
+      // Reset scrolling flag after animation completes
       setTimeout(() => {
         isScrolling = false;
-      }, 800);
+        document.body.style.overflow = "";
+      }, scrollAnimationDuration);
     }
 
-    // Track scroll position to detect direction
-    function handleScroll() {
-      const currentScrollTop = window.scrollY;
-      
-      // Determine scroll direction
-      if (currentScrollTop > lastScrollTop) {
-        lastScrollDirection = 1; // scrolling down
-      } else if (currentScrollTop < lastScrollTop) {
-        lastScrollDirection = -1; // scrolling up
+    // Determine if we're currently in the hero section
+    function isInHeroSection() {
+      const scrollPosition = window.scrollY;
+      const heroBottom = heroSection.offsetTop + heroSection.offsetHeight;
+
+      // We're in hero if scroll position is before the end of hero section
+      return scrollPosition < heroBottom - window.innerHeight / 3;
+    }
+
+    // Handle native scroll events to intercept all scrolling in hero
+    function handleScroll(e: Event) {
+      if (isScrolling) return;
+
+      if (isInHeroSection() && window.scrollY > 0) {
+        // If user tries to scroll within hero section, snap back to top
+        window.scrollTo({
+          top: 0,
+          behavior: "instant",
+        });
       }
-      
-      lastScrollTop = currentScrollTop;
     }
 
+    // Handle wheel events
     function handleWheel(e: WheelEvent) {
-      if (isScrolling) {
-        e.preventDefault();
-        return;
-      }
+      // Only control scrolling when in the hero section
+      if (!isInHeroSection()) return;
 
-      const currentIndex = getCurrentSectionIndex();
-
-      // Determine scroll direction
-      if (e.deltaY > 50 && currentIndex < sections.length - 1) {
-        // Scrolling down - go to next section
+      // If scrolling down with enough force, go to next section
+      if (e.deltaY > 10) {
         e.preventDefault();
-        scrollToSection(currentIndex + 1);
-      } else if (e.deltaY < -50 && currentIndex > 0) {
-        e.preventDefault();
-        scrollToSection(currentIndex - 1);
+        scrollToNextSection();
       }
     }
 
@@ -117,89 +92,75 @@ export const useSectionScrolling = () => {
     let touchStartY = 0;
 
     function handleTouchStart(e: TouchEvent) {
-      touchStartY = e.touches[0].clientY;
+      // Only track touch start if in hero section
+      if (isInHeroSection()) {
+        touchStartY = e.touches[0].clientY;
+      }
     }
 
     function handleTouchEnd(e: TouchEvent) {
-      if (isScrolling) return;
+      // Only handle touch end if in hero section and not currently scrolling
+      if (!isInHeroSection() || isScrolling) return;
 
       const touchEndY = e.changedTouches[0].clientY;
       const touchDiff = touchEndY - touchStartY;
 
-      // Only respond to significant swipes
-      if (Math.abs(touchDiff) < 70) return;
-
-      const currentIndex = getCurrentSectionIndex();
-
-      if (touchDiff < 0 && currentIndex < sections.length - 1) {
-        // Swipe up - go to next section
-        scrollToSection(currentIndex + 1);
-      } else if (touchDiff > 0 && currentIndex > 0) {
-        // Swipe down - go to previous section
-        scrollToSection(currentIndex - 1);
+      // Swipe up with enough force, go to next section
+      if (touchDiff < -30) {
+        scrollToNextSection();
       }
     }
 
-    // Keyboard navigation
+    // Keyboard navigation from hero section
     function handleKeyDown(e: KeyboardEvent) {
-      if (isScrolling) return;
+      // Only handle keyboard when in hero section and not currently scrolling
+      if (!isInHeroSection() || isScrolling) return;
 
-      const currentIndex = getCurrentSectionIndex();
+      if (e.key === "ArrowDown" || e.key === "PageDown" || e.key === "Space") {
+        e.preventDefault();
+        scrollToNextSection();
+      }
+    }
 
-      if (e.key === "ArrowDown" || e.key === "PageDown") {
-        if (currentIndex < sections.length - 1) {
-          e.preventDefault();
-          scrollToSection(currentIndex + 1);
+    // Scroll to section on hash change (for nav links)
+    function handleHashChange() {
+      const hash = window.location.hash.substring(1);
+      if (hash) {
+        const targetSection = sections.find((section) => section.id === hash);
+        if (targetSection) {
+          isScrolling = true;
+          window.scrollTo({
+            top: targetSection.offsetTop,
+            behavior: "smooth",
+          });
+          setTimeout(() => {
+            isScrolling = false;
+          }, scrollAnimationDuration);
         }
-      } else if (e.key === "ArrowUp" || e.key === "PageUp") {
-        if (currentIndex > 0) {
-          e.preventDefault();
-          scrollToSection(currentIndex - 1);
-        }
-      } else if (e.key === "Home") {
-        e.preventDefault();
-        scrollToSection(0);
-      } else if (e.key === "End") {
-        e.preventDefault();
-        scrollToSection(sections.length - 1);
       }
     }
 
     // Add event listeners
+    window.addEventListener("scroll", handleScroll, { passive: true });
     window.addEventListener("wheel", handleWheel, { passive: false });
     window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("hashchange", handleHashChange);
     document.addEventListener("touchstart", handleTouchStart, {
       passive: true,
     });
     document.addEventListener("touchend", handleTouchEnd, { passive: true });
-    window.addEventListener("scroll", handleScroll);
 
-    // Also scroll to sections when hash changes (for direct linking)
-    function handleHashChange() {
-      const hash = window.location.hash.substring(1);
-      if (hash) {
-        const sectionIndex = sections.findIndex(
-          (section) => section.id === hash
-        );
-        if (sectionIndex >= 0) {
-          scrollToSection(sectionIndex);
-        }
-      }
-    }
-
-    window.addEventListener("hashchange", handleHashChange);
-
-    // Handle direct navigation to a hash on initial load
+    // Handle direct link to a section
     if (window.location.hash) {
       handleHashChange();
     }
 
     // Clean up event listeners on unmount
     return () => {
+      window.removeEventListener("scroll", handleScroll);
       window.removeEventListener("wheel", handleWheel);
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("hashchange", handleHashChange);
-      window.removeEventListener("scroll", handleScroll);
       document.removeEventListener("touchstart", handleTouchStart);
       document.removeEventListener("touchend", handleTouchEnd);
     };
