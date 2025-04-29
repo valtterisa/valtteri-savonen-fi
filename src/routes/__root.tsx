@@ -23,11 +23,10 @@ export const Route = createRootRoute({
         content: "width=device-width, initial-scale=1",
       },
       ...seo({
-        title: "Valtteri Savonen | Full-Stack Developer",
-        description:
-          "Personal website of Valtteri Savonen - Full-Stack Developer specializing in creating innovative web applications and software solutions.",
+        title: "Valtteri Savonen | Personal website",
+        description: "Personal website of Valtteri Savonen - Personal website",
         keywords:
-          "Valtteri Savonen, full-stack developer, web development, software engineer, Finland",
+          "Valtteri Savonen, full-stack developer, web development, software engineer, Finland, Bittive, Bittive Oy",
         image: "https://valtterisavonen.fi/favicon.png",
       }),
     ],

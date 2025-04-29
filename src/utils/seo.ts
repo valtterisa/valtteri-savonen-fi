@@ -2,7 +2,7 @@ export const seo = ({
   title,
   description,
   keywords,
-  image,
+  image = "/og-image.png",
   url = "https://valtterisavonen.fi",
   author = "Valtteri Savonen",
 }: {
@@ -32,8 +32,8 @@ export const seo = ({
     // Twitter tags
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
-    { name: "twitter:creator", content: "@valtterisavonen" },
-    { name: "twitter:site", content: "@valtterisavonen" },
+    { name: "twitter:creator", content: "@vvaltterisa" },
+    { name: "twitter:site", content: "@vvaltterisa" },
 
     // Add canonical URL
     { tagName: "link", rel: "canonical", href: url },
