@@ -72,7 +72,12 @@ export function Contact() {
           <div className="max-w-7xl mx-auto text-center py-6">
             <p className="text-sm sm:text-base text-gray-300 flex items-center justify-center gap-1">
               Made with
-              <img src="/tanstack.png" width={20} height={20} />
+              <img
+                src="/tanstack.png"
+                width={20}
+                height={20}
+                alt="TanStack Start Logo"
+              />
               <a
                 className="pr-1 font-bold hover:underline"
                 href="https://tanstack.com/start/latest"
