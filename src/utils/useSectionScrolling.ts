@@ -11,16 +11,11 @@ export const useSectionScrolling = () => {
       document.querySelectorAll<HTMLElement>("section")
     );
 
-    console.log("Sections found:", sections);
-
     if (sections.length < 2) return; // Need at least 2 sections (hero + next)
 
     // Only control scrolling for the hero section (first section)
     const heroSection = sections[0];
     const nextSection = sections[1];
-
-    console.log("Hero section:", heroSection);
-    console.log("Next section:", nextSection);
 
     // Track if animation is in progress
     let isScrolling = false;
@@ -36,7 +31,6 @@ export const useSectionScrolling = () => {
       lastScrollTime = now;
 
       isScrolling = true;
-      console.log("Scrolling to next section with animation");
 
       // Ensure normal scrolling is prevented during animation
       document.body.style.overflow = "hidden";
