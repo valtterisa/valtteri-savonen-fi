@@ -24,10 +24,10 @@ export const Route = createRootRoute({
       },
       ...seo({
         title: "Valtteri Savonen | Personal website",
-        description: "Personal website of Valtteri Savonen - Personal website",
+        description: "Personal website of Valtteri Savonen",
         keywords:
           "Valtteri Savonen, full-stack developer, web development, software engineer, Finland, Bittive, Bittive Oy",
-        image: "https://valtterisavonen.fi/favicon.png",
+        image: "https://valtterisavonen.fi/og-image.png",
       }),
     ],
     links: [
