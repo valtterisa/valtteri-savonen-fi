@@ -28,6 +28,7 @@ export const seo = ({
     { name: "og:description", content: description },
     { name: "og:url", content: url },
     { name: "og:type", content: "website" },
+    { name: "og:image", content: image },
 
     // Twitter tags
     { name: "twitter:title", content: title },
