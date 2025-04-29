@@ -22,6 +22,53 @@ export const useSectionScrolling = () => {
     let lastScrollTime = 0;
     const scrollAnimationDuration = 1000; // ms
 
+    // Improved scroll back to hero section with optimized animation
+    function scrollToHeroSection() {
+      if (isScrolling) return;
+
+      const now = Date.now();
+      if (now - lastScrollTime < 100) return; // Prevent rapid fire scrolls
+      lastScrollTime = now;
+
+      isScrolling = true;
+
+      // Temporarily disable scrolling during transition
+      document.body.style.overflow = "hidden";
+
+      // Use a shorter duration for scrolling back to top for better responsiveness
+      const backToTopDuration = 700;
+
+      // Use requestAnimationFrame for smoother animation
+      const startTime = performance.now();
+      const startPosition = window.scrollY;
+
+      function animateScroll(currentTime: any) {
+        const elapsedTime = currentTime - startTime;
+        const progress = Math.min(elapsedTime / backToTopDuration, 1);
+
+        // Use easeOutQuart for a fast start and smooth finish
+        const easeOut = 1 - Math.pow(1 - progress, 4);
+        const newPosition = startPosition * (1 - easeOut);
+
+        window.scrollTo(0, newPosition);
+
+        if (progress < 1) {
+          requestAnimationFrame(animateScroll);
+        } else {
+          // Ensure we're exactly at the top
+          window.scrollTo(0, 0);
+
+          // Reset scrolling state
+          setTimeout(() => {
+            isScrolling = false;
+            document.body.style.overflow = "";
+          }, 50);
+        }
+      }
+
+      requestAnimationFrame(animateScroll);
+    }
+
     // Scroll from hero to next section with animation
     function scrollToNextSection() {
       if (isScrolling) return;
@@ -65,6 +112,19 @@ export const useSectionScrolling = () => {
       return scrollPosition < heroBottom - window.innerHeight / 3;
     }
 
+    // Check if we're near the top of the second section (for back-to-top detection)
+    function isNearTopOfNextSection() {
+      const scrollPosition = window.scrollY;
+      const nextSectionTop = nextSection.offsetTop;
+
+      // Consider "near top" if within 25% of the viewport height from the section start
+      const threshold = window.innerHeight * 0.25;
+      return (
+        scrollPosition >= nextSectionTop &&
+        scrollPosition <= nextSectionTop + threshold
+      );
+    }
+
     // Handle native scroll events to intercept all scrolling in hero
     function handleScroll(e: Event) {
       if (isScrolling) return;
@@ -80,13 +140,20 @@ export const useSectionScrolling = () => {
 
     // Handle wheel events
     function handleWheel(e: WheelEvent) {
-      // Only control scrolling when in the hero section
-      if (!isInHeroSection()) return;
+      // If already scrolling, ignore the event
+      if (isScrolling) return;
 
-      // If scrolling down with enough force, go to next section
-      if (e.deltaY > 10) {
+      // Going down from hero section
+      if (isInHeroSection()) {
+        if (e.deltaY > 10) {
+          e.preventDefault();
+          scrollToNextSection();
+        }
+      }
+      // Going up from next section back to hero
+      else if (isNearTopOfNextSection() && e.deltaY < -10) {
         e.preventDefault();
-        scrollToNextSection();
+        scrollToHeroSection();
       }
     }
 
@@ -96,8 +163,8 @@ export const useSectionScrolling = () => {
     let isTouchMoving = false;
 
     function handleTouchStart(e: TouchEvent) {
-      // Only track touch start if in hero section
-      if (isInHeroSection()) {
+      // Track touch start in both hero section and near top of next section
+      if (isInHeroSection() || isNearTopOfNextSection()) {
         touchStartY = e.touches[0].clientY;
         touchStartX = e.touches[0].clientX;
         isTouchMoving = false;
@@ -105,49 +172,81 @@ export const useSectionScrolling = () => {
     }
 
     function handleTouchMove(e: TouchEvent) {
-      // Only handle in hero section
-      if (!isInHeroSection() || isScrolling) return;
+      // Ignore if already scrolling
+      if (isScrolling) return;
 
       const touchY = e.touches[0].clientY;
       const touchX = e.touches[0].clientX;
       const diffY = touchY - touchStartY;
       const diffX = touchX - touchStartX;
 
-      // If primarily vertical movement and downward swipe
-      if (Math.abs(diffY) > Math.abs(diffX) && diffY < -10) {
+      // If primarily vertical movement
+      if (Math.abs(diffY) > Math.abs(diffX)) {
         isTouchMoving = true;
-        // Prevent default only for significant vertical scrolls to avoid interrupting other touch interactions
-        if (Math.abs(diffY) > 30) {
-          e.preventDefault();
+
+        // In hero section, handle downward swipes
+        if (isInHeroSection() && diffY < -10) {
+          // Prevent default only for significant vertical scrolls
+          if (Math.abs(diffY) > 30) {
+            e.preventDefault();
+          }
+        }
+        // Near top of next section, handle upward swipes
+        else if (isNearTopOfNextSection() && diffY > 10) {
+          // Prevent default for significant upward swipes
+          if (diffY > 30) {
+            e.preventDefault();
+          }
         }
       }
     }
 
     function handleTouchEnd(e: TouchEvent) {
-      // Only handle touch end if in hero section and not currently scrolling
-      if (!isInHeroSection() || isScrolling) return;
+      // Ignore if already scrolling
+      if (isScrolling) return;
 
       const touchEndY = e.changedTouches[0].clientY;
       const touchDiff = touchEndY - touchStartY;
 
-      // Only trigger section change if we detected movement in touchMove
-      // and if the swipe was significant enough
-      if (isTouchMoving && touchDiff < -30) {
-        e.preventDefault();
-        scrollToNextSection();
+      // Only proceed if we detected movement
+      if (isTouchMoving) {
+        // In hero section, handle downward swipes
+        if (isInHeroSection() && touchDiff < -30) {
+          e.preventDefault();
+          scrollToNextSection();
+        }
+        // Near top of next section, handle upward swipes
+        else if (isNearTopOfNextSection() && touchDiff > 30) {
+          e.preventDefault();
+          scrollToHeroSection();
+        }
       }
 
       isTouchMoving = false;
     }
 
-    // Keyboard navigation from hero section
+    // Keyboard navigation
     function handleKeyDown(e: KeyboardEvent) {
-      // Only handle keyboard when in hero section and not currently scrolling
-      if (!isInHeroSection() || isScrolling) return;
+      // Ignore if already scrolling
+      if (isScrolling) return;
 
-      if (e.key === "ArrowDown" || e.key === "PageDown" || e.key === "Space") {
-        e.preventDefault();
-        scrollToNextSection();
+      // Navigate down from hero section
+      if (isInHeroSection()) {
+        if (
+          e.key === "ArrowDown" ||
+          e.key === "PageDown" ||
+          e.key === "Space"
+        ) {
+          e.preventDefault();
+          scrollToNextSection();
+        }
+      }
+      // Navigate up to hero from next section
+      else if (isNearTopOfNextSection()) {
+        if (e.key === "ArrowUp" || e.key === "PageUp" || e.key === "Home") {
+          e.preventDefault();
+          scrollToHeroSection();
+        }
       }
     }
 
