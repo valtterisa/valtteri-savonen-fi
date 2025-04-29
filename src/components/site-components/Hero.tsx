@@ -9,9 +9,9 @@ export function Hero() {
           </h1>
 
           <div className="max-w-2xl mx-auto mb-16">
-            <div className="bg-white/10 backdrop-blur-sm p-6 sm:p-8 rounded-xl shadow-lg">
+            <div className="rounded-xl shadow-lg">
               <blockquote className="text-center">
-                <p className="text-lg sm:text-2xl leading-relaxed mb-3 text-gray-200 font-light">
+                <p className="text-base sm:text-lg md:text-xl text-gray-300">
                   <span className="font-serif">"</span>
                   Your time is limited, so don't waste it living someone else's
                   life.

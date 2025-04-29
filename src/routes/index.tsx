@@ -3,6 +3,7 @@ import { Hero } from "../components/site-components/Hero";
 import { ThreeBackground } from "../components/site-components/ThreeBackground";
 import { Contact } from "~/components/site-components/Contact";
 import { About } from "~/components/site-components/About";
+import { Currently } from "~/components/site-components/Currently";
 import { useSectionScrolling } from "~/utils/useSectionScrolling";
 
 export const Route = createFileRoute("/")({
@@ -17,6 +18,7 @@ function Home() {
       <ThreeBackground />
       <Hero />
       <About />
+      <Currently />
       <Contact />
     </div>
   );
