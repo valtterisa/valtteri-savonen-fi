@@ -27,6 +27,11 @@
     @apply font-archivo-black;
   }
 
+  p,
+  a {
+    @apply font-archivo;
+  }
+
   .using-mouse * {
     outline: none !important;
   }

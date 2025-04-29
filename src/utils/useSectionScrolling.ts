@@ -1,310 +1,178 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
-/**
- * A custom hook for smooth section-by-section scrolling using GSAP
- * Shows one section at a time with smooth transitions
- * Optimized for both desktop and mobile using media queries
- */
 export const useSectionScrolling = () => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [currentSection, setCurrentSection] = useState(0);
 
   useEffect(() => {
-    // Avoid running on server
     if (typeof window === "undefined") return;
     if (!containerRef.current) return;
 
-    // Use matchMedia for efficient mobile detection
-    const mobileMediaQuery = window.matchMedia("(max-width: 767px)");
+    const sections = Array.from(
+      document.querySelectorAll<HTMLElement>("section")
+    );
 
-    // Function to check if mobile view
-    const isMobile = () => mobileMediaQuery.matches;
+    if (!sections.length) return;
+    console.log(
+      `Found ${sections.length} sections:`,
+      sections.map((s) => s.id).join(", ")
+    );
 
-    // Dynamic import to avoid SSR issues
-    const setupScrolling = async () => {
-      const { gsap } = await import("gsap");
-      const { ScrollTrigger } = await import("gsap/ScrollTrigger");
-      const ScrollToPlugin = await import("gsap/ScrollToPlugin");
+    // Track if we're currently in a scroll transition
+    let isScrolling = false;
 
-      // Register plugins
-      gsap.registerPlugin(ScrollTrigger, ScrollToPlugin.default);
+    // Initialize at the top
+    window.scrollTo(0, 0);
 
-      // Get all sections within the container
-      const sections = gsap.utils.toArray<HTMLElement>(".section");
+    // Get the currently visible section based on scroll position
+    function getCurrentSectionIndex() {
+      const scrollPosition = window.scrollY + window.innerHeight / 3;
 
-      // Skip if no sections found
-      if (!sections.length) return;
+      for (let i = 0; i < sections.length; i++) {
+        const section = sections[i];
+        const sectionTop = section.offsetTop;
+        const sectionBottom = sectionTop + section.offsetHeight;
 
-      // Enable regular scrolling
-      document.body.style.overflow = "auto";
-
-      // Create scroll triggers for each section
-      sections.forEach((section, index) => {
-        // Skip the first section - it's already visible
-        if (index === 0) {
-          // Ensure first section is fully visible
-          gsap.set(section, { autoAlpha: 1, y: 0 });
-          return;
+        if (scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
+          return i;
         }
+      }
 
-        // Set initial state for other sections
-        gsap.set(section, { autoAlpha: 0, y: 100 });
+      return 0; // Default to first section
+    }
 
-        // Create a scroll trigger for each section
-        ScrollTrigger.create({
-          trigger: section,
-          start: "top bottom-=100",
-          end: "bottom top+=100",
-          markers: false,
-          onEnter: () => {
-            // Animate section in when scrolled to
-            gsap.to(section, {
-              autoAlpha: 1,
-              y: 0,
-              duration: 0.7,
-              ease: "power2.out",
-              overwrite: "auto",
-            });
-            setCurrentSection(index);
-          },
-          onLeaveBack: () => {
-            // Animate section out when scrolled past (upward)
-            gsap.to(section, {
-              autoAlpha: 0,
-              y: 100,
-              duration: 0.5,
-              ease: "power2.in",
-              overwrite: "auto",
-            });
-            setCurrentSection(index - 1);
-          },
-        });
+    // Smooth scroll to a specific section by index
+    function scrollToSection(index: number) {
+      if (index < 0 || index >= sections.length || isScrolling) return;
+
+      isScrolling = true;
+      const targetSection = sections[index];
+      const targetPosition = targetSection.offsetTop;
+
+      // Display the section being scrolled to
+      console.log(`Scrolling to section: ${targetSection.id}`);
+
+      // Smooth scroll to section
+      window.scrollTo({
+        top: targetPosition,
+        behavior: "smooth",
       });
 
-      // Track scroll accumulation to require more deliberate scrolling
-      let scrollAccumulator = 0;
-      // Use smaller threshold on mobile for easier scrolling
-      const getScrollThreshold = () => (isMobile() ? 80 : 150);
-      let isTransitioning = false;
-      let lastScrollTime = 0;
-      const SCROLL_TIMEOUT = 300; // Reset accumulator after this many ms of no scrolling
+      // Reset scrolling flag after animation completes
+      setTimeout(() => {
+        isScrolling = false;
+      }, 800);
+    }
 
-      // Add wheel event to help with smoother scrolling
-      const handleWheel = (e: WheelEvent) => {
-        // Always prevent default to take full control of scrolling
+    // Wheel event handler
+    function handleWheel(e: WheelEvent) {
+      // If already scrolling, prevent default behavior
+      if (isScrolling) {
         e.preventDefault();
+        return;
+      }
 
-        // Reset accumulator if enough time has passed between scroll events
-        const now = Date.now();
-        if (now - lastScrollTime > SCROLL_TIMEOUT) {
-          scrollAccumulator = 0;
-        }
-        lastScrollTime = now;
+      const currentIndex = getCurrentSectionIndex();
 
-        // Skip if currently transitioning between sections
-        if (isTransitioning) return;
+      // Determine scroll direction
+      if (e.deltaY > 50 && currentIndex < sections.length - 1) {
+        // Scrolling down - go to next section
+        e.preventDefault();
+        scrollToSection(currentIndex + 1);
+      } else if (e.deltaY < -50 && currentIndex > 0) {
+        e.preventDefault();
+        scrollToSection(currentIndex - 1);
+      }
+    }
 
-        // Add to accumulator based on scroll amount
-        scrollAccumulator += Math.abs(e.deltaY);
+    // Touch handling for mobile
+    let touchStartY = 0;
 
-        // Only move to next section when accumulator exceeds threshold
-        if (scrollAccumulator > getScrollThreshold()) {
-          scrollAccumulator = 0; // Reset accumulator
+    function handleTouchStart(e: TouchEvent) {
+      touchStartY = e.touches[0].clientY;
+    }
 
-          // Calculate new section index based on scroll direction
-          const newIndex =
-            e.deltaY > 0
-              ? Math.min(currentSection + 1, sections.length - 1)
-              : Math.max(currentSection - 1, 0);
+    function handleTouchEnd(e: TouchEvent) {
+      if (isScrolling) return;
 
-          // If we're changing sections, animate to it
-          if (newIndex !== currentSection) {
-            isTransitioning = true;
+      const touchEndY = e.changedTouches[0].clientY;
+      const touchDiff = touchEndY - touchStartY;
 
-            // Calculate offset for mobile to ensure title visibility
-            let offsetY = 0;
-            if (isMobile() && sections[newIndex].id === "about") {
-              offsetY = 20; // Add offset for "About" section on mobile
-            }
+      // Only respond to significant swipes
+      if (Math.abs(touchDiff) < 70) return;
 
-            gsap.to(window, {
-              duration: isMobile() ? 0.7 : 0.9, // Faster on mobile
-              scrollTo: { y: sections[newIndex], offsetY: offsetY },
-              ease: "power2.inOut",
-              onComplete: () => {
-                isTransitioning = false;
-                setCurrentSection(newIndex);
-              },
-            });
-          }
-        }
-      };
+      const currentIndex = getCurrentSectionIndex();
 
-      // Track touch position for swipe detection
-      let touchStartY = 0;
-      let touchStartX = 0;
-      let touchMoved = false;
-      // Lower threshold on mobile for easier swiping
-      const getTouchThreshold = () => (isMobile() ? 60 : 80);
+      if (touchDiff < 0 && currentIndex < sections.length - 1) {
+        // Swipe up - go to next section
+        scrollToSection(currentIndex + 1);
+      } else if (touchDiff > 0 && currentIndex > 0) {
+        // Swipe down - go to previous section
+        scrollToSection(currentIndex - 1);
+      }
+    }
 
-      const handleTouchStart = (e: TouchEvent) => {
-        touchStartY = e.touches[0].clientY;
-        touchStartX = e.touches[0].clientX;
-        touchMoved = false;
-      };
+    // Keyboard navigation
+    function handleKeyDown(e: KeyboardEvent) {
+      if (isScrolling) return;
 
-      // Special handling for touch move - we need to detect horizontal scrolling
-      // and only prevent default for vertical scrolling
-      const handleTouchMove = (e: TouchEvent) => {
-        if (!touchMoved) {
-          const touchY = e.touches[0].clientY;
-          const touchX = e.touches[0].clientX;
-          const deltaY = touchY - touchStartY;
-          const deltaX = touchX - touchStartX;
+      const currentIndex = getCurrentSectionIndex();
 
-          // If vertical scrolling is dominant, prevent default
-          if (Math.abs(deltaY) > Math.abs(deltaX)) {
-            e.preventDefault();
-            touchMoved = true;
-          }
-        } else {
+      if (e.key === "ArrowDown" || e.key === "PageDown") {
+        if (currentIndex < sections.length - 1) {
           e.preventDefault();
+          scrollToSection(currentIndex + 1);
         }
-      };
-
-      const handleTouchEnd = (e: TouchEvent) => {
-        if (isTransitioning) return;
-
-        const touchEndY = e.changedTouches[0].clientY;
-        const touchEndX = e.changedTouches[0].clientX;
-        const touchDiffY = touchEndY - touchStartY;
-        const touchDiffX = touchEndX - touchStartX;
-
-        // Only proceed if vertical swipe was dominant and long enough
-        if (
-          Math.abs(touchDiffY) < getTouchThreshold() ||
-          Math.abs(touchDiffX) > Math.abs(touchDiffY)
-        )
-          return;
-
-        // Calculate new section based on swipe direction (negative = swipe up)
-        const newIndex =
-          touchDiffY < 0
-            ? Math.min(currentSection + 1, sections.length - 1)
-            : Math.max(currentSection - 1, 0);
-
-        // If we're changing sections, animate to it
-        if (newIndex !== currentSection) {
-          isTransitioning = true;
-
-          // Calculate offset for mobile to ensure title visibility
-          let offsetY = 0;
-          if (isMobile() && sections[newIndex].id === "about") {
-            offsetY = 20; // Add offset for "About" section on mobile
-          }
-
-          gsap.to(window, {
-            duration: isMobile() ? 0.7 : 0.9, // Faster on mobile
-            scrollTo: { y: sections[newIndex], offsetY: offsetY },
-            ease: "power2.inOut",
-            onComplete: () => {
-              isTransitioning = false;
-              setCurrentSection(newIndex);
-            },
-          });
-        }
-      };
-
-      // Add touch event handlers
-      document.addEventListener("touchstart", handleTouchStart, {
-        passive: true,
-      });
-      document.addEventListener("touchmove", handleTouchMove, {
-        passive: false,
-      });
-      document.addEventListener("touchend", handleTouchEnd, { passive: true });
-
-      // Conditionally add wheel event listener only on desktop
-      window.addEventListener("wheel", handleWheel, { passive: false });
-
-      // Make the content navigable by keyboard
-      const handleKeyDown = (e: KeyboardEvent) => {
-        if (isTransitioning) return;
-
-        // Arrow keys for navigation
-        if (
-          e.key === "ArrowDown" ||
-          e.key === "ArrowRight" ||
-          e.key === "PageDown"
-        ) {
+      } else if (e.key === "ArrowUp" || e.key === "PageUp") {
+        if (currentIndex > 0) {
           e.preventDefault();
-          if (currentSection < sections.length - 1) {
-            isTransitioning = true;
-
-            // Calculate offset for mobile to ensure title visibility
-            let offsetY = 0;
-            if (isMobile() && sections[currentSection + 1].id === "about") {
-              offsetY = 20; // Add offset for "About" section on mobile
-            }
-
-            const nextSection = sections[currentSection + 1];
-            gsap.to(window, {
-              duration: isMobile() ? 0.7 : 0.9, // Faster on mobile
-              scrollTo: { y: nextSection, offsetY: offsetY },
-              ease: "power2.inOut",
-              onComplete: () => {
-                isTransitioning = false;
-                setCurrentSection(currentSection + 1);
-              },
-            });
-          }
-        } else if (
-          e.key === "ArrowUp" ||
-          e.key === "ArrowLeft" ||
-          e.key === "PageUp"
-        ) {
-          e.preventDefault();
-          if (currentSection > 0) {
-            isTransitioning = true;
-            const prevSection = sections[currentSection - 1];
-            gsap.to(window, {
-              duration: isMobile() ? 0.7 : 0.9, // Faster on mobile
-              scrollTo: { y: prevSection, offsetY: 0 },
-              ease: "power2.inOut",
-              onComplete: () => {
-                isTransitioning = false;
-                setCurrentSection(currentSection - 1);
-              },
-            });
-          }
+          scrollToSection(currentIndex - 1);
         }
-      };
+      } else if (e.key === "Home") {
+        e.preventDefault();
+        scrollToSection(0);
+      } else if (e.key === "End") {
+        e.preventDefault();
+        scrollToSection(sections.length - 1);
+      }
+    }
 
-      window.addEventListener("keydown", handleKeyDown);
+    // Add event listeners
+    window.addEventListener("wheel", handleWheel, { passive: false });
+    window.addEventListener("keydown", handleKeyDown);
+    document.addEventListener("touchstart", handleTouchStart, {
+      passive: true,
+    });
+    document.addEventListener("touchend", handleTouchEnd, { passive: true });
 
-      // Clean up
-      return () => {
-        ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
-        window.removeEventListener("wheel", handleWheel);
-        window.removeEventListener("keydown", handleKeyDown);
-        document.removeEventListener("touchstart", handleTouchStart);
-        document.removeEventListener("touchmove", handleTouchMove);
-        document.removeEventListener("touchend", handleTouchEnd);
-        document.body.style.overflow = "";
-      };
-    };
+    // Also scroll to sections when hash changes (for direct linking)
+    function handleHashChange() {
+      const hash = window.location.hash.substring(1);
+      if (hash) {
+        const sectionIndex = sections.findIndex(
+          (section) => section.id === hash
+        );
+        if (sectionIndex >= 0) {
+          scrollToSection(sectionIndex);
+        }
+      }
+    }
 
-    // Execute and store the cleanup function
-    const cleanupPromise = setupScrolling();
+    window.addEventListener("hashchange", handleHashChange);
 
+    // Handle direct navigation to a hash on initial load
+    if (window.location.hash) {
+      handleHashChange();
+    }
+
+    // Clean up event listeners on unmount
     return () => {
-      cleanupPromise.then((cleanup) => {
-        if (typeof cleanup === "function") {
-          cleanup();
-        }
-      });
+      window.removeEventListener("wheel", handleWheel);
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("hashchange", handleHashChange);
+      document.removeEventListener("touchstart", handleTouchStart);
+      document.removeEventListener("touchend", handleTouchEnd);
     };
-  }, [currentSection]);
+  }, []);
 
   return containerRef;
 };

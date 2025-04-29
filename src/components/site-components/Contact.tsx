@@ -1,10 +1,9 @@
 import { Github, Linkedin, Mail, Twitter } from "lucide-react";
-import { Link } from "@tanstack/react-router";
 
 export function Contact() {
   return (
-    <div className="w-full px-4 sm:px-8 md:px-16">
-      <div className="w-full max-w-4xl mx-auto">
+    <div className="section w-full px-4 sm:px-8 md:px-16">
+      <div className="w-full max-w-7xl mx-auto">
         <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6 sm:mb-10 md:mb-16 uppercase">
           Contact
         </h2>

@@ -1,6 +1,5 @@
 import { useRef, useEffect } from "react";
 import * as THREE from "three";
-import gsap from "gsap";
 
 interface ThreeBackgroundProps {
   className?: string;
@@ -90,20 +89,28 @@ export function ThreeBackground({ className }: ThreeBackgroundProps) {
 
     document.addEventListener("mousemove", handleMouseMove);
 
+    // Automatic animation parameters
+    let time = 0;
+    const autoAmplitudeX = 0.3;
+    const autoAmplitudeY = 0.2;
+    const autoFrequencyX = 0.0005;
+    const autoFrequencyY = 0.0007;
+
     // Animation
     const animate = () => {
       requestAnimationFrame(animate);
+      time += 1;
 
       // Slow rotation
       particlesMesh.rotation.y += 0.001;
 
-      // Mouse follow with easing
-      gsap.to(particlesMesh.rotation, {
-        x: -mouseY * 0.3,
-        y: mouseX * 0.5,
-        duration: 2,
-        ease: "power1.out",
-      });
+      // Calculate automatic movement patterns
+      const autoX = Math.sin(time * autoFrequencyX) * autoAmplitudeX;
+      const autoY = Math.cos(time * autoFrequencyY) * autoAmplitudeY;
+
+      // Combine automatic movement with mouse input
+      const targetX = -mouseY * 0.3 + autoY;
+      const targetY = mouseX * 0.5 + autoX;
 
       renderer.render(scene, camera);
     };
