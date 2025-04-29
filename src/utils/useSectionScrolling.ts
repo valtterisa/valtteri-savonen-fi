@@ -127,9 +127,15 @@ export const useSectionScrolling = () => {
           if (newIndex !== currentSection) {
             isTransitioning = true;
 
+            // Calculate offset for mobile to ensure title visibility
+            let offsetY = 0;
+            if (isMobile && sections[newIndex].id === "about") {
+              offsetY = 20; // Add offset for "About" section on mobile
+            }
+
             gsap.to(window, {
               duration: isMobile ? 0.7 : 0.9, // Faster on mobile
-              scrollTo: { y: sections[newIndex], offsetY: 0 },
+              scrollTo: { y: sections[newIndex], offsetY: offsetY },
               ease: "power2.inOut",
               onComplete: () => {
                 isTransitioning = false;
@@ -197,9 +203,15 @@ export const useSectionScrolling = () => {
         if (newIndex !== currentSection) {
           isTransitioning = true;
 
+          // Calculate offset for mobile to ensure title visibility
+          let offsetY = 0;
+          if (isMobile && sections[newIndex].id === "about") {
+            offsetY = 20; // Add offset for "About" section on mobile
+          }
+
           gsap.to(window, {
             duration: isMobile ? 0.7 : 0.9, // Faster on mobile
-            scrollTo: { y: sections[newIndex], offsetY: 0 },
+            scrollTo: { y: sections[newIndex], offsetY: offsetY },
             ease: "power2.inOut",
             onComplete: () => {
               isTransitioning = false;
@@ -210,8 +222,12 @@ export const useSectionScrolling = () => {
       };
 
       // Add touch event handlers
-      document.addEventListener("touchstart", handleTouchStart, { passive: true });
-      document.addEventListener("touchmove", handleTouchMove, { passive: false });
+      document.addEventListener("touchstart", handleTouchStart, {
+        passive: true,
+      });
+      document.addEventListener("touchmove", handleTouchMove, {
+        passive: false,
+      });
       document.addEventListener("touchend", handleTouchEnd, { passive: true });
 
       // Conditionally add wheel event listener only on desktop
@@ -230,10 +246,17 @@ export const useSectionScrolling = () => {
           e.preventDefault();
           if (currentSection < sections.length - 1) {
             isTransitioning = true;
+
+            // Calculate offset for mobile to ensure title visibility
+            let offsetY = 0;
+            if (isMobile && sections[currentSection + 1].id === "about") {
+              offsetY = 20; // Add offset for "About" section on mobile
+            }
+
             const nextSection = sections[currentSection + 1];
             gsap.to(window, {
               duration: isMobile ? 0.7 : 0.9, // Faster on mobile
-              scrollTo: { y: nextSection, offsetY: 0 },
+              scrollTo: { y: nextSection, offsetY: offsetY },
               ease: "power2.inOut",
               onComplete: () => {
                 isTransitioning = false;
