@@ -1,17 +1,36 @@
 import { motion } from "framer-motion";
 import { useEffect, useRef, useCallback } from "react";
 
+function isMobile() {
+  if (typeof window === "undefined") return false;
+  return (
+    "ontouchstart" in window ||
+    navigator.maxTouchPoints > 0 ||
+    navigator.userAgent.toLowerCase().includes("mobi")
+  );
+}
+
 export function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
 
-  // Helper to scroll to next section
+  // Helper to scroll to next section with mobile fallback
   const scrollToNextSection = useCallback(() => {
     const sections = Array.from(
       document.querySelectorAll<HTMLElement>("section")
     );
     if (sections.length < 2) return;
     const nextSection = sections[1];
+    const startY = window.scrollY;
     nextSection.scrollIntoView({ behavior: "smooth" });
+    // Fallback for mobile browsers where scrollIntoView may not work
+    if (isMobile()) {
+      setTimeout(() => {
+        // If scroll position hasn't changed, use window.scrollTo
+        if (window.scrollY === startY) {
+          window.scrollTo({ top: nextSection.offsetTop, behavior: "smooth" });
+        }
+      }, 100);
+    }
   }, []);
 
   // Desktop: handle wheel and keyboard
