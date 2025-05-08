@@ -33,10 +33,7 @@ export const useSectionScrolling = () => {
       isScrolling = true;
 
       // Smooth scroll to the very top of the next section
-      window.scrollTo({
-        top: nextSection.offsetTop,
-        behavior: "smooth",
-      });
+      nextSection.scrollIntoView({ behavior: "smooth" });
 
       // Reset scrolling flag after animation completes
       setTimeout(() => {
