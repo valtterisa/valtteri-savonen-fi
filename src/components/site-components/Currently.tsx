@@ -27,8 +27,8 @@ export function Currently() {
                 </li>
                 <li className="pl-2">
                   <p className="text-base sm:text-lg md:text-xl text-gray-300">
-                    Building a new product designed to make WordPress obsolete.
-                    Coming soon.
+                    Building a new product designed to democratize the
+                    development and management of websites with AI. Coming soon.
                   </p>
                 </li>
               </ul>
