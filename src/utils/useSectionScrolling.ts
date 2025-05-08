@@ -68,23 +68,37 @@ export const useSectionScrolling = () => {
 
     // Touch handling for mobile
     let touchStartY = 0;
+    let touchMoved = false;
+    let touchShouldScroll = false;
 
     function handleTouchStart(e: TouchEvent) {
       // Only track touch start if in hero section
       if (isInHeroSection()) {
         touchStartY = e.touches[0].clientY;
+        touchMoved = false;
+        touchShouldScroll = false;
       }
+    }
+
+    function handleTouchMove(e: TouchEvent) {
+      if (!isInHeroSection() || isScrolling) return;
+      if (e.touches.length !== 1) return;
+      const currentY = e.touches[0].clientY;
+      const touchDiff = touchStartY - currentY;
+      // Only trigger if finger moved upward (scrolling down)
+      if (touchDiff > 30) {
+        // Prevent browser native scroll
+        e.preventDefault();
+        touchShouldScroll = true;
+      }
+      touchMoved = true;
     }
 
     function handleTouchEnd(e: TouchEvent) {
       // Only handle touch end if in hero section and not currently scrolling
       if (!isInHeroSection() || isScrolling) return;
-
-      const touchEndY = e.changedTouches[0].clientY;
-      const touchDiff = touchStartY - touchEndY; // Positive means finger moved upward on screen (scrolling down)
-
-      // Only trigger animation when finger moves upward (which is scrolling down)
-      if (touchDiff > 30) {
+      if (!touchMoved) return;
+      if (touchShouldScroll) {
         scrollToNextSection();
       }
       // When finger moves downward (scrolling up), behave normally
@@ -109,6 +123,7 @@ export const useSectionScrolling = () => {
     document.addEventListener("touchstart", handleTouchStart, {
       passive: true,
     });
+    document.addEventListener("touchmove", handleTouchMove, { passive: false });
     document.addEventListener("touchend", handleTouchEnd, { passive: true });
 
     // Clean up event listeners on unmount
@@ -116,6 +131,7 @@ export const useSectionScrolling = () => {
       window.removeEventListener("wheel", handleWheel);
       window.removeEventListener("keydown", handleKeyDown);
       document.removeEventListener("touchstart", handleTouchStart);
+      document.removeEventListener("touchmove", handleTouchMove);
       document.removeEventListener("touchend", handleTouchEnd);
     };
   }, []);
