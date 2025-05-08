@@ -1,121 +1,124 @@
-// This hook is now deprecated. Drag-to-scroll is handled directly in the Hero component using framer-motion.
-// You can safely remove this file if not used elsewhere.
-import { useEffect, useRef, useCallback } from "react";
+import { useEffect, useRef } from "react";
 
-function isMobile() {
-  if (typeof window === "undefined") return false;
-  return (
-    "ontouchstart" in window ||
-    (typeof navigator !== "undefined" && navigator.maxTouchPoints > 0) ||
-    (typeof navigator !== "undefined" &&
-      navigator.userAgent.toLowerCase().includes("mobi"))
-  );
-}
+export const useSectionScrolling = () => {
+  const containerRef = useRef<HTMLDivElement>(null);
 
-export function useSectionScrolling() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const isScrollingRef = useRef(false);
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (!containerRef.current) return;
 
-  // Helper to scroll to next section with mobile fallback
-  const scrollToNextSection = useCallback(() => {
     const sections = Array.from(
       document.querySelectorAll<HTMLElement>("section")
     );
-    if (sections.length < 2) return;
-    const nextSection = sections[1];
-    const startY = window.scrollY;
-    nextSection.scrollIntoView({ behavior: "smooth" });
-    // Fallback for mobile browsers where scrollIntoView may not work
-    if (isMobile()) {
-      setTimeout(() => {
-        // If scroll position hasn't changed, use window.scrollTo
-        if (window.scrollY === startY) {
-          window.scrollTo({ top: nextSection.offsetTop, behavior: "smooth" });
-        }
-      }, 100);
-    }
-    // Prevent further scrolls until animation completes
-    isScrollingRef.current = true;
-    setTimeout(() => {
-      isScrollingRef.current = false;
-    }, 900);
-  }, []);
 
-  // Desktop: handle wheel and keyboard
-  useEffect(() => {
-    const handleWheel = (e: WheelEvent) => {
-      if (!sectionRef.current) return;
-      // Only trigger if in hero section and scrolling down
-      const rect = sectionRef.current.getBoundingClientRect();
-      if (rect.top > -window.innerHeight / 3 && e.deltaY > 10) {
+    if (sections.length < 2) return; // Need at least 2 sections (hero + next)
+
+    // Only control scrolling for the hero section (first section)
+    const heroSection = sections[0];
+    const nextSection = sections[1];
+
+    // Track if animation is in progress
+    let isScrolling = false;
+    let lastScrollTime = 0;
+    const scrollAnimationDuration = 800; // ms - reduced from 1000ms for faster response
+
+    // Scroll from hero to next section with animation
+    function scrollToNextSection() {
+      if (isScrolling) return;
+
+      const now = Date.now();
+      if (now - lastScrollTime < 100) return; // Prevent rapid fire scrolls
+      lastScrollTime = now;
+
+      isScrolling = true;
+
+      // Smooth scroll to the next section with enhanced animation
+      window.scrollTo({
+        top: nextSection.offsetTop,
+        behavior: "smooth",
+      });
+
+      // Reset scrolling flag after animation completes
+      setTimeout(() => {
+        isScrolling = false;
+      }, scrollAnimationDuration);
+    }
+
+    // Determine if we're currently in the hero section
+    function isInHeroSection() {
+      const scrollPosition = window.scrollY;
+      const heroBottom = heroSection.offsetTop + heroSection.offsetHeight;
+
+      // We're in hero if scroll position is before the end of hero section
+      return scrollPosition < heroBottom - window.innerHeight / 3;
+    }
+
+    // Handle wheel events (mouse/trackpad)
+    function handleWheel(e: WheelEvent) {
+      // Only control scrolling when in the hero section and only for downward scrolling
+      if (!isInHeroSection()) return;
+
+      // Only trigger animation when scrolling downwards
+      if (e.deltaY > 10) {
         e.preventDefault();
         scrollToNextSection();
       }
-    };
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (!sectionRef.current) return;
-      const rect = sectionRef.current.getBoundingClientRect();
-      if (rect.top > -window.innerHeight / 3) {
-        if (["ArrowDown", "PageDown", " ", "Spacebar"].includes(e.key)) {
-          e.preventDefault();
-          scrollToNextSection();
-        }
-      }
-    };
-    // Only add on non-touch devices
-    if (!("ontouchstart" in window)) {
-      window.addEventListener("wheel", handleWheel, { passive: false });
-      window.addEventListener("keydown", handleKeyDown);
-      return () => {
-        window.removeEventListener("wheel", handleWheel);
-        window.removeEventListener("keydown", handleKeyDown);
-      };
+      // Upward scrolling is allowed to function normally
     }
-  }, [scrollToNextSection]);
 
-  // Mobile: handle scroll and drag (snap only on fast downward flick from top)
-  useEffect(() => {
-    if (!isMobile()) return;
-    let lastScrollY = window.scrollY;
-    let lastTime = Date.now();
-    const flickThreshold = 60; // px
-    const timeThreshold = 200; // ms
-    const handleScroll = () => {
-      if (!sectionRef.current || isScrollingRef.current) return;
-      const now = Date.now();
-      const atTopOfPage = window.scrollY === 0;
-      const scrollDelta = window.scrollY - lastScrollY;
-      const timeDelta = now - lastTime;
-      // Only trigger if at top, fast downward scroll, and not a slow drag
-      if (
-        atTopOfPage &&
-        scrollDelta > flickThreshold &&
-        timeDelta < timeThreshold
-      ) {
+    // Touch handling for mobile
+    let touchStartY = 0;
+
+    function handleTouchStart(e: TouchEvent) {
+      // Only track touch start if in hero section
+      if (isInHeroSection()) {
+        touchStartY = e.touches[0].clientY;
+      }
+    }
+
+    function handleTouchEnd(e: TouchEvent) {
+      // Only handle touch end if in hero section and not currently scrolling
+      if (!isInHeroSection() || isScrolling) return;
+
+      const touchEndY = e.changedTouches[0].clientY;
+      const touchDiff = touchStartY - touchEndY; // Positive means finger moved upward on screen (scrolling down)
+
+      // Only trigger animation when finger moves upward (which is scrolling down)
+      if (touchDiff > 30) {
         scrollToNextSection();
       }
-      lastScrollY = window.scrollY;
-      lastTime = now;
-    };
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, [scrollToNextSection]);
+      // When finger moves downward (scrolling up), behave normally
+    }
 
-  const isTouch = typeof window !== "undefined" && "ontouchstart" in window;
-  const dragProps = isTouch
-    ? {
-        drag: "y" as const,
-        dragConstraints: { top: 0, bottom: 0 },
-        onDragEnd: (_: any, info: { offset: { y: number } }) => {
-          if (info.offset.y < -60) scrollToNextSection();
-        },
-        dragElastic: 0.2,
-        dragMomentum: false,
-        style: { touchAction: "pan-y" },
+    // Keyboard navigation from hero section
+    function handleKeyDown(e: KeyboardEvent) {
+      // Only handle keyboard when in hero section and not currently scrolling
+      if (!isInHeroSection() || isScrolling) return;
+
+      // Only trigger animation for downward navigation keys
+      if (e.key === "ArrowDown" || e.key === "PageDown" || e.key === "Space") {
+        e.preventDefault();
+        scrollToNextSection();
       }
-    : {};
+      // Upward navigation keys behave normally
+    }
 
-  return { sectionRef, dragProps };
-}
+    // Add event listeners - removed the general scroll handler to reduce lag
+    window.addEventListener("wheel", handleWheel, { passive: false });
+    window.addEventListener("keydown", handleKeyDown);
+    document.addEventListener("touchstart", handleTouchStart, {
+      passive: true,
+    });
+    document.addEventListener("touchend", handleTouchEnd, { passive: true });
+
+    // Clean up event listeners on unmount
+    return () => {
+      window.removeEventListener("wheel", handleWheel);
+      window.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener("touchstart", handleTouchStart);
+      document.removeEventListener("touchend", handleTouchEnd);
+    };
+  }, []);
+
+  return containerRef;
+};
