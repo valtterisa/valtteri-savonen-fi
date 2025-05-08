@@ -80,8 +80,10 @@ export function useSectionScrolling() {
     const handleScroll = () => {
       if (!sectionRef.current || isScrollingRef.current) return;
       const rect = sectionRef.current.getBoundingClientRect();
-      // Only trigger if in hero section and user scrolls down
-      if (rect.top > -window.innerHeight / 3 && window.scrollY > lastScrollY) {
+      // Only trigger if at (or near) the top of the hero section and user scrolls down
+      const atTop = Math.abs(rect.top) < 10;
+      const scrollingDown = window.scrollY > lastScrollY;
+      if (atTop && scrollingDown) {
         scrollToNextSection();
       }
       lastScrollY = window.scrollY;
