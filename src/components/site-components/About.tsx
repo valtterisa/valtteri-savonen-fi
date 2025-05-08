@@ -1,6 +1,6 @@
 export function About() {
   return (
-    <section id="about" className="w-full min-h-dvh flex items-center py-16">
+    <section id="about" className="w-full min-h-screen flex items-center py-16">
       <div className="section w-full px-4 sm:px-8 md:px-16">
         <div className="max-w-7xl mx-auto">
           <h2 className="text-center uppercase text-3xl sm:text-4xl md:text-6xl pt-6 md:pt-0 font-bold mb-6 sm:mb-10 md:mb-16 uppercase tracking-wide">

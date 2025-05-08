@@ -17,6 +17,18 @@ export const useSectionScrolling = () => {
     const heroSection = sections[0];
     const nextSection = sections[1];
 
+    // Log the real position of all sections and compare to offset
+    console.log("Section positions:");
+    sections.forEach((section, idx) => {
+      const rect = section.getBoundingClientRect();
+      console.log(
+        `Section ${idx}: offsetTop=${section.offsetTop}, rect.top=${rect.top}, rect.bottom=${rect.bottom}, scrollY=${window.scrollY}`
+      );
+    });
+    console.log(
+      `Next section offsetTop: ${nextSection.offsetTop}, window.scrollY: ${window.scrollY}`
+    );
+
     // Track if animation is in progress
     let isScrolling = false;
     let lastScrollTime = 0;
@@ -38,8 +50,12 @@ export const useSectionScrolling = () => {
         behavior: "smooth",
       });
 
-      // Reset scrolling flag after animation completes
+      // Log after scroll is triggered
       setTimeout(() => {
+        const rect = nextSection.getBoundingClientRect();
+        console.log(
+          `After scroll: nextSection.offsetTop=${nextSection.offsetTop}, rect.top=${rect.top}, window.scrollY=${window.scrollY}`
+        );
         isScrolling = false;
       }, scrollAnimationDuration);
     }
