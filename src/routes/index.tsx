@@ -4,17 +4,18 @@ import { ThreeBackground } from "../components/site-components/BackgroundAnimati
 import { Contact } from "~/components/site-components/Contact";
 import { About } from "~/components/site-components/About";
 import { Currently } from "~/components/site-components/Currently";
-import { useSectionScrolling } from "~/utils/useSectionScrolling";
+// import { useSectionScrolling } from "~/utils/useSectionScrolling";
 
 export const Route = createFileRoute("/")({
   component: Home,
 });
 
 function Home() {
-  const containerRef = useSectionScrolling();
+  // const containerRef = useSectionScrolling();
 
   return (
-    <div ref={containerRef} className="bg-black text-white relative w-full">
+    // <div ref={containerRef} className="bg-black text-white relative w-full">
+    <div className="bg-black text-white relative w-full">
       <ThreeBackground />
       <Hero />
       <About />
