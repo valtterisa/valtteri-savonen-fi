@@ -79,11 +79,10 @@ export function useSectionScrolling() {
     let lastScrollY = window.scrollY;
     const handleScroll = () => {
       if (!sectionRef.current || isScrollingRef.current) return;
-      const rect = sectionRef.current.getBoundingClientRect();
-      // Only trigger if at (or near) the top of the hero section and user scrolls down
-      const atTop = Math.abs(rect.top) < 10;
+      // Only trigger if at the very top of the page and user scrolls down
+      const atTopOfPage = window.scrollY === 0;
       const scrollingDown = window.scrollY > lastScrollY;
-      if (atTop && scrollingDown) {
+      if (atTopOfPage && scrollingDown) {
         scrollToNextSection();
       }
       lastScrollY = window.scrollY;
