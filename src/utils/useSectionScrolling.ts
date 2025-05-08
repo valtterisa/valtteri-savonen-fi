@@ -14,6 +14,7 @@ function isMobile() {
 
 export function useSectionScrolling() {
   const sectionRef = useRef<HTMLElement>(null);
+  const isScrollingRef = useRef(false);
 
   // Helper to scroll to next section with mobile fallback
   const scrollToNextSection = useCallback(() => {
@@ -33,6 +34,11 @@ export function useSectionScrolling() {
         }
       }, 100);
     }
+    // Prevent further scrolls until animation completes
+    isScrollingRef.current = true;
+    setTimeout(() => {
+      isScrollingRef.current = false;
+    }, 900);
   }, []);
 
   // Desktop: handle wheel and keyboard
@@ -67,7 +73,25 @@ export function useSectionScrolling() {
     }
   }, [scrollToNextSection]);
 
-  // Mobile: drag only if touch
+  // Mobile: handle scroll and drag
+  useEffect(() => {
+    if (!isMobile()) return;
+    let lastScrollY = window.scrollY;
+    const handleScroll = () => {
+      if (!sectionRef.current || isScrollingRef.current) return;
+      const rect = sectionRef.current.getBoundingClientRect();
+      // Only trigger if in hero section and user scrolls down
+      if (rect.top > -window.innerHeight / 3 && window.scrollY > lastScrollY) {
+        scrollToNextSection();
+      }
+      lastScrollY = window.scrollY;
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [scrollToNextSection]);
+
   const isTouch = typeof window !== "undefined" && "ontouchstart" in window;
   const dragProps = isTouch
     ? {
