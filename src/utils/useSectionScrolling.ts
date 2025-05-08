@@ -119,6 +119,27 @@ export const useSectionScrolling = () => {
       // Upward navigation keys behave normally
     }
 
+    // Double scroll hack for anchor navigation (iOS Safari adjustment)
+    function doubleScrollToAnchor() {
+      const hash = window.location.hash;
+      if (hash && hash.startsWith("#")) {
+        const target = document.getElementById(hash.slice(1));
+        if (target) {
+          // First scroll
+          target.scrollIntoView({ behavior: "smooth" });
+          // Second scroll after a short delay
+          setTimeout(() => {
+            target.scrollIntoView({ behavior: "smooth" });
+          }, 400); // 400ms delay, can be tuned
+        }
+      }
+    }
+    window.addEventListener("hashchange", doubleScrollToAnchor);
+    // Also handle initial load with hash
+    if (window.location.hash) {
+      setTimeout(doubleScrollToAnchor, 0);
+    }
+
     // Add event listeners - removed the general scroll handler to reduce lag
     window.addEventListener("wheel", handleWheel, { passive: false });
     window.addEventListener("keydown", handleKeyDown);
@@ -133,6 +154,7 @@ export const useSectionScrolling = () => {
       window.removeEventListener("keydown", handleKeyDown);
       document.removeEventListener("touchstart", handleTouchStart);
       document.removeEventListener("touchend", handleTouchEnd);
+      window.removeEventListener("hashchange", doubleScrollToAnchor);
     };
   }, []);
 
