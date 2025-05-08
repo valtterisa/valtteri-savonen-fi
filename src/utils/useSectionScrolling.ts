@@ -73,19 +73,29 @@ export function useSectionScrolling() {
     }
   }, [scrollToNextSection]);
 
-  // Mobile: handle scroll and drag
+  // Mobile: handle scroll and drag (snap only on fast downward flick from top)
   useEffect(() => {
     if (!isMobile()) return;
     let lastScrollY = window.scrollY;
+    let lastTime = Date.now();
+    const flickThreshold = 60; // px
+    const timeThreshold = 200; // ms
     const handleScroll = () => {
       if (!sectionRef.current || isScrollingRef.current) return;
-      // Only trigger if at the very top of the page and user scrolls down
+      const now = Date.now();
       const atTopOfPage = window.scrollY === 0;
-      const scrollingDown = window.scrollY > lastScrollY;
-      if (atTopOfPage && scrollingDown) {
+      const scrollDelta = window.scrollY - lastScrollY;
+      const timeDelta = now - lastTime;
+      // Only trigger if at top, fast downward scroll, and not a slow drag
+      if (
+        atTopOfPage &&
+        scrollDelta > flickThreshold &&
+        timeDelta < timeThreshold
+      ) {
         scrollToNextSection();
       }
       lastScrollY = window.scrollY;
+      lastTime = now;
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => {
