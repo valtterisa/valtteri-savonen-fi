@@ -52,6 +52,12 @@ export const Route = createRootRoute({
       { rel: "manifest", href: "/site.webmanifest", color: "#000000" },
       { rel: "icon", href: "/favicon.ico" },
     ],
+    scripts: [
+      {
+        async: true,
+        src: "https://scripts.simpleanalyticscdn.com/latest.js",
+      },
+    ],
   }),
   errorComponent: (props) => {
     return (
