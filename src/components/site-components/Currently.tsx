@@ -13,6 +13,20 @@ export function Currently() {
               <ul className="list-disc pl-5 space-y-4">
                 <li className="pl-2">
                   <p className="text-base sm:text-lg md:text-xl text-gray-300">
+                    Building{" "}
+                    <a
+                      href="https://builddrr.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-gray-300 underline"
+                    >
+                      Builddrr
+                    </a>
+                    , make websites without coding.
+                  </p>
+                </li>
+                <li className="pl-2">
+                  <p className="text-base sm:text-lg md:text-xl text-gray-300">
                     Co-founder of{"  "}
                     <a
                       className="text-gray-300 underline"
@@ -23,12 +37,6 @@ export function Currently() {
                       Bittive LLC
                     </a>
                     , a software agency.
-                  </p>
-                </li>
-                <li className="pl-2">
-                  <p className="text-base sm:text-lg md:text-xl text-gray-300">
-                    Building a new product designed to democratize the
-                    development and management of websites with AI. Coming soon.
                   </p>
                 </li>
               </ul>

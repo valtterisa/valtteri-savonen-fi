@@ -9,16 +9,24 @@ export function Contact() {
             <h2 className="text-center uppercase text-3xl sm:text-4xl md:text-6xl pt-6 md:pt-0 font-bold mb-6 sm:mb-10 md:mb-16 uppercase tracking-wide">
               Contact
             </h2>
-
+            <div className="w-full flex flex-col items-center justify-center mb-8 sm:mb-10 md:mb-12">
+              <img
+                src="/my-x-profile-pic.jpg"
+                alt="Profile picture of Valtteri Savonen"
+                className="rounded-full object-cover w-36 h-36 md:w-48 md:h-48 shadow-lg z-10"
+                loading="eager"
+              />
+              <p className="text-gray-300 pt-2 text-sm">(this is me!)</p>
+            </div>
             <div className="space-y-4 text-center text-base sm:text-lg md:text-xl text-gray-300">
               <p>Any inquiries, collaborations, or just want to talk?</p>
 
               <a
-                href="mailto:valtteri@bittive.com"
+                href="mailto:savonen.emppu@gmail.com"
                 className="underline inline-block hover:text-gray-400 transition-colors"
                 rel="noopener noreferrer"
               >
-                valtteri@bittive.com
+                savonen.emppu@gmail.com
               </a>
 
               <div className="flex space-x-6 justify-center pt-6">

@@ -13,12 +13,11 @@ export function Hero() {
               <blockquote className="text-center">
                 <p className="text-base sm:text-lg md:text-xl text-gray-300">
                   <span className="font-serif">"</span>
-                  Your time is limited, so don't waste it living someone else's
-                  life.
+                  Everything is figureoutable.
                   <span className="font-serif">"</span>
                 </p>
                 <footer className="text-gray-300 font-medium mt-2">
-                  <span className="font-bold">- Steve Jobs</span>
+                  <span className="font-bold">- someone smart probably</span>
                 </footer>
               </blockquote>
             </div>
