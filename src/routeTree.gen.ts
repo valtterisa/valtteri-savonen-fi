@@ -12,12 +12,26 @@
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as IndexImport } from './routes/index'
+import { Route as ThoughtsIndexImport } from './routes/thoughts.index'
+import { Route as ThoughtsSlugImport } from './routes/thoughts.$slug'
 
 // Create/Update Routes
 
 const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const ThoughtsIndexRoute = ThoughtsIndexImport.update({
+  id: '/thoughts/',
+  path: '/thoughts/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const ThoughtsSlugRoute = ThoughtsSlugImport.update({
+  id: '/thoughts/$slug',
+  path: '/thoughts/$slug',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -32,6 +46,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
+    '/thoughts/$slug': {
+      id: '/thoughts/$slug'
+      path: '/thoughts/$slug'
+      fullPath: '/thoughts/$slug'
+      preLoaderRoute: typeof ThoughtsSlugImport
+      parentRoute: typeof rootRoute
+    }
+    '/thoughts/': {
+      id: '/thoughts/'
+      path: '/thoughts'
+      fullPath: '/thoughts'
+      preLoaderRoute: typeof ThoughtsIndexImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -39,32 +67,42 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/thoughts/$slug': typeof ThoughtsSlugRoute
+  '/thoughts': typeof ThoughtsIndexRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/thoughts/$slug': typeof ThoughtsSlugRoute
+  '/thoughts': typeof ThoughtsIndexRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
+  '/thoughts/$slug': typeof ThoughtsSlugRoute
+  '/thoughts/': typeof ThoughtsIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/thoughts/$slug' | '/thoughts'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/thoughts/$slug' | '/thoughts'
+  id: '__root__' | '/' | '/thoughts/$slug' | '/thoughts/'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ThoughtsSlugRoute: typeof ThoughtsSlugRoute
+  ThoughtsIndexRoute: typeof ThoughtsIndexRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ThoughtsSlugRoute: ThoughtsSlugRoute,
+  ThoughtsIndexRoute: ThoughtsIndexRoute,
 }
 
 export const routeTree = rootRoute
@@ -77,11 +115,19 @@ export const routeTree = rootRoute
     "__root__": {
       "filePath": "__root.tsx",
       "children": [
-        "/"
+        "/",
+        "/thoughts/$slug",
+        "/thoughts/"
       ]
     },
     "/": {
       "filePath": "index.tsx"
+    },
+    "/thoughts/$slug": {
+      "filePath": "thoughts.$slug.tsx"
+    },
+    "/thoughts/": {
+      "filePath": "thoughts.index.tsx"
     }
   }
 }

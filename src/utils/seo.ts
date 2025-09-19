@@ -36,9 +36,6 @@ export const seo = ({
     { name: "twitter:creator", content: "@vvaltterisa" },
     { name: "twitter:site", content: "@vvaltterisa" },
 
-    // Add canonical URL
-    { tagName: "link", rel: "canonical", href: url },
-
     ...(image
       ? [
           { name: "og:image", content: image },

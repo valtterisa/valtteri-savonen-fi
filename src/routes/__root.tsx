@@ -9,6 +9,7 @@ import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import * as React from "react";
 import { DefaultCatchBoundary } from "~/components/DefaultCatchBoundary";
 import { NotFound } from "~/components/NotFound";
+import { SiteHeader } from "~/components/site-components/Header";
 import appCss from "~/styles/app.css?url";
 import { seo } from "~/utils/seo";
 
@@ -73,8 +74,11 @@ export const Route = createRootRoute({
 function RootComponent() {
   return (
     <RootDocument>
-      <div className="flex min-h-screen bg-black text-white">
-        <Outlet />
+      <div className="flex min-h-screen bg-black text-white w-full">
+        <div className="w-full">
+          {/* <SiteHeader /> */}
+          <Outlet />
+        </div>
       </div>
     </RootDocument>
   );
