@@ -3,7 +3,7 @@ export function Hero() {
     <section id="hero" className="min-h-dvh flex items-center relative">
       <div className="section w-full px-4 sm:px-8 md:px-16">
         <div className="max-w-7xl mx-auto">
-          <h1 className="text-5xl sm:text-6xl md:text-8xl lg:text-9xl font-archivo-black mb-6 sm:mb-10 tracking-tighter uppercase text-center overflow-hidden flex flex-col">
+          <h1 className="text-5xl sm:text-6xl md:text-8xl lg:text-9xl font-bold mb-6 sm:mb-10 tracking-tighter uppercase text-center overflow-hidden flex flex-col">
             <span className="inline-block">Valtteri</span>
             <span className="inline-block">Savonen</span>
           </h1>

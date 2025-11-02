@@ -9,7 +9,6 @@ import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import * as React from "react";
 import { DefaultCatchBoundary } from "~/components/DefaultCatchBoundary";
 import { NotFound } from "~/components/NotFound";
-import { SiteHeader } from "~/components/site-components/Header";
 import appCss from "~/styles/app.css?url";
 import { seo } from "~/utils/seo";
 
@@ -24,11 +23,13 @@ export const Route = createRootRoute({
         content: "width=device-width, initial-scale=1",
       },
       ...seo({
-        title: "Valtteri Savonen",
-        description: "Personal website of Valtteri Savonen",
+        title: "Valtteri Savonen - Software Engineer",
+        description:
+          "Full Stack Engineer from Finland. Working for myself, looking for startup ideas, building and doing work for clients. Specializing in Next.js, TypeScript, and modern web technologies.",
         keywords:
-          "Valtteri Savonen, full-stack developer, web development, software engineer, Finland, Bittive, Bittive Oy",
+          "Valtteri Savonen, full stack engineer, software engineer, web development, Next.js, TypeScript, Finland, Builddrr",
         image: "https://valtterisavonen.fi/og-image.png",
+        url: "https://valtterisavonen.fi",
       }),
     ],
     links: [
@@ -74,9 +75,8 @@ export const Route = createRootRoute({
 function RootComponent() {
   return (
     <RootDocument>
-      <div className="flex min-h-screen bg-black text-white w-full">
+      <div className="flex min-h-screen w-full">
         <div className="w-full">
-          {/* <SiteHeader /> */}
           <Outlet />
         </div>
       </div>

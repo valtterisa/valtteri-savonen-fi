@@ -5,6 +5,7 @@ export const seo = ({
   image,
   url = "https://valtterisavonen.fi",
   author = "Valtteri Savonen",
+  type = "website",
 }: {
   title: string;
   description?: string;
@@ -12,9 +13,11 @@ export const seo = ({
   keywords?: string;
   url?: string;
   author?: string;
+  type?: string;
 }) => {
+  const fullTitle = title.includes("Valtteri Savonen") ? title : `${title} | Valtteri Savonen`;
   const tags = [
-    { title },
+    { title: fullTitle },
     { name: "description", content: description },
     { name: "keywords", content: keywords },
     { name: "author", content: author },
@@ -22,23 +25,24 @@ export const seo = ({
     { name: "language", content: "English" },
     { name: "revisit-after", content: "7 days" },
 
-    // Open Graph tags
-    { name: "og:site_name", content: "Valtteri Savonen" },
-    { name: "og:title", content: title },
-    { name: "og:description", content: description },
-    { name: "og:url", content: url },
-    { name: "og:type", content: "website" },
-    { name: "og:image", content: image },
+    { property: "og:site_name", content: "Valtteri Savonen" },
+    { property: "og:title", content: fullTitle },
+    { property: "og:description", content: description },
+    { property: "og:url", content: url },
+    { property: "og:type", content: type },
+    { property: "og:locale", content: "en_US" },
 
-    // Twitter tags
-    { name: "twitter:title", content: title },
+    { name: "twitter:title", content: fullTitle },
     { name: "twitter:description", content: description },
-    { name: "twitter:creator", content: "@vvaltterisa" },
-    { name: "twitter:site", content: "@vvaltterisa" },
+    { name: "twitter:creator", content: "@valtterisavonen" },
+    { name: "twitter:site", content: "@valtterisavonen" },
 
     ...(image
       ? [
-          { name: "og:image", content: image },
+          { property: "og:image", content: image },
+          { property: "og:image:width", content: "1200" },
+          { property: "og:image:height", content: "630" },
+          { property: "og:image:alt", content: fullTitle },
           { name: "twitter:image", content: image },
           { name: "twitter:card", content: "summary_large_image" },
         ]

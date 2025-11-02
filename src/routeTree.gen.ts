@@ -12,8 +12,8 @@
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as IndexImport } from './routes/index'
-import { Route as ThoughtsIndexImport } from './routes/thoughts.index'
-import { Route as ThoughtsSlugImport } from './routes/thoughts.$slug'
+import { Route as BlogIndexImport } from './routes/blog.index'
+import { Route as BlogSlugImport } from './routes/blog.$slug'
 
 // Create/Update Routes
 
@@ -23,15 +23,15 @@ const IndexRoute = IndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const ThoughtsIndexRoute = ThoughtsIndexImport.update({
-  id: '/thoughts/',
-  path: '/thoughts/',
+const BlogIndexRoute = BlogIndexImport.update({
+  id: '/blog/',
+  path: '/blog/',
   getParentRoute: () => rootRoute,
 } as any)
 
-const ThoughtsSlugRoute = ThoughtsSlugImport.update({
-  id: '/thoughts/$slug',
-  path: '/thoughts/$slug',
+const BlogSlugRoute = BlogSlugImport.update({
+  id: '/blog/$slug',
+  path: '/blog/$slug',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -46,18 +46,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
-    '/thoughts/$slug': {
-      id: '/thoughts/$slug'
-      path: '/thoughts/$slug'
-      fullPath: '/thoughts/$slug'
-      preLoaderRoute: typeof ThoughtsSlugImport
+    '/blog/$slug': {
+      id: '/blog/$slug'
+      path: '/blog/$slug'
+      fullPath: '/blog/$slug'
+      preLoaderRoute: typeof BlogSlugImport
       parentRoute: typeof rootRoute
     }
-    '/thoughts/': {
-      id: '/thoughts/'
-      path: '/thoughts'
-      fullPath: '/thoughts'
-      preLoaderRoute: typeof ThoughtsIndexImport
+    '/blog/': {
+      id: '/blog/'
+      path: '/blog'
+      fullPath: '/blog'
+      preLoaderRoute: typeof BlogIndexImport
       parentRoute: typeof rootRoute
     }
   }
@@ -67,42 +67,42 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/thoughts/$slug': typeof ThoughtsSlugRoute
-  '/thoughts': typeof ThoughtsIndexRoute
+  '/blog/$slug': typeof BlogSlugRoute
+  '/blog': typeof BlogIndexRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/thoughts/$slug': typeof ThoughtsSlugRoute
-  '/thoughts': typeof ThoughtsIndexRoute
+  '/blog/$slug': typeof BlogSlugRoute
+  '/blog': typeof BlogIndexRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
-  '/thoughts/$slug': typeof ThoughtsSlugRoute
-  '/thoughts/': typeof ThoughtsIndexRoute
+  '/blog/$slug': typeof BlogSlugRoute
+  '/blog/': typeof BlogIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/thoughts/$slug' | '/thoughts'
+  fullPaths: '/' | '/blog/$slug' | '/blog'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/thoughts/$slug' | '/thoughts'
-  id: '__root__' | '/' | '/thoughts/$slug' | '/thoughts/'
+  to: '/' | '/blog/$slug' | '/blog'
+  id: '__root__' | '/' | '/blog/$slug' | '/blog/'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  ThoughtsSlugRoute: typeof ThoughtsSlugRoute
-  ThoughtsIndexRoute: typeof ThoughtsIndexRoute
+  BlogSlugRoute: typeof BlogSlugRoute
+  BlogIndexRoute: typeof BlogIndexRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  ThoughtsSlugRoute: ThoughtsSlugRoute,
-  ThoughtsIndexRoute: ThoughtsIndexRoute,
+  BlogSlugRoute: BlogSlugRoute,
+  BlogIndexRoute: BlogIndexRoute,
 }
 
 export const routeTree = rootRoute
@@ -116,18 +116,18 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/thoughts/$slug",
-        "/thoughts/"
+        "/blog/$slug",
+        "/blog/"
       ]
     },
     "/": {
       "filePath": "index.tsx"
     },
-    "/thoughts/$slug": {
-      "filePath": "thoughts.$slug.tsx"
+    "/blog/$slug": {
+      "filePath": "blog.$slug.tsx"
     },
-    "/thoughts/": {
-      "filePath": "thoughts.index.tsx"
+    "/blog/": {
+      "filePath": "blog.index.tsx"
     }
   }
 }

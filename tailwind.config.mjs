@@ -4,10 +4,6 @@ export default {
   plugins: [require("@tailwindcss/typography")],
   theme: {
     extend: {
-      fontFamily: {
-        "archivo": ["Archivo", "sans-serif"],
-        "archivo-black": ['"Archivo Black"', "sans-serif"],
-      },
       fontSize: {
         "7xl": "5rem",
         "8xl": "6rem",

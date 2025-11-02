@@ -1,20 +1,13 @@
-import { Link, createFileRoute } from "@tanstack/react-router";
-import { ThreeBackground } from "~/components/site-components/BackgroundAnimation";
-
-export const Route = createFileRoute("/thoughts/")({
-  component: ThoughtsPage,
-});
+import { Link } from "@tanstack/react-router";
 
 type Post = {
   title: string;
   date: string;
-  content: string;
   slug: string;
   status?: string;
 };
 
 function parseFrontmatter(raw: string): { meta: Partial<Post>; body: string } {
-  // Look for frontmatter between --- markers
   const frontmatterRegex = /^---\r?\n([\s\S]*?)\r?\n---\r?\n?/;
   const match = raw.match(frontmatterRegex);
 
@@ -61,7 +54,6 @@ const posts: Post[] = Object.entries(files)
     return {
       title: derivedTitle,
       date: derivedDate,
-      content: body.trim(),
       slug,
       status: meta.status || "published",
     } as Post;
@@ -69,46 +61,34 @@ const posts: Post[] = Object.entries(files)
   .filter((post) => post.status !== "draft")
   .sort((a, b) => (b.date || "").localeCompare(a.date || ""));
 
-function ThoughtsPage() {
+export function BlogTab() {
+  if (posts.length === 0) {
+    return (
+      <div className="text-gray-400">No blog posts, yet.</div>
+    );
+  }
+
   return (
-    <div className="w-full py-10 sm:py-12 px-4 sm:px-8 md:px-16">
-      <ThreeBackground />
-
-      <div className="max-w-3xl mx-auto">
-        <header className="mb-8 sm:mb-10">
-          <h1 className="text-center uppercase text-3xl sm:text-4xl md:text-6xl pt-6 md:pt-0 font-bold uppercase tracking-wide">
-            Thoughts
-          </h1>
-          <p className="text-gray-400 mt-4 text-center">
-            my thoughts on various topics.
-          </p>
-        </header>
-        {posts.length > 0 ? (
-          <div className="space-y-6">
-            {posts.map((post) => (
-              <Link
-                key={post.slug}
-                to="/thoughts/$slug"
-                params={{ slug: post.slug }}
-                className="block rounded-xl shadow-sm hover:shadow-md transition-shadow"
-              >
-                <div className="py-4">
-                  <h2 className="text-xl sm:text-2xl font-semibold">
-                    {post.title}
-                  </h2>
-                  {post.date ? (
-                    <p className="text-xs text-gray-500 mt-1">{post.date}</p>
-                  ) : null}
-
-                  <p className="text-gray-400 text-sm mt-3">Read post →</p>
-                </div>
-              </Link>
-            ))}
+    <div className="space-y-6">
+      {posts.map((post) => (
+        <Link
+          key={post.slug}
+          to="/blog/$slug"
+          params={{ slug: post.slug }}
+          className="block text-gray-400 hover:text-white transition-colors"
+        >
+          <div className="flex justify-between items-start">
+            <div>
+              <h3 className="text-lg font-semibold text-white mb-1">
+                {post.title}
+              </h3>
+              {post.date && (
+                <p className="text-sm text-gray-500">{post.date}</p>
+              )}
+            </div>
           </div>
-        ) : (
-          <div className="text-gray-400">No posts found. yet.</div>
-        )}
-      </div>
+        </Link>
+      ))}
     </div>
   );
 }
