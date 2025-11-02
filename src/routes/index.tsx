@@ -6,10 +6,10 @@ import {
 import { Github, Mail, Linkedin, ExternalLink } from "lucide-react";
 import { ProjectsTab } from "~/components/site-components/ProjectsTab";
 import { ExperienceTab } from "~/components/site-components/ExperienceTab";
-import { BlogTab } from "~/components/site-components/BlogTab";
+// import { BlogTab } from "~/components/site-components/BlogTab";
 import { seo } from "~/utils/seo";
 
-type Tab = "projects" | "experience" | "blog";
+type Tab = "projects" | "experience"; // | "blog";
 
 export const Route = createFileRoute("/")({
   validateSearch: (search: Record<string, unknown>) => {
@@ -184,7 +184,7 @@ function Home() {
             >
               Experience
             </button>
-            <button
+            {/* <button
               onClick={() => handleTabChange("blog")}
               className={`pb-3 text-sm font-medium transition-colors ${
                 activeTab === "blog"
@@ -193,14 +193,14 @@ function Home() {
               }`}
             >
               Blog
-            </button>
+            </button> */}
           </nav>
         </header>
 
         <main className="mt-8">
           {activeTab === "projects" && <ProjectsTab />}
           {activeTab === "experience" && <ExperienceTab />}
-          {activeTab === "blog" && <BlogTab />}
+          {/* {activeTab === "blog" && <BlogTab />} */}
         </main>
 
         <footer className="mt-16 pt-8 border-t border-gray-800 flex justify-between items-center text-sm text-gray-500">
