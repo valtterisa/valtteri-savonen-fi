@@ -158,8 +158,8 @@ function PostPage() {
         ← Back to homepage
       </Link>
 
-      <div className="max-w-xl mx-auto">
-        <article className="prose prose-invert prose-sm max-w-none">
+      <div className="max-w-xl mx-auto pt-8">
+        <article className="prose prose-invert prose-sm max-w-none prose-ul:pl-6 prose-ol:pl-6 prose-li:my-2">
           <h1 className="text-center uppercase text-2xl sm:text-3xl md:text-4xl font-bold uppercase tracking-wide">
             {post.title}
           </h1>

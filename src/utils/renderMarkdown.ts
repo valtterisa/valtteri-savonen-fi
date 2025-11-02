@@ -26,17 +26,17 @@ export function renderMarkdown(md: string): string {
     /\[(.*?)\]\((.*?)\)/g,
     '<a class="text-blue-400 hover:text-blue-300 underline" href="$2">$1<\/a>'
   );
-  html = html.replace(/^\s*[-*]\s+(.*)$/gm, '<li class="my-1">$1<\/li>');
+  html = html.replace(/^\s*[-*]\s+(.*)$/gm, '<li class="my-2">$1<\/li>');
   html = html.replace(
     /(<li[\s\S]*?<\/li>)(\n(?!<li))/g,
-    '<ul class="list-disc pl-12 my-4">$1<\/ul>\n'
+    '<ul class="list-disc pl-6 my-4">$1<\/ul>\n'
   );
   html = html
     .split(/\n{2,}/)
     .map((para) => {
       if (/^\s*<(h1|h2|h3|ul)/.test(para)) return para;
       if (/^\s*<li/.test(para))
-        return `<ul class=\"list-disc pl-6 my-4\">${para}<\/ul>`;
+        return `<ul class=\"list-disc pl-6 my-4 space-y-2\">${para}<\/ul>`;
       return `<p class=\"text-gray-300 leading-7\">${para.replace(/\n/g, "<br/>")}</p>`;
     })
     .join("\n");

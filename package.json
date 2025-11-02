@@ -9,7 +9,6 @@
     "start": "vinxi start"
   },
   "dependencies": {
-    "@databuddy/sdk": "^2.2.1",
     "@react-three/drei": "^10.0.7",
     "@react-three/fiber": "^9.1.2",
     "@tanstack/react-router": "^1.117.1",

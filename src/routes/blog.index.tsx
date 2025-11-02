@@ -98,7 +98,7 @@ function BlogPage() {
         ← Back to homepage
       </Link>
 
-      <div className="max-w-xl mx-auto">
+      <div className="max-w-xl mx-auto pt-8">
         <header className="mb-8 sm:mb-10">
           <h1 className="text-center uppercase text-xl sm:text-2xl pt-6 md:pt-0 font-bold uppercase tracking-wide">
             Blog
