@@ -7,6 +7,7 @@ import {
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import * as React from "react";
+import { Databuddy } from "@databuddy/sdk/react";
 import { DefaultCatchBoundary } from "~/components/DefaultCatchBoundary";
 import { NotFound } from "~/components/NotFound";
 import appCss from "~/styles/app.css?url";
@@ -54,12 +55,7 @@ export const Route = createRootRoute({
       { rel: "manifest", href: "/site.webmanifest", color: "#000000" },
       { rel: "icon", href: "/favicon.ico" },
     ],
-    scripts: [
-      {
-        async: true,
-        src: "https://scripts.simpleanalyticscdn.com/latest.js",
-      },
-    ],
+    scripts: [],
   }),
   errorComponent: (props) => {
     return (
@@ -75,6 +71,12 @@ export const Route = createRootRoute({
 function RootComponent() {
   return (
     <RootDocument>
+      <Databuddy
+        clientId="gHCzLL73h4zbC94EXh5c1"
+        trackInteractions={true}
+        trackBounceRate={true}
+        enableBatching={true}
+      />
       <div className="flex min-h-screen w-full">
         <div className="w-full">
           <Outlet />

@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@databuddy/sdk':
+        specifier: ^2.2.1
+        version: 2.2.1(react@19.1.0)
       '@react-three/drei':
         specifier: ^10.0.7
         version: 10.0.7(@react-three/fiber@9.1.2(@types/react@19.1.2)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(three@0.176.0))(@types/react@19.1.2)(@types/three@0.176.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(three@0.176.0)
@@ -195,6 +198,32 @@ packages:
 
   '@dabh/diagnostics@2.0.3':
     resolution: {integrity: sha512-hrlQOIi7hAfzsMqlGSFyVucrx38O+j6wiGOf//H2ecvIEqYN4ADBSS2iLMh5UFyDunCNniUIPk/q3riFv45xRA==}
+
+  '@databuddy/sdk@2.2.1':
+    resolution: {integrity: sha512-3dPN/CuCJz7LxN5skuFib0MrDHCL1b2U1+ocGVb/Wi3pmeuaB86j334p+ZuP56HpU3ANgsvzK+XTiUkHNtiHdA==}
+    peerDependencies:
+      '@ai-sdk/provider': ^2.0.0
+      ai: ^5.0.51
+      jotai: '>=2.0.0'
+      msw: ^2.11.5
+      react: '>=18'
+      tokenlens: ^2.0.0-alpha.3
+      vue: '>=3'
+    peerDependenciesMeta:
+      '@ai-sdk/provider':
+        optional: true
+      ai:
+        optional: true
+      jotai:
+        optional: true
+      msw:
+        optional: true
+      react:
+        optional: true
+      tokenlens:
+        optional: true
+      vue:
+        optional: true
 
   '@deno/shim-deno-test@0.5.0':
     resolution: {integrity: sha512-4nMhecpGlPi0cSzT67L+Tm+GOJqvuk8gqHBziqcUQOarnuIax1z96/gJHCSIz2Z0zhxE6Rzwb3IZXPtFh51j+w==}
@@ -4272,6 +4301,10 @@ snapshots:
       colorspace: 1.1.4
       enabled: 2.0.0
       kuler: 2.0.0
+
+  '@databuddy/sdk@2.2.1(react@19.1.0)':
+    optionalDependencies:
+      react: 19.1.0
 
   '@deno/shim-deno-test@0.5.0': {}
 

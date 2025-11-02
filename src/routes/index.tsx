@@ -204,8 +204,26 @@ function Home() {
         </main>
 
         <footer className="mt-16 pt-8 border-t border-gray-800 flex justify-between items-center text-sm text-gray-500">
-          <span>valtterisavonen.fi</span>
-          <span>Built with TanStack Start</span>
+          <span>
+            Stolen from{" "}
+            <a
+              href="https://x.com/bruvimtired"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-gray-400 hover:text-white transition-colors"
+            >
+              Ahmet
+            </a>
+          </span>
+          <a
+            href="https://tanstack.com/start"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 text-gray-500 hover:text-white transition-colors"
+          >
+            <img src="/tanstack.png" alt="TanStack" className="h-4 w-auto" />
+            <span>Built with TanStack Start</span>
+          </a>
         </footer>
       </div>
     </div>
