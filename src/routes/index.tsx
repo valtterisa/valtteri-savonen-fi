@@ -153,13 +153,6 @@ function Home() {
             >
               <Linkedin size={20} />
             </a>
-            <a
-              href="mailto:valtteri@valtterisavonen.fi"
-              className="text-gray-400 hover:text-white transition-colors"
-              aria-label="Email"
-            >
-              <Mail size={20} />
-            </a>
           </div>
 
           <nav className="flex gap-6 border-b border-gray-800">
