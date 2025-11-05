@@ -83,8 +83,7 @@ function Home() {
                 Hey, I'm Valtteri
               </h1>
               <p className="text-gray-400 text-sm">
-                Software Engineer from Finland. Currently freelancing and
-                working on my own products.
+                wannabe cracked. atleast 8.5x dev. builder. freelancer
               </p>
             </div>
           </div>

@@ -10,16 +10,16 @@ type Project = {
 
 const projects: Project[] = [
   {
-    title: "Builddrr",
+    title: "builddrr.com",
     description: "Make websites without coding. AI-powered website builder.",
-    technologies: [
-      "Next.js",
-      "TypeScript",
-      "Tailwind CSS",
-      "OpenAI",
-      "Vercel",
-    ],
+    technologies: ["Next.js", "TypeScript", "Tailwind CSS", "OpenAI", "Vercel"],
     liveUrl: "https://builddrr.com",
+  },
+  {
+    title: "haalarikone.fi",
+    description: "Finnish university students overall search tool.",
+    technologies: ["Next.js", "TypeScript", "Tailwind CSS", "Vercel"],
+    liveUrl: "https://haalarikone.fi",
   },
 ];
 
