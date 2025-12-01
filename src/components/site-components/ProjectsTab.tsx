@@ -6,20 +6,29 @@ type Project = {
   technologies: string[];
   githubUrl?: string;
   liveUrl?: string;
+  active: boolean;
 };
 
 const projects: Project[] = [
   {
-    title: "builddrr.com",
-    description: "Make websites without coding. AI-powered website builder.",
-    technologies: ["Next.js", "TypeScript", "Tailwind CSS", "OpenAI", "Vercel"],
-    liveUrl: "https://builddrr.com",
+    title: "project-x",
+    description: "start selling online quick. coming soon.",
+    technologies: ["Next.js", "TypeScript", "Tailwind CSS", "Vercel"],
+    active: true,
   },
   {
     title: "haalarikone.fi",
     description: "Finnish university students overall search tool.",
     technologies: ["Next.js", "TypeScript", "Tailwind CSS", "Vercel"],
     liveUrl: "https://haalarikone.fi",
+    active: true,
+  },
+  {
+    title: "builddrr.com",
+    description: "Make websites without coding. AI-powered website builder.",
+    technologies: ["Next.js", "TypeScript", "Tailwind CSS", "OpenAI", "Vercel"],
+    liveUrl: "https://builddrr.com",
+    active: false,
   },
 ];
 
@@ -29,7 +38,18 @@ export function ProjectsTab() {
       {projects.map((project, index) => (
         <div key={index} className="flex justify-between items-start gap-4">
           <div className="flex-1">
-            <h3 className="text-lg font-semibold mb-2">{project.title}</h3>
+            <h3 className="text-lg font-semibold mb-2">
+              {project.title}{" "}
+              {project.active ? (
+                <span className="text-green-500 text-xs bg-green-500/10 px-2 py-1 rounded-md">
+                  active
+                </span>
+              ) : (
+                <span className="text-red-500 text-xs bg-red-500/10 px-2 py-1 rounded-md">
+                  discontinued
+                </span>
+              )}
+            </h3>
             <p className="text-gray-400 text-sm mb-3">{project.description}</p>
             <div className="flex flex-wrap gap-2 text-sm text-gray-500">
               {project.technologies.map((tech, techIndex) => (
