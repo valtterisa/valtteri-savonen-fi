@@ -8,25 +8,25 @@ type Experience = {
 
 const experiences: Experience[] = [
   {
-    title: "Full Stack Engineer",
-    company: "Self-employed",
-    period: "September 2024 - Present",
+    title: "full-stack engineer",
+    company: "self-employed",
+    period: "9/2024 - present",
     description:
       "Working for myself, looking for startup ideas, building my own products and doing work for clients. Specializing in full-stack development with modern technologies.",
     technologies: ["Next.js", "TypeScript", "React", "Node.js", "PostgreSQL"],
   },
   {
-    title: "Web Developer",
-    company: "Ikius Oy",
-    period: "February 2023 - September 2024",
+    title: "web developer",
+    company: "ikius oy",
+    period: "2/2023 - 9/2024",
     description:
       "Developed web applications and digital solutions for clients. Worked with modern web technologies to build scalable and maintainable applications.",
     technologies: ["Next.js", "TypeScript", "React", "Node.js"],
   },
   {
-    title: "Co-founder",
-    company: "Luxmarketfin Clothing & Accessories LLC",
-    period: "May 2024 - Present",
+    title: "co-founder",
+    company: "luxmarketfin clothing & accessories llc",
+    period: "5/2024 - present",
     description:
       "Co-founded a pre-loved luxury clothing and accessories brand. Managing e-commerce operations and digital presence.",
   },
