@@ -4,12 +4,12 @@ import {
   useNavigate,
 } from "@tanstack/react-router";
 import { Github, Mail, Linkedin, ExternalLink } from "lucide-react";
-import { ProjectsTab } from "~/components/site-components/ProjectsTab";
-import { ExperienceTab } from "~/components/site-components/ExperienceTab";
-// import { BlogTab } from "~/components/site-components/BlogTab";
-import { seo } from "~/utils/seo";
+import { ProjectsTab } from "../components/site-components/ProjectsTab";
+import { ExperienceTab } from "../components/site-components/ExperienceTab";
+import { BlogTab } from "../components/site-components/BlogTab";
+import { seo } from "../utils/seo";
 
-type Tab = "projects" | "experience"; // | "blog";
+type Tab = "projects" | "experience" | "blog";
 
 export const Route = createFileRoute("/")({
   validateSearch: (search: Record<string, unknown>) => {
@@ -158,41 +158,38 @@ function Home() {
           <nav className="flex gap-6 border-b border-gray-800">
             <button
               onClick={() => handleTabChange("projects")}
-              className={`pb-3 text-sm font-medium transition-colors ${
-                activeTab === "projects"
-                  ? "text-white border-b-2 border-white -mb-[2px]"
-                  : "text-gray-500 hover:text-gray-300"
-              }`}
+              className={`pb-3 text-sm font-medium transition-colors ${activeTab === "projects"
+                ? "text-white border-b-2 border-white -mb-[2px]"
+                : "text-gray-500 hover:text-gray-300"
+                }`}
             >
               Projects
             </button>
             <button
               onClick={() => handleTabChange("experience")}
-              className={`pb-3 text-sm font-medium transition-colors ${
-                activeTab === "experience"
-                  ? "text-white border-b-2 border-white -mb-[2px]"
-                  : "text-gray-500 hover:text-gray-300"
-              }`}
+              className={`pb-3 text-sm font-medium transition-colors ${activeTab === "experience"
+                ? "text-white border-b-2 border-white -mb-[2px]"
+                : "text-gray-500 hover:text-gray-300"
+                }`}
             >
               Experience
             </button>
-            {/* <button
+            <button
               onClick={() => handleTabChange("blog")}
-              className={`pb-3 text-sm font-medium transition-colors ${
-                activeTab === "blog"
-                  ? "text-white border-b-2 border-white -mb-[2px]"
-                  : "text-gray-500 hover:text-gray-300"
-              }`}
+              className={`pb-3 text-sm font-medium transition-colors ${activeTab === "blog"
+                ? "text-white border-b-2 border-white -mb-[2px]"
+                : "text-gray-500 hover:text-gray-300"
+                }`}
             >
               Blog
-            </button> */}
+            </button>
           </nav>
         </header>
 
         <main className="mt-8">
           {activeTab === "projects" && <ProjectsTab />}
           {activeTab === "experience" && <ExperienceTab />}
-          {/* {activeTab === "blog" && <BlogTab />} */}
+          {activeTab === "blog" && <BlogTab />}
         </main>
 
         <footer className="mt-16 pt-8 border-t border-gray-800 flex justify-between items-center text-sm text-gray-500">

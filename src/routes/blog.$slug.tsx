@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useLoaderData } from "@tanstack/react-router";
-import { getSinglePost } from "~/utils/marble-query";
-import { seo } from "~/utils/seo";
+import { getSinglePost } from "../utils/marble-query";
+import { seo } from "../utils/seo";
 
 export const Route = createFileRoute("/blog/$slug")({
   loader: async ({ params }) => {
@@ -37,9 +37,9 @@ export const Route = createFileRoute("/blog/$slug")({
         }),
         ...(post.publishedAt
           ? [
-              { property: "article:published_time", content: post.publishedAt },
-              { property: "article:author", content: "Valtteri Savonen" },
-            ]
+            { property: "article:published_time", content: post.publishedAt },
+            { property: "article:author", content: "Valtteri Savonen" },
+          ]
           : []),
       ],
       links: [
