@@ -11,9 +11,10 @@ type Project = {
 
 const projects: Project[] = [
   {
-    title: "project-x",
+    title: "quickshops.app",
     description: "start selling online quick. coming soon.",
     technologies: ["Next.js", "TypeScript", "Tailwind CSS", "Vercel"],
+    liveUrl: "https://quickshops.app",
     active: true,
   },
   {
