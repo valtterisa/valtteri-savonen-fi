@@ -28,22 +28,9 @@ export function BlogTab({ posts }: BlogTabProps) {
           params={{ slug: post.slug }}
           className="block text-gray-400 hover:text-white transition-colors"
         >
-          <div className="flex justify-between items-start">
-            <div>
-              <h3 className="text-lg font-semibold text-white mb-1">
+              <h3 className="text-lg font-semibold text-white mb-1 lowercase">
                 {post.title || "Untitled Post"}
               </h3>
-              {post.publishedAt && (
-                <p className="text-sm text-gray-500">
-                  {new Date(post.publishedAt).toLocaleDateString("en-US", {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                  })}
-                </p>
-              )}
-            </div>
-          </div>
         </Link>
       ))}
     </div>
