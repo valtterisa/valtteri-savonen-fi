@@ -6,6 +6,7 @@ import { Prose } from "../components/Prose";
 export const Route = createFileRoute("/blog/$slug")({
   loader: async ({ params }) => {
     const result = await getSinglePost({ data: params.slug });
+    console.log(result);
     return result;
   },    
   head: ({ loaderData, params }) => {
@@ -42,7 +43,8 @@ export const Route = createFileRoute("/blog/$slug")({
     return {
       meta: [
         ...seo({
-          title: post.title || "Blog Post",
+          title: post.title?.toLowerCase() || "Blog Post",
+          description: post.description?.toLowerCase() || "The requested blog post could not be found.",
           image: post.coverImage || "https://valtterisavonen.fi/og-image.png",
           url: `https://valtterisavonen.fi/blog/${slug}`,
           type: "article",
@@ -140,7 +142,7 @@ function PostPage() {
       <article className="max-w-3xl mx-auto pt-8">
         <header className="mb-8">
           <h1 className="text-3xl sm:text-4xl font-bold text-white mb-4 leading-tight">
-            {post.title}
+            {post.title?.toLowerCase()}
           </h1>
 
           <div className="flex items-center gap-3 text-sm text-gray-500 mb-4">
