@@ -2,16 +2,44 @@ import {
   createFileRoute,
   useSearch,
   useNavigate,
+  useLoaderData,
 } from "@tanstack/react-router";
 import { Github, Mail, Linkedin, ExternalLink } from "lucide-react";
 import { ProjectsTab } from "../components/site-components/ProjectsTab";
 import { ExperienceTab } from "../components/site-components/ExperienceTab";
 import { BlogTab } from "../components/site-components/BlogTab";
 import { seo } from "../utils/seo";
+import { getPosts } from "../utils/marble-query";
 
 type Tab = "projects" | "experience" | "blog";
 
+type Post = {
+  title?: string;
+  publishedAt?: string;
+  slug: string;
+};
+
 export const Route = createFileRoute("/")({
+  loader: async () => {
+    const data = await getPosts();
+    const postsArray = Array.isArray(data) 
+      ? data 
+      : (data as { posts?: unknown[] })?.posts || [];
+    const posts: Post[] = postsArray
+      .filter((post): post is { publishedAt?: Date | string; title?: string; slug: string } => 
+        typeof post === "object" && post !== null && "slug" in post
+      )
+      .map((post) => ({
+        title: post.title,
+        publishedAt: post.publishedAt instanceof Date 
+          ? post.publishedAt.toISOString() 
+          : typeof post.publishedAt === "string" 
+          ? post.publishedAt 
+          : undefined,
+        slug: post.slug,
+      }));
+    return { posts };
+  },
   validateSearch: (search: Record<string, unknown>) => {
     return {
       tab: (search.tab as Tab) || "projects",
@@ -59,6 +87,8 @@ export const Route = createFileRoute("/")({
 function Home() {
   const navigate = useNavigate({ from: "/" });
   const { tab } = useSearch({ from: "/" });
+  const data = Route.useLoaderData();
+  const posts = (data?.posts || []) as Post[];
   const activeTab = (tab || "projects") as Tab;
 
   const handleTabChange = (newTab: Tab) => {
@@ -189,10 +219,10 @@ function Home() {
         <main className="mt-8">
           {activeTab === "projects" && <ProjectsTab />}
           {activeTab === "experience" && <ExperienceTab />}
-          {activeTab === "blog" && <BlogTab />}
+          {activeTab === "blog" && <BlogTab posts={posts} />}
         </main>
 
-        <footer className="mt-16 pt-8 border-t border-gray-800 flex justify-between items-center text-sm text-gray-500">
+        <footer className="mt-8 pt-8 border-t border-gray-800 flex justify-between items-center text-sm text-gray-500">
           <span>
             Stolen from{" "}
             <a

@@ -1,53 +1,30 @@
-const url = process.env.MARBLE_API_URL;
-const key = process.env.MARBLE_WORKSPACE_KEY;
+import { createServerFn } from "@tanstack/react-start";
+import { z } from "zod";
+import { marble } from "../lib/marble";
 
-export async function getPosts() {
-  try {
-    const raw = await fetch(`${url}/${key}/posts`);
-    const data = await raw.json();
-    return data;
-  } catch (error) {
-    console.log(error);
-  }
-}
+export const getPosts = createServerFn().handler(async () => {
+  const posts = await marble.posts.list();
+  return posts.result;
+});
 
-export async function getSinglePost(slug: string) {
-  try {
-    const raw = await fetch(`${url}/${key}/posts/${slug}`);
-    const data = await raw.json();
-    return data;
-  } catch (error) {
-    console.log(error);
-  }
-}
+export const getTags = createServerFn().handler(async () => {
+  const tags = await marble.tags.list();
+  return tags.result;
+});
 
-export async function getTags() {
-  try {
-    const raw = await fetch(`${url}/${key}/tags`);
-    const data = await raw.json();
-    return data;
-  } catch (error) {
-    console.log(error);
-  }
-}
+export const getSinglePost = createServerFn()
+  .inputValidator(z.string())
+  .handler(async ({ data: slug }) => {
+    const post = await marble.posts.get({ identifier: slug });
+    return post;
+  });
 
-export async function getCategories() {
-  try {
-    const raw = await fetch(`${url}/${key}/categories`);
+export const getCategories = createServerFn().handler(async () => {
+  const categories = await marble.categories.list();
+  return categories.result;
+});
 
-    const data = await raw.json();
-    return data;
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-export async function getAuthors() {
-  try {
-    const raw = await fetch(`${url}/${key}/authors`);
-    const data = await raw.json();
-    return data;
-  } catch (error) {
-    console.log(error);
-  }
-}
+export const getAuthors = createServerFn().handler(async () => {
+  const authors = await marble.authors.list();
+  return authors.result;
+});

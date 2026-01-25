@@ -1,15 +1,24 @@
 import { createFileRoute, Link, useLoaderData } from "@tanstack/react-router";
 import { getSinglePost } from "../utils/marble-query";
 import { seo } from "../utils/seo";
+import { Prose } from "../components/Prose";
 
 export const Route = createFileRoute("/blog/$slug")({
   loader: async ({ params }) => {
-    const data = await getSinglePost(params.slug);
-    return data;
-  },
+    const result = await getSinglePost({ data: params.slug });
+    return result;
+  },    
   head: ({ loaderData, params }) => {
     const { slug } = params;
-    const post = loaderData?.post || loaderData;
+    const result = loaderData as { post?: {
+      title?: string;
+      content?: string;
+      publishedAt?: Date | string;
+      description?: string;
+      coverImage?: string;
+      authors?: Array<{ name?: string }>;
+    } } | null;
+    const post = result?.post;
 
     if (!post) {
       return {
@@ -23,58 +32,76 @@ export const Route = createFileRoute("/blog/$slug")({
       };
     }
 
-    const description =
-      post.content?.replace(/[#*`]/g, "").substring(0, 160).trim() || "";
+    const description = post.description || post.content?.replace(/[#*`<>&]/g, "").substring(0, 160).trim() || "";
+    const publishedAt = post.publishedAt instanceof Date 
+      ? post.publishedAt.toISOString() 
+      : typeof post.publishedAt === "string" 
+      ? post.publishedAt 
+      : undefined;
+    const authorName = post.authors?.[0]?.name || "Valtteri Savonen";
 
     return {
       meta: [
         ...seo({
           title: post.title || "Blog Post",
           description: description || "A blog post by Valtteri Savonen",
-          image: "https://valtterisavonen.fi/og-image.png",
+          image: post.coverImage || "https://valtterisavonen.fi/og-image.png",
           url: `https://valtterisavonen.fi/blog/${slug}`,
           type: "article",
         }),
-        ...(post.publishedAt
+        ...(publishedAt
           ? [
-            { property: "article:published_time", content: post.publishedAt },
-            { property: "article:author", content: "Valtteri Savonen" },
+            { property: "article:published_time", content: publishedAt },
+            { property: "article:author", content: authorName },
           ]
           : []),
       ],
       links: [
         { rel: "canonical", href: `https://valtterisavonen.fi/blog/${slug}` },
       ],
-      scripts: [
-        {
-          type: "application/ld+json",
-          children: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "BlogPosting",
-            headline: post.title || "Blog Post",
-            description: description || "A blog post by Valtteri Savonen",
-            author: {
-              "@type": "Person",
-              name: "Valtteri Savonen",
-              url: "https://valtterisavonen.fi",
+      scripts: publishedAt
+        ? [
+            {
+              type: "application/ld+json",
+              children: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "BlogPosting",
+                headline: post.title || "Blog Post",
+                description: description || "A blog post by Valtteri Savonen",
+                author: {
+                  "@type": "Person",
+                  name: authorName,
+                  url: "https://valtterisavonen.fi",
+                },
+                datePublished: publishedAt,
+                url: `https://valtterisavonen.fi/blog/${slug}`,
+                publisher: {
+                  "@type": "Person",
+                  name: "Valtteri Savonen",
+                },
+              }),
             },
-            datePublished: post.publishedAt || undefined,
-            url: `https://valtterisavonen.fi/blog/${slug}`,
-            publisher: {
-              "@type": "Person",
-              name: "Valtteri Savonen",
-            },
-          }),
-        },
-      ],
+          ]
+        : [],
     };
   },
   component: PostPage,
 });
 
 function PostPage() {
-  const loaderData = useLoaderData({ from: "/blog/$slug" });
-  const post = loaderData?.post || loaderData;
+  const loaderData = useLoaderData({ from: "/blog/$slug" }) as { post?: {
+    title?: string;
+    content?: string;
+    publishedAt?: Date | string;
+    updatedAt?: Date | string;
+    description?: string;
+    coverImage?: string;
+    authors?: Array<{ name?: string; image?: string }>;
+    category?: { name?: string; slug?: string };
+    tags?: Array<{ name?: string; slug?: string }>;
+  } } | null;
+  
+  const post = loaderData?.post;
 
   if (!post) {
     return (
@@ -86,12 +113,21 @@ function PostPage() {
         >
           ← Back to homepage
         </Link>
-        <div className="max-w-xl mx-auto pt-8">
+        <div className="max-w-3xl mx-auto pt-8">
           <p className="text-gray-400">Post not found.</p>
         </div>
       </div>
     );
   }
+
+  const publishedAt = post.publishedAt instanceof Date 
+    ? post.publishedAt 
+    : typeof post.publishedAt === "string" 
+    ? new Date(post.publishedAt) 
+    : null;
+
+  const authorName = post.authors?.[0]?.name || "Valtteri Savonen";
+  const authorImage = post.authors?.[0]?.image;
 
   return (
     <div className="w-full py-10 sm:py-12 px-4 sm:px-8 md:px-16 relative">
@@ -103,10 +139,52 @@ function PostPage() {
         ← Back to homepage
       </Link>
 
-      <div className="max-w-xl mx-auto pt-8">
-        <h1>{post.title}</h1>
-        <article dangerouslySetInnerHTML={{ __html: post.content }} />
-      </div>
+      <article className="max-w-3xl mx-auto pt-8">
+        
+
+        <header className="mb-8">
+          <h1 className="text-3xl sm:text-4xl font-bold text-white mb-4 leading-tight">
+            {post.title}
+          </h1>
+
+          <div className="flex items-center gap-3 text-sm text-gray-500 mb-4">
+            {authorImage && (
+              <img
+                src={authorImage}
+                alt={authorName}
+                className="w-8 h-8 rounded-full object-cover"
+              />
+            )}
+            <div className="flex-1">
+              <div className="text-white">{authorName}</div>
+              {publishedAt && (
+                <time dateTime={publishedAt.toISOString()}>
+                  {publishedAt.toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })}
+                </time>
+              )}
+            </div>
+          </div>
+
+          {post.tags && post.tags.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {post.tags.map((tag, index) => (
+                <span
+                  key={index}
+                  className="px-2 py-0.5 text-xs text-gray-400 bg-gray-800 rounded-full"
+                >
+                  {tag.name || tag.slug}
+                </span>
+              ))}
+            </div>
+          )}
+        </header>
+
+        <Prose html={post.content || ""} />
+      </article>
     </div>
   );
 }
