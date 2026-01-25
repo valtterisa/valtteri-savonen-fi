@@ -6,6 +6,7 @@ export const seo = ({
   url = "https://valtterisavonen.fi",
   author = "Valtteri Savonen",
   type = "website",
+  appendSiteName = true,
 }: {
   title: string;
   description?: string;
@@ -14,8 +15,11 @@ export const seo = ({
   url?: string;
   author?: string;
   type?: string;
+  appendSiteName?: boolean;
 }) => {
-  const fullTitle = title.includes("Valtteri Savonen") ? title : `${title} | Valtteri Savonen`;
+  const fullTitle = appendSiteName && !title.includes("Valtteri Savonen") 
+    ? `${title} | Valtteri Savonen` 
+    : title;
   const tags = [
     { title: fullTitle },
     { name: "description", content: description },

@@ -32,22 +32,21 @@ export const Route = createFileRoute("/blog/$slug")({
       };
     }
 
-    const description = post.description || post.content?.replace(/[#*`<>&]/g, "").substring(0, 160).trim() || "";
     const publishedAt = post.publishedAt instanceof Date 
       ? post.publishedAt.toISOString() 
       : typeof post.publishedAt === "string" 
       ? post.publishedAt 
       : undefined;
-    const authorName = post.authors?.[0]?.name || "Valtteri Savonen";
+    const authorName = "Valtteri Savonen";
 
     return {
       meta: [
         ...seo({
           title: post.title || "Blog Post",
-          description: description || "A blog post by Valtteri Savonen",
           image: post.coverImage || "https://valtterisavonen.fi/og-image.png",
           url: `https://valtterisavonen.fi/blog/${slug}`,
           type: "article",
+          appendSiteName: false,
         }),
         ...(publishedAt
           ? [
@@ -67,7 +66,6 @@ export const Route = createFileRoute("/blog/$slug")({
                 "@context": "https://schema.org",
                 "@type": "BlogPosting",
                 headline: post.title || "Blog Post",
-                description: description || "A blog post by Valtteri Savonen",
                 author: {
                   "@type": "Person",
                   name: authorName,
@@ -140,8 +138,6 @@ function PostPage() {
       </Link>
 
       <article className="max-w-3xl mx-auto pt-8">
-        
-
         <header className="mb-8">
           <h1 className="text-3xl sm:text-4xl font-bold text-white mb-4 leading-tight">
             {post.title}
