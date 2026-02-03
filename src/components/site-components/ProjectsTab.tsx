@@ -34,7 +34,7 @@ const projects: Project[] = [
       "Anthropic",
       "Vercel",
     ],
-    liveUrl: "github.com/valtterisa/builddrr-app",
+    liveUrl: "https://github.com/valtterisa/builddrr-app",
     active: false,
   },
 ];
