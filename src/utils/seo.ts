@@ -17,6 +17,7 @@ export const seo = ({
   type?: string;
   appendSiteName?: boolean;
 }) => {
+
   const fullTitle = appendSiteName && !title.includes("Valtteri Savonen") 
     ? `${title} | Valtteri Savonen` 
     : title;

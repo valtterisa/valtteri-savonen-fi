@@ -27,8 +27,14 @@ const projects: Project[] = [
   {
     title: "builddrr.com",
     description: "Make websites without coding. AI-powered website builder.",
-    technologies: ["Next.js", "TypeScript", "Tailwind CSS", "OpenAI", "Vercel"],
-    liveUrl: "https://builddrr.com",
+    technologies: [
+      "Next.js",
+      "TypeScript",
+      "Firecracker VMs",
+      "Anthropic",
+      "Vercel",
+    ],
+    liveUrl: "github.com/valtterisa/builddrr-app",
     active: false,
   },
 ];

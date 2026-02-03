@@ -22,20 +22,27 @@ type Post = {
 export const Route = createFileRoute("/")({
   loader: async () => {
     const data = await getPosts();
-    const postsArray = Array.isArray(data) 
-      ? data 
+    const postsArray = Array.isArray(data)
+      ? data
       : (data as { posts?: unknown[] })?.posts || [];
     const posts: Post[] = postsArray
-      .filter((post): post is { publishedAt?: Date | string; title?: string; slug: string } => 
-        typeof post === "object" && post !== null && "slug" in post
+      .filter(
+        (
+          post
+        ): post is {
+          publishedAt?: Date | string;
+          title?: string;
+          slug: string;
+        } => typeof post === "object" && post !== null && "slug" in post
       )
       .map((post) => ({
         title: post.title,
-        publishedAt: post.publishedAt instanceof Date 
-          ? post.publishedAt.toISOString() 
-          : typeof post.publishedAt === "string" 
-          ? post.publishedAt 
-          : undefined,
+        publishedAt:
+          post.publishedAt instanceof Date
+            ? post.publishedAt.toISOString()
+            : typeof post.publishedAt === "string"
+            ? post.publishedAt
+            : undefined,
         slug: post.slug,
       }));
     return { posts };
@@ -188,28 +195,31 @@ function Home() {
           <nav className="flex gap-6 border-b border-gray-800">
             <button
               onClick={() => handleTabChange("projects")}
-              className={`pb-3 text-sm font-medium transition-colors ${activeTab === "projects"
-                ? "text-white border-b-2 border-white -mb-[2px]"
-                : "text-gray-500 hover:text-gray-300"
-                }`}
+              className={`pb-3 text-sm font-medium transition-colors ${
+                activeTab === "projects"
+                  ? "text-white border-b-2 border-white -mb-[2px]"
+                  : "text-gray-500 hover:text-gray-300"
+              }`}
             >
               Projects
             </button>
             <button
               onClick={() => handleTabChange("experience")}
-              className={`pb-3 text-sm font-medium transition-colors ${activeTab === "experience"
-                ? "text-white border-b-2 border-white -mb-[2px]"
-                : "text-gray-500 hover:text-gray-300"
-                }`}
+              className={`pb-3 text-sm font-medium transition-colors ${
+                activeTab === "experience"
+                  ? "text-white border-b-2 border-white -mb-[2px]"
+                  : "text-gray-500 hover:text-gray-300"
+              }`}
             >
               Experience
             </button>
             <button
               onClick={() => handleTabChange("blog")}
-              className={`pb-3 text-sm font-medium transition-colors ${activeTab === "blog"
-                ? "text-white border-b-2 border-white -mb-[2px]"
-                : "text-gray-500 hover:text-gray-300"
-                }`}
+              className={`pb-3 text-sm font-medium transition-colors ${
+                activeTab === "blog"
+                  ? "text-white border-b-2 border-white -mb-[2px]"
+                  : "text-gray-500 hover:text-gray-300"
+              }`}
             >
               Blog
             </button>
@@ -223,17 +233,6 @@ function Home() {
         </main>
 
         <footer className="mt-8 pt-8 border-t border-gray-800 flex justify-between items-center text-sm text-gray-500">
-          <span>
-            Stolen from{" "}
-            <a
-              href="https://x.com/bruvimtired"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-gray-400 hover:text-white transition-colors"
-            >
-              Ahmet
-            </a>
-          </span>
           <a
             href="https://tanstack.com/start"
             target="_blank"
