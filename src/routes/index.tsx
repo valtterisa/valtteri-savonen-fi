@@ -156,7 +156,7 @@ function Home() {
               </svg>
             </a>
             <a
-              href="https://github.com/valtterisavonen"
+              href="https://github.com/valtterisa"
               target="_blank"
               rel="noopener noreferrer"
               className="text-gray-400 hover:text-white transition-colors"
@@ -165,7 +165,7 @@ function Home() {
               <Github size={20} />
             </a>
             <a
-              href="https://x.com/valtterisavonen"
+              href="https://x.com/vvaltterisa"
               target="_blank"
               rel="noopener noreferrer"
               className="text-gray-400 hover:text-white transition-colors"
