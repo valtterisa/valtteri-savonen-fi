@@ -76,8 +76,8 @@ export const Route = createFileRoute("/")({
           url: "https://valtterisavonen.fi",
           sameAs: [
             "https://cal.com/valtterisa/15min",
-            "https://github.com/valtterisavonen",
-            "https://x.com/valtterisavonen",
+            "https://github.com/valtterisa",
+            "https://x.com/vvaltterisa",
             "https://linkedin.com/in/valtterisavonen",
           ],
           address: {
