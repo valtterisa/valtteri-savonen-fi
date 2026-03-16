@@ -11,8 +11,7 @@ const experiences: Experience[] = [
     title: "full-stack engineer",
     company: "self-employed",
     period: "9/2024 - present",
-    description:
-      "Working for myself, looking for startup ideas, building my own products and doing work for clients. Specializing in full-stack development with modern technologies.",
+    description: "building own projects and freelancing for clients.",
     technologies: ["Next.js", "TypeScript", "React", "Node.js", "PostgreSQL"],
   },
   {
