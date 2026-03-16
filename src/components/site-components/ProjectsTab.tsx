@@ -11,17 +11,17 @@ type Project = {
 
 const projects: Project[] = [
   {
-    title: "booking app reinvented",
-    description: "coming soon.",
-    technologies: ["Next.js", "TypeScript", "Tailwind CSS", "Self-host"],
-    liveUrl: "https://booking.bittive.com",
+    title: "quickshops.app",
+    description: "launch soon.",
+    technologies: ["Next.js", "TypeScript", "Tailwind CSS", "Vercel", "Convex"],
+    liveUrl: "https://quickshops.app",
     active: true,
   },
   {
-    title: "quickshops.app",
-    description: "start selling online quick. coming soon.",
-    technologies: ["Next.js", "TypeScript", "Tailwind CSS", "Vercel"],
-    liveUrl: "https://quickshops.app",
+    title: "aikaly.com",
+    description: "launch soon.",
+    technologies: ["Next.js", "TypeScript", "Tailwind CSS", "Self-host"],
+    liveUrl: "https://booking.bittive.com",
     active: true,
   },
   {
