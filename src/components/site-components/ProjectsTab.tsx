@@ -13,15 +13,8 @@ const projects: Project[] = [
   {
     title: "quickshops.app",
     description: "launch soon.",
-    technologies: ["Next.js", "TypeScript", "Tailwind CSS", "Vercel", "Convex"],
+    technologies: ["Next.js", "TypeScript", "Tailwind CSS", "Vercel", "Convex", "Elysia.js"],
     liveUrl: "https://quickshops.app",
-    active: true,
-  },
-  {
-    title: "aikaly.com",
-    description: "launch soon.",
-    technologies: ["Next.js", "TypeScript", "Tailwind CSS", "Self-host"],
-    liveUrl: "https://booking.bittive.com",
     active: true,
   },
   {
