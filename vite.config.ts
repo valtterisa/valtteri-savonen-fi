@@ -10,5 +10,15 @@ export default defineConfig({
     server: {
         port: 3000,
     },
-    plugins: [tsConfigPaths(), tanstackStart(), viteReact(), tailwindcss(), nitro()],
+    plugins: [
+        tsConfigPaths(),
+        tanstackStart({
+            prerender: {
+                filter: ({ path }) => path === "/" || path === "/blog" || path.startsWith("/blog/"),
+            },
+        }),
+        viteReact(),
+        tailwindcss(),
+        nitro(),
+    ],
 })

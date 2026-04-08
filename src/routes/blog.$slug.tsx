@@ -6,9 +6,13 @@ import { Prose } from "../components/Prose";
 export const Route = createFileRoute("/blog/$slug")({
   loader: async ({ params }) => {
     const result = await getSinglePost({ data: params.slug });
-    console.log(result);
     return result;
-  },    
+  },
+  headers: () => ({
+    "Cache-Control": "public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400",
+  }),
+  staleTime: 5 * 60_000,
+  gcTime: 10 * 60_000,
   head: ({ loaderData, params }) => {
     const { slug } = params;
     const result = loaderData as { post?: {
