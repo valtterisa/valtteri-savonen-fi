@@ -41,8 +41,8 @@ export const Route = createFileRoute("/")({
           post.publishedAt instanceof Date
             ? post.publishedAt.toISOString()
             : typeof post.publishedAt === "string"
-            ? post.publishedAt
-            : undefined,
+              ? post.publishedAt
+              : undefined,
         slug: post.slug,
       }));
     return { posts };
@@ -120,7 +120,16 @@ function Home() {
                 Hey, I'm Valtteri
               </h1>
               <p className="text-gray-400 text-sm">
-                wannabe cracked. atleast 8.5x dev. builder. freelancer
+                Currently building{" "}
+                <a
+                  href="https://quickshops.app"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gray-300 hover:text-white transition-colors underline underline-offset-2"
+                >
+                  quickshops.app
+                </a>
+                . Also interested in distributed systems and system design. Web dev at heart.
               </p>
             </div>
           </div>
@@ -195,31 +204,28 @@ function Home() {
           <nav className="flex gap-6 border-b border-gray-800">
             <button
               onClick={() => handleTabChange("projects")}
-              className={`pb-3 text-sm font-medium transition-colors ${
-                activeTab === "projects"
-                  ? "text-white border-b-2 border-white -mb-[2px]"
-                  : "text-gray-500 hover:text-gray-300"
-              }`}
+              className={`pb-3 text-sm font-medium transition-colors ${activeTab === "projects"
+                ? "text-white border-b-2 border-white -mb-[2px]"
+                : "text-gray-500 hover:text-gray-300"
+                }`}
             >
               Projects
             </button>
             <button
               onClick={() => handleTabChange("experience")}
-              className={`pb-3 text-sm font-medium transition-colors ${
-                activeTab === "experience"
-                  ? "text-white border-b-2 border-white -mb-[2px]"
-                  : "text-gray-500 hover:text-gray-300"
-              }`}
+              className={`pb-3 text-sm font-medium transition-colors ${activeTab === "experience"
+                ? "text-white border-b-2 border-white -mb-[2px]"
+                : "text-gray-500 hover:text-gray-300"
+                }`}
             >
               Experience
             </button>
             <button
               onClick={() => handleTabChange("blog")}
-              className={`pb-3 text-sm font-medium transition-colors ${
-                activeTab === "blog"
-                  ? "text-white border-b-2 border-white -mb-[2px]"
-                  : "text-gray-500 hover:text-gray-300"
-              }`}
+              className={`pb-3 text-sm font-medium transition-colors ${activeTab === "blog"
+                ? "text-white border-b-2 border-white -mb-[2px]"
+                : "text-gray-500 hover:text-gray-300"
+                }`}
             >
               Blog
             </button>
