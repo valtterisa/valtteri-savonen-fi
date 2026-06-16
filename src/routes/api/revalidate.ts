@@ -1,5 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createHmac, timingSafeEqual } from "node:crypto";
+import {
+  invalidateMarblePost,
+  invalidateMarblePostsList,
+} from "../../utils/marble-cache";
 
 type PostEventData = {
   event: string;
@@ -34,10 +38,16 @@ async function handleWebhookEvent(payload: PostEventData) {
   const event = payload.event;
 
   if (event.startsWith("post")) {
+    invalidateMarblePostsList();
+
+    if (payload.data.slug) {
+      invalidateMarblePost(payload.data.slug);
+    }
+
     return {
       revalidated: true,
       now: Date.now(),
-      message: "Post event handled",
+      message: "Post cache invalidated",
     };
   }
 

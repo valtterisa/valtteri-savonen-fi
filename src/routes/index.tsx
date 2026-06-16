@@ -20,7 +20,14 @@ type Post = {
 };
 
 export const Route = createFileRoute("/")({
-  loader: async () => {
+  loaderDeps: ({ search }) => ({
+    tab: (search.tab as Tab) || "projects",
+  }),
+  loader: async ({ deps }) => {
+    if (deps.tab !== "blog") {
+      return { posts: [] as Post[] };
+    }
+
     const data = await getPosts();
     const postsArray = Array.isArray(data)
       ? data
@@ -47,6 +54,11 @@ export const Route = createFileRoute("/")({
       }));
     return { posts };
   },
+  headers: () => ({
+    "Cache-Control": "public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400",
+  }),
+  staleTime: 24 * 60 * 60 * 1000,
+  gcTime: 24 * 60 * 60 * 1000,
   validateSearch: (search: Record<string, unknown>) => {
     return {
       tab: (search.tab as Tab) || "projects",

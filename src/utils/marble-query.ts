@@ -1,6 +1,10 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { marble } from "../lib/marble";
+import {
+  getMarbleCached,
+  setMarbleCached,
+} from "./marble-cache";
 
 type MarblePostResult = Awaited<ReturnType<typeof marble.posts.list>>["result"];
 type MarbleSinglePostResult = Awaited<ReturnType<typeof marble.posts.get>>;
@@ -29,8 +33,14 @@ const isRecoverableBlogApiError = (error: unknown) => {
 };
 
 export const getPosts = createServerFn().handler(async () => {
+  const cached = getMarbleCached<MarblePostResult>("posts:list");
+  if (cached) {
+    return cached;
+  }
+
   try {
     const posts = await marble.posts.list();
+    setMarbleCached("posts:list", posts.result);
     return posts.result;
   } catch {
     return emptyPostsResult;
@@ -45,8 +55,15 @@ export const getTags = createServerFn().handler(async () => {
 export const getSinglePost = createServerFn()
   .inputValidator(z.string())
   .handler(async ({ data: slug }) => {
+    const cacheKey = `posts:${slug}`;
+    const cached = getMarbleCached<MarbleSinglePostResult | null>(cacheKey);
+    if (cached !== undefined) {
+      return cached;
+    }
+
     try {
       const post = await marble.posts.get({ identifier: slug });
+      setMarbleCached(cacheKey, post);
       return post;
     } catch (error) {
       if (isRecoverableBlogApiError(error)) {

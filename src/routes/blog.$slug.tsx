@@ -11,8 +11,9 @@ export const Route = createFileRoute("/blog/$slug")({
   headers: () => ({
     "Cache-Control": "public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400",
   }),
-  staleTime: 5 * 60_000,
-  gcTime: 10 * 60_000,
+  staleTime: 24 * 60 * 60 * 1000,
+  gcTime: 24 * 60 * 60 * 1000,
+  shouldReload: false,
   head: ({ loaderData, params }) => {
     const { slug } = params;
     const result = loaderData as { post?: {
