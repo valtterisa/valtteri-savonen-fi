@@ -20,19 +20,24 @@ export function BlogTab({ posts }: BlogTabProps) {
   }
 
   return (
-    <div className="space-y-6">
-      {posts?.map((post) => (
-        <Link
-          key={post.slug}
-          to="/blog/$slug"
-          params={{ slug: post.slug }}
-          className="block text-gray-400 hover:text-white transition-colors"
-        >
-              <h3 className="text-lg font-semibold text-white mb-1 lowercase">
-                {post.title || "Untitled Post"}
-              </h3>
-        </Link>
+    <ul className="space-y-3">
+      {posts.map((post) => (
+        <li key={post.slug} className="flex items-start gap-3">
+          <span
+            aria-hidden="true"
+            className="mt-[0.55rem] h-1.5 w-1.5 shrink-0 rounded-full bg-gray-500"
+          />
+          <Link
+            to="/blog/$slug"
+            params={{ slug: post.slug }}
+            className="text-gray-400 hover:text-white transition-colors"
+          >
+            <span className="text-base font-medium text-white lowercase">
+              {post.title || "Untitled Post"}
+            </span>
+          </Link>
+        </li>
       ))}
-    </div>
+    </ul>
   );
 }
