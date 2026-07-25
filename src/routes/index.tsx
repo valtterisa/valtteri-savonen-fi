@@ -2,8 +2,8 @@ import {
   createFileRoute,
   useSearch,
   useNavigate,
-  useLoaderData,
 } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { Github, Mail, Linkedin, ExternalLink } from "lucide-react";
 import { ProjectsTab } from "../components/site-components/ProjectsTab";
 import { ExperienceTab } from "../components/site-components/ExperienceTab";
@@ -25,7 +25,7 @@ export const Route = createFileRoute("/")({
   }),
   loader: async ({ deps }) => {
     if (deps.tab !== "blog") {
-      return { posts: [] as Post[] };
+      return { posts: [] as Post[], blogFetched: false };
     }
 
     const data = await getPosts();
@@ -52,7 +52,7 @@ export const Route = createFileRoute("/")({
               : undefined,
         slug: post.slug,
       }));
-    return { posts };
+    return { posts, blogFetched: true };
   },
   headers: () => ({
     "Cache-Control": "public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400",
@@ -108,9 +108,25 @@ function Home() {
   const { tab } = useSearch({ from: "/" });
   const data = Route.useLoaderData();
   const posts = (data?.posts || []) as Post[];
+  const blogFetched = Boolean(data?.blogFetched);
   const activeTab = (tab || "projects") as Tab;
+  const [isBlogLoading, setIsBlogLoading] = useState(
+    () => activeTab === "blog" && !blogFetched
+  );
+
+  useEffect(() => {
+    if (activeTab !== "blog") {
+      setIsBlogLoading(false);
+      return;
+    }
+
+    setIsBlogLoading(!blogFetched);
+  }, [activeTab, blogFetched]);
 
   const handleTabChange = (newTab: Tab) => {
+    if (newTab === "blog" && !blogFetched) {
+      setIsBlogLoading(true);
+    }
     navigate({
       search: { tab: newTab },
       replace: true,
@@ -234,12 +250,19 @@ function Home() {
             </button>
             <button
               onClick={() => handleTabChange("blog")}
-              className={`pb-3 text-sm font-medium transition-colors ${activeTab === "blog"
+              aria-busy={isBlogLoading}
+              className={`pb-3 text-sm font-medium transition-colors inline-flex items-center gap-2 ${activeTab === "blog"
                 ? "text-white border-b-2 border-white -mb-[2px]"
                 : "text-gray-500 hover:text-gray-300"
                 }`}
             >
               Blog
+              {isBlogLoading && (
+                <span
+                  aria-hidden="true"
+                  className="inline-block h-3.5 w-3.5 shrink-0 rounded-full border-2 border-gray-500 border-t-white animate-spin"
+                />
+              )}
             </button>
           </nav>
         </header>
@@ -247,7 +270,9 @@ function Home() {
         <main className="mt-8">
           {activeTab === "projects" && <ProjectsTab />}
           {activeTab === "experience" && <ExperienceTab />}
-          {activeTab === "blog" && <BlogTab posts={posts} />}
+          {activeTab === "blog" && (
+            <BlogTab posts={posts} isLoading={isBlogLoading} />
+          )}
         </main>
 
         <footer className="mt-8 pt-8 border-t border-gray-800 flex justify-between items-center text-sm text-gray-500">

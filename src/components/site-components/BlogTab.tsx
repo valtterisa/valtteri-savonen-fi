@@ -8,15 +8,16 @@ type Post = {
 
 type BlogTabProps = {
   posts: Post[];
+  isLoading?: boolean;
 };
 
-export function BlogTab({ posts }: BlogTabProps) {
+export function BlogTab({ posts, isLoading = false }: BlogTabProps) {
+  if (isLoading) {
+    return null;
+  }
 
-
-  if (posts?.length === 0) {
-    return (
-      <div className="text-gray-400">No blog posts, yet.</div>
-    );
+  if (posts.length === 0) {
+    return <div className="text-gray-400">No blog posts, yet.</div>;
   }
 
   return (

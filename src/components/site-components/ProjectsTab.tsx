@@ -18,6 +18,13 @@ const projects: Project[] = [
     active: true,
   },
   {
+    title: "floras.app",
+    description: "AI website generator for Astro sites.",
+    technologies: ["Astro", "TypeScript", "Convex", "Box", "Cloudflare"],
+    liveUrl: "https://floras.app",
+    active: true,
+  },
+  {
     title: "haalarikone.fi",
     description: "Finnish university students overall search tool.",
     technologies: ["Next.js", "TypeScript", "Tailwind CSS", "Vercel"],
