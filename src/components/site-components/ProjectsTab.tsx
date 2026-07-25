@@ -31,19 +31,6 @@ const projects: Project[] = [
     liveUrl: "https://haalarikone.fi",
     active: true,
   },
-  {
-    title: "builddrr.com",
-    description: "Make websites without coding. AI-powered website builder.",
-    technologies: [
-      "Next.js",
-      "TypeScript",
-      "Firecracker VMs",
-      "Anthropic",
-      "Vercel",
-    ],
-    liveUrl: "https://github.com/valtterisa/builddrr-app",
-    active: false,
-  },
 ];
 
 export function ProjectsTab() {
@@ -94,7 +81,7 @@ export function ProjectsTab() {
                 rel="noopener noreferrer"
                 className="text-gray-400 hover:text-white transition-colors flex items-center gap-1"
               >
-                <span className="text-sm">View</span>
+                <span className="text-sm">view</span>
                 <ExternalLink size={12} />
               </a>
             )}

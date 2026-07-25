@@ -4,7 +4,7 @@ import {
   useNavigate,
 } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Github, Mail, Linkedin, ExternalLink } from "lucide-react";
+import { Github, Linkedin } from "lucide-react";
 import { ProjectsTab } from "../components/site-components/ProjectsTab";
 import { ExperienceTab } from "../components/site-components/ExperienceTab";
 import { BlogTab } from "../components/site-components/BlogTab";
@@ -20,10 +20,15 @@ type Post = {
 };
 
 export const Route = createFileRoute("/")({
-  loaderDeps: ({ search }) => ({
-    tab: (search.tab as Tab) || "projects",
+  validateSearch: (search: Record<string, unknown>): { tab: Tab } => {
+    return {
+      tab: (search.tab as Tab) || "projects",
+    };
+  },
+  loaderDeps: ({ search }: { search: { tab: Tab } }) => ({
+    tab: search.tab,
   }),
-  loader: async ({ deps }) => {
+  loader: async ({ deps }: { deps: { tab: Tab } }) => {
     if (deps.tab !== "blog") {
       return { posts: [] as Post[], blogFetched: false };
     }
@@ -59,11 +64,6 @@ export const Route = createFileRoute("/")({
   }),
   staleTime: 24 * 60 * 60 * 1000,
   gcTime: 24 * 60 * 60 * 1000,
-  validateSearch: (search: Record<string, unknown>) => {
-    return {
-      tab: (search.tab as Tab) || "projects",
-    };
-  },
   head: () => ({
     meta: [
       ...seo({
@@ -71,7 +71,7 @@ export const Route = createFileRoute("/")({
         description:
           "Full Stack Engineer from Finland. Working for myself, looking for startup ideas, building and doing work for clients. Specializing in Next.js, TypeScript, and modern web technologies.",
         keywords:
-          "Valtteri Savonen, full stack engineer, software engineer, web development, Next.js, TypeScript, Finland, Builddrr",
+          "Valtteri Savonen, full stack engineer, software engineer, web development, Next.js, TypeScript, Finland, floras.app",
         image: "https://valtterisavonen.fi/og-image.png",
         url: "https://valtterisavonen.fi",
       }),
@@ -145,10 +145,10 @@ function Home() {
             />
             <div className="flex-1">
               <h1 className="text-xl md:text-2xl font-bold mb-3">
-                Hey, I'm Valtteri
+                hey, i'm valtteri!
               </h1>
               <p className="text-gray-400 text-sm">
-                Currently building{" "}
+                currently building{" "}
                 <a
                   href="https://quickshops.app"
                   target="_blank"
@@ -157,7 +157,7 @@ function Home() {
                 >
                   quickshops.app
                 </a>
-                . Also interested in distributed systems and system design. Web dev at heart.
+                .
               </p>
             </div>
           </div>
@@ -237,7 +237,7 @@ function Home() {
                 : "text-gray-500 hover:text-gray-300"
                 }`}
             >
-              Projects
+              projects
             </button>
             <button
               onClick={() => handleTabChange("experience")}
@@ -246,7 +246,7 @@ function Home() {
                 : "text-gray-500 hover:text-gray-300"
                 }`}
             >
-              Experience
+              experience
             </button>
             <button
               onClick={() => handleTabChange("blog")}
@@ -256,7 +256,7 @@ function Home() {
                 : "text-gray-500 hover:text-gray-300"
                 }`}
             >
-              Blog
+              blog
               {isBlogLoading && (
                 <span
                   aria-hidden="true"

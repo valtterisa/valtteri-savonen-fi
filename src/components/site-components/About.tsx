@@ -14,7 +14,7 @@ export function About() {
               need freedom to experiment and build without limits to really
               shine. I think big, aiming for billions, not millions, with ideas
               that scale worldwide. Engineering lets me turn wild ideas into
-              real products that grow fast. Like with builddrr.com, I'm creating
+              real products that grow fast. Like with floras.app, I'm creating
               tools for builders, plus e-commerce hustles that deliver wins.
               It's all about shipping code and products that make an impact.
             </p>

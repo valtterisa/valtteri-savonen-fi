@@ -17,7 +17,7 @@ export function BlogTab({ posts, isLoading = false }: BlogTabProps) {
   }
 
   if (posts.length === 0) {
-    return <div className="text-gray-400">No blog posts, yet.</div>;
+    return <div className="text-gray-400">no blog posts, yet.</div>;
   }
 
   return (

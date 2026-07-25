@@ -27,7 +27,7 @@ export const Route = createRootRoute({
         description:
           "Full Stack Engineer from Finland. Working for myself, looking for startup ideas, building and doing work for clients. Specializing in Next.js, TypeScript, and modern web technologies.",
         keywords:
-          "Valtteri Savonen, full stack engineer, software engineer, web development, Next.js, TypeScript, Finland, Builddrr",
+          "Valtteri Savonen, full stack engineer, software engineer, web development, Next.js, TypeScript, Finland, floras.app",
         image: "https://valtterisavonen.fi/og-image.png",
         url: "https://valtterisavonen.fi",
       }),
