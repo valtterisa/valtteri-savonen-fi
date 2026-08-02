@@ -184,7 +184,7 @@ func (s *Server) handleBlogPost(w http.ResponseWriter, r *http.Request) {
 	title := strings.ToLower(post.Title)
 	desc := strings.ToLower(post.Description)
 	if desc == "" {
-		desc = "The requested blog post could not be found."
+		desc = title
 	}
 	image := post.CoverImage
 	if image == "" {

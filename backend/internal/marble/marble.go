@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"os"
 	"strings"
@@ -19,6 +20,8 @@ const (
 	baseURL = "https://api.marblecms.com"
 	ttl     = 24 * time.Hour
 )
+
+var httpClient = &http.Client{Timeout: 10 * time.Second}
 
 type cacheEntry struct {
 	value     any
@@ -113,7 +116,7 @@ func apiGet(path string) ([]byte, error) {
 	req.Header.Set("Authorization", key)
 	req.Header.Set("Accept", "application/json")
 
-	resp, err := http.DefaultClient.Do(req)
+	resp, err := httpClient.Do(req)
 	if err != nil {
 		return nil, err
 	}
@@ -136,6 +139,7 @@ func ListPosts() []Post {
 
 	body, err := apiGet("/v1/posts")
 	if err != nil {
+		log.Printf("marble ListPosts: %v", err)
 		return nil
 	}
 
@@ -143,6 +147,7 @@ func ListPosts() []Post {
 	if err := json.Unmarshal(body, &parsed); err != nil {
 		var posts []Post
 		if err2 := json.Unmarshal(body, &posts); err2 != nil {
+			log.Printf("marble ListPosts: decode: %v", err2)
 			return nil
 		}
 		setCached("posts:list", posts)
@@ -161,7 +166,7 @@ func GetPost(slug string) *Post {
 
 	body, err := apiGet("/v1/posts/" + slug)
 	if err != nil {
-		setCached(cacheKey, (*Post)(nil))
+		log.Printf("marble GetPost %q: %v", slug, err)
 		return nil
 	}
 
@@ -173,7 +178,7 @@ func GetPost(slug string) *Post {
 
 	var post Post
 	if err := json.Unmarshal(body, &post); err != nil || post.Slug == "" {
-		setCached(cacheKey, (*Post)(nil))
+		log.Printf("marble GetPost %q: decode failed or empty slug", slug)
 		return nil
 	}
 	setCached(cacheKey, &post)
