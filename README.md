@@ -31,8 +31,21 @@ backend/
     marble/             # CMS client
     site/               # HTTP handlers
 scripts/                # local start script
-package.json go.mod Dockerfile railway.toml
+package.json go.mod Dockerfile Dockerfile.vercel
 ```
+
+## Deploy (Vercel)
+
+Vercel picks up `Dockerfile.vercel`, builds the image, and runs it on Fluid compute. The server listens on `$PORT` (defaults to `80`).
+
+```sh
+vercel deploy
+```
+
+Or connect the repo in the Vercel dashboard. Set project env:
+
+- `MARBLE_API_KEY`
+- `MARBLE_WEBHOOK_SECRET`
 
 ## Deploy (Railway)
 
