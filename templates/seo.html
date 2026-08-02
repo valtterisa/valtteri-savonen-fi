@@ -1,0 +1,55 @@
+{{define "seo-head"}}
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>{{.SEO.Title}}</title>
+{{if .SEO.Description}}<meta name="description" content="{{.SEO.Description}}" />{{end}}
+{{if .SEO.Keywords}}<meta name="keywords" content="{{.SEO.Keywords}}" />{{end}}
+<meta name="author" content="Valtteri Savonen" />
+<meta name="robots" content="index, follow" />
+<meta name="language" content="English" />
+<meta name="revisit-after" content="7 days" />
+<meta property="og:site_name" content="Valtteri Savonen" />
+<meta property="og:title" content="{{.SEO.Title}}" />
+{{if .SEO.Description}}<meta property="og:description" content="{{.SEO.Description}}" />{{end}}
+<meta property="og:url" content="{{.SEO.URL}}" />
+<meta property="og:type" content="{{.SEO.Type}}" />
+<meta property="og:locale" content="en_US" />
+<meta name="twitter:title" content="{{.SEO.Title}}" />
+{{if .SEO.Description}}<meta name="twitter:description" content="{{.SEO.Description}}" />{{end}}
+<meta name="twitter:creator" content="@valtterisavonen" />
+<meta name="twitter:site" content="@valtterisavonen" />
+{{if .SEO.Image}}
+<meta property="og:image" content="{{.SEO.Image}}" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content="{{.SEO.Title}}" />
+<meta name="twitter:image" content="{{.SEO.Image}}" />
+<meta name="twitter:card" content="summary_large_image" />
+{{else}}
+<meta name="twitter:card" content="summary" />
+{{end}}
+{{if .SEO.ArticlePublished}}
+<meta property="article:published_time" content="{{.SEO.ArticlePublished}}" />
+<meta property="article:author" content="{{.SEO.ArticleAuthor}}" />
+{{end}}
+{{if .SEO.Canonical}}<link rel="canonical" href="{{.SEO.Canonical}}" />{{end}}
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+<link rel="manifest" href="/site.webmanifest" />
+<link rel="icon" href="/favicon.ico" />
+<link rel="stylesheet" href="/css/output.css" />
+<script src="https://unpkg.com/htmx.org@2.0.4"></script>
+<script
+  src="https://cdn.databuddy.cc/databuddy.js"
+  async
+  crossorigin="anonymous"
+  data-client-id="gHCzLL73h4zbC94EXh5c1"
+  data-track-interactions="true"
+  data-track-bounce-rate="true"
+  data-enable-batching="true"
+></script>
+{{if .SEO.JSONLD}}
+<script type="application/ld+json">{{.SEO.JSONLD}}</script>
+{{end}}
+{{end}}

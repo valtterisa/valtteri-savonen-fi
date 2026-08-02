@@ -1,0 +1,18 @@
+{{define "tab-blog.html"}}
+{{if eq (len .Posts) 0}}
+<div class="text-gray-400">no blog posts, yet.</div>
+{{else}}
+<ul class="space-y-3">
+  {{range .Posts}}
+  <li class="flex items-start gap-3">
+    <span aria-hidden="true" class="mt-[0.55rem] h-1.5 w-1.5 shrink-0 rounded-full bg-gray-500"></span>
+    <a href="/blog/{{.Slug}}" class="text-gray-400 hover:text-white transition-colors">
+      <span class="text-base font-medium text-white lowercase">
+        {{if .Title}}{{.Title}}{{else}}Untitled Post{{end}}
+      </span>
+    </a>
+  </li>
+  {{end}}
+</ul>
+{{end}}
+{{end}}

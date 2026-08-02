@@ -1,72 +1,42 @@
-# Welcome to TanStack.com!
+# valtterisavonen.fi
 
-This site is built with TanStack Router!
+Personal site — templates + Tailwind at the root, Go server under `backend/`.
 
-- [TanStack Router Docs](https://tanstack.com/router)
-
-It's deployed automagically with Netlify!
-
-- [Netlify](https://netlify.com/)
-
-## Development
-
-From your terminal:
+## Run
 
 ```sh
 pnpm install
-pnpm dev
+pnpm start
 ```
 
-This starts your app in development mode, rebuilding assets on file changes.
+Opens [http://localhost:8080](http://localhost:8080).
 
-## Editing and previewing the docs of TanStack projects locally
-
-The documentations for all TanStack projects except for `React Charts` are hosted on [https://tanstack.com](https://tanstack.com), powered by this TanStack Router app.
-In production, the markdown doc pages are fetched from the GitHub repos of the projects, but in development they are read from the local file system.
-
-Follow these steps if you want to edit the doc pages of a project (in these steps we'll assume it's [`TanStack/form`](https://github.com/tanstack/form)) and preview them locally :
-
-1. Create a new directory called `tanstack`.
+Optional env for blog:
 
 ```sh
-mkdir tanstack
+export MARBLE_API_KEY=...
+export MARBLE_WEBHOOK_SECRET=...
 ```
 
-2. Enter the directory and clone this repo and the repo of the project there.
+## Layout
 
-```sh
-cd tanstack
-git clone git@github.com:TanStack/tanstack.com.git
-git clone git@github.com:TanStack/form.git
+```
+templates/              # HTML + HTMX (UI)
+css/                    # Tailwind v4
+static/                 # images, favicons, og
+backend/
+  cmd/server/           # entrypoint
+  internal/
+    content/            # projects + experience
+    marble/             # CMS client
+    site/               # HTTP handlers
+scripts/                # local start script
+package.json go.mod Dockerfile railway.toml
 ```
 
-> [!NOTE]
-> Your `tanstack` directory should look like this:
->
-> ```
-> tanstack/
->    |
->    +-- form/
->    |
->    +-- tanstack.com/
-> ```
+## Deploy (Railway)
 
-> [!WARNING]
-> Make sure the name of the directory in your local file system matches the name of the project's repo. For example, `tanstack/form` must be cloned into `form` (this is the default) instead of `some-other-name`, because that way, the doc pages won't be found.
-
-3. Enter the `tanstack/tanstack.com` directory, install the dependencies and run the app in dev mode:
-
-```sh
-cd tanstack.com
-pnpm i
-# The app will run on https://localhost:3000 by default
-pnpm dev
-```
-
-4. Now you can visit http://localhost:3000/form/latest/docs/overview in the browser and see the changes you make in `tanstack/form/docs`.
-
-> [!NOTE]
-> The updated pages need to be manually reloaded in the browser.
-
-> [!WARNING]
-> You will need to update the `docs/config.json` file (in the project's repo) if you add a new doc page!
+1. Connect this repo on [Railway](https://railway.app)
+2. Builds via `Dockerfile`
+3. Set `MARBLE_API_KEY` and `MARBLE_WEBHOOK_SECRET`
+4. Point `valtterisavonen.fi` at the service

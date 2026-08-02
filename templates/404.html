@@ -1,0 +1,15 @@
+{{define "404.html"}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {{template "seo-head" .}}
+</head>
+<body class="bg-black text-white">
+  <div class="min-h-screen flex flex-col items-center justify-center gap-4 px-6">
+    <h1 class="text-2xl font-bold">404</h1>
+    <p class="text-gray-400">Page not found.</p>
+    <a href="/" class="text-gray-300 hover:text-white underline underline-offset-2">Go home</a>
+  </div>
+</body>
+</html>
+{{end}}

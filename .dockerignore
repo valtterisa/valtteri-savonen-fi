@@ -1,0 +1,10 @@
+.git
+.github
+.vscode
+.DS_Store
+node_modules
+bin
+app
+.env
+.env.*
+*.md
