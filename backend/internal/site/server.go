@@ -34,29 +34,29 @@ func New(root string) (*Server, error) {
 
 func (s *Server) Handler() http.Handler {
 	mux := http.NewServeMux()
-
 	mux.HandleFunc("GET /css/output.css", s.handleCSS)
-	for _, name := range []string{
-		"my-x-profile-pic.jpg",
-		"og-image.png",
-		"favicon.ico",
-		"favicon-16x16.png",
-		"favicon-32x32.png",
-		"apple-touch-icon.png",
-		"android-chrome-192x192.png",
-		"android-chrome-512x512.png",
-		"site.webmanifest",
-	} {
-		mux.HandleFunc("GET /"+name, s.handleStaticFile(name))
-	}
-
 	mux.HandleFunc("GET /tabs/{tab}", s.handleTab)
 	mux.HandleFunc("GET /blog/{slug}", s.handleBlogPost)
 	mux.HandleFunc("POST /api/revalidate", s.handleRevalidate)
 	mux.HandleFunc("GET /{$}", s.handleIndex)
-	mux.HandleFunc("GET /", s.handleNotFound)
-
+	mux.HandleFunc("GET /", s.serveStaticOrNotFound)
 	return mux
+}
+
+func (s *Server) serveStaticOrNotFound(w http.ResponseWriter, r *http.Request) {
+	staticRoot := filepath.Join(s.root, "static")
+	rel := strings.TrimPrefix(filepath.Clean(r.URL.Path), "/")
+	full := filepath.Join(staticRoot, rel)
+	if !strings.HasPrefix(full, staticRoot+string(os.PathSeparator)) && full != staticRoot {
+		s.handleNotFound(w, r)
+		return
+	}
+	info, err := os.Stat(full)
+	if err != nil || info.IsDir() {
+		s.handleNotFound(w, r)
+		return
+	}
+	http.ServeFile(w, r, full)
 }
 
 func (s *Server) render(w http.ResponseWriter, name string, data any) {
@@ -65,11 +65,4 @@ func (s *Server) render(w http.ResponseWriter, name string, data any) {
 		log.Printf("template %s: %v", name, err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 	}
-}
-
-func RootFromEnv() string {
-	if root := os.Getenv("SITE_ROOT"); root != "" {
-		return root
-	}
-	return "."
 }

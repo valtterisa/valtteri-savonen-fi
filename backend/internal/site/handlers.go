@@ -32,7 +32,7 @@ type PageData struct {
 	ActiveTab        string
 	Projects         []content.Project
 	Experiences      []content.Experience
-	Posts            []content.BlogPostSummary
+	Posts            []marble.Post
 	Post             *marble.Post
 	PostHTML         template.HTML
 	AuthorName       string
@@ -42,7 +42,7 @@ type PageData struct {
 	NotFound         bool
 }
 
-func (s *Server) normalizeTab(tab string) string {
+func normalizeTab(tab string) string {
 	switch tab {
 	case "experience", "blog":
 		return tab
@@ -81,7 +81,7 @@ func homeSEO() SEO {
 	}
 }
 
-func formatPublishedDisplay(raw string) string {
+func formatPublished(raw string) string {
 	if raw == "" {
 		return ""
 	}
@@ -95,22 +95,6 @@ func formatPublishedDisplay(raw string) string {
 	return t.Format("January 2, 2006")
 }
 
-func toSummaries(posts []marble.Post) []content.BlogPostSummary {
-	out := make([]content.BlogPostSummary, 0, len(posts))
-	for _, p := range posts {
-		out = append(out, content.BlogPostSummary{
-			Title:       p.Title,
-			PublishedAt: p.PublishedAt,
-			Slug:        p.Slug,
-		})
-	}
-	return out
-}
-
-func cacheHeaders(w http.ResponseWriter) {
-	w.Header().Set("Cache-Control", "public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400")
-}
-
 func writeJSON(w http.ResponseWriter, status int, v any) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
@@ -118,36 +102,35 @@ func writeJSON(w http.ResponseWriter, status int, v any) {
 }
 
 func (s *Server) handleIndex(w http.ResponseWriter, r *http.Request) {
-	tab := s.normalizeTab(r.URL.Query().Get("tab"))
-	data := PageData{
-		SEO:         homeSEO(),
-		ActiveTab:   tab,
-		Projects:    content.Projects,
-		Experiences: content.Experiences,
+	tab := normalizeTab(r.URL.Query().Get("tab"))
+	data := PageData{SEO: homeSEO(), ActiveTab: tab}
+	switch tab {
+	case "blog":
+		data.Posts = marble.ListPosts()
+	case "experience":
+		data.Experiences = content.Experiences
+	default:
+		data.Projects = content.Projects
 	}
-	if tab == "blog" {
-		data.Posts = toSummaries(marble.ListPosts())
-	}
-	cacheHeaders(w)
+	w.Header().Set("Cache-Control", "public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400")
 	s.render(w, "index.html", data)
 }
 
 func (s *Server) handleTab(w http.ResponseWriter, r *http.Request) {
-	tab := s.normalizeTab(r.PathValue("tab"))
-	data := PageData{
-		ActiveTab:   tab,
-		Projects:    content.Projects,
-		Experiences: content.Experiences,
-	}
+	tab := normalizeTab(r.PathValue("tab"))
+	data := PageData{ActiveTab: tab}
 	tmpl := "tab-projects.html"
 	switch tab {
 	case "experience":
 		tmpl = "tab-experience.html"
+		data.Experiences = content.Experiences
 	case "blog":
 		tmpl = "tab-blog.html"
-		data.Posts = toSummaries(marble.ListPosts())
+		data.Posts = marble.ListPosts()
+	default:
+		data.Projects = content.Projects
 	}
-	cacheHeaders(w)
+	w.Header().Set("Cache-Control", "public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400")
 	s.render(w, tmpl, data)
 }
 
@@ -156,7 +139,8 @@ func (s *Server) handleBlogPost(w http.ResponseWriter, r *http.Request) {
 	post := marble.GetPost(slug)
 
 	if post == nil {
-		data := PageData{
+		w.WriteHeader(http.StatusNotFound)
+		s.render(w, "blog-post.html", PageData{
 			SEO: SEO{
 				Title:       "Post Not Found",
 				Description: "The requested blog post could not be found.",
@@ -166,9 +150,7 @@ func (s *Server) handleBlogPost(w http.ResponseWriter, r *http.Request) {
 				Image:       "https://valtterisavonen.fi/og-image.png",
 			},
 			NotFound: true,
-		}
-		w.WriteHeader(http.StatusNotFound)
-		s.render(w, "blog-post.html", data)
+		})
 		return
 	}
 
@@ -213,7 +195,8 @@ func (s *Server) handleBlogPost(w http.ResponseWriter, r *http.Request) {
 		jsonLD = template.JS(raw)
 	}
 
-	data := PageData{
+	w.Header().Set("Cache-Control", "public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400")
+	s.render(w, "blog-post.html", PageData{
 		SEO: SEO{
 			Title:            title,
 			Description:      desc,
@@ -230,10 +213,8 @@ func (s *Server) handleBlogPost(w http.ResponseWriter, r *http.Request) {
 		AuthorName:       authorName,
 		AuthorImage:      authorImage,
 		PublishedAt:      post.PublishedAt,
-		PublishedDisplay: formatPublishedDisplay(post.PublishedAt),
-	}
-	cacheHeaders(w)
-	s.render(w, "blog-post.html", data)
+		PublishedDisplay: formatPublished(post.PublishedAt),
+	})
 }
 
 func (s *Server) handleNotFound(w http.ResponseWriter, r *http.Request) {
@@ -249,16 +230,6 @@ func (s *Server) handleNotFound(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-type postEventPayload struct {
-	Event string `json:"event"`
-	Data  struct {
-		ID    string `json:"id"`
-		Slug  string `json:"slug"`
-		Name  string `json:"name"`
-		Title string `json:"title"`
-	} `json:"data"`
-}
-
 func (s *Server) handleRevalidate(w http.ResponseWriter, r *http.Request) {
 	signature := r.Header.Get("x-marble-signature")
 	secret := os.Getenv("MARBLE_WEBHOOK_SECRET")
@@ -269,42 +240,12 @@ func (s *Server) handleRevalidate(w http.ResponseWriter, r *http.Request) {
 
 	defer r.Body.Close()
 	body, err := io.ReadAll(r.Body)
-	if err != nil {
-		writeJSON(w, http.StatusBadRequest, map[string]string{"error": "Invalid body"})
-		return
-	}
-
-	if !marble.VerifySignature(secret, signature, string(body)) {
+	if err != nil || !marble.VerifySignature(secret, signature, string(body)) {
 		writeJSON(w, http.StatusBadRequest, map[string]string{"error": "Invalid signature"})
 		return
 	}
 
-	var payload postEventPayload
-	if err := json.Unmarshal(body, &payload); err != nil || payload.Event == "" {
-		writeJSON(w, http.StatusBadRequest, map[string]string{"error": "Invalid payload structure"})
-		return
-	}
-
-	if strings.HasPrefix(payload.Event, "post") {
-		writeJSON(w, http.StatusOK, map[string]any{
-			"revalidated": true,
-			"now":         time.Now().UnixMilli(),
-			"message":     "ok",
-		})
-		return
-	}
-
-	writeJSON(w, http.StatusOK, map[string]any{
-		"revalidated": false,
-		"now":         time.Now().UnixMilli(),
-		"message":     "Event ignored",
-	})
-}
-
-func (s *Server) handleStaticFile(name string) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, filepath.Join(s.root, "static", name))
-	}
+	writeJSON(w, http.StatusOK, map[string]string{"ok": "true"})
 }
 
 func (s *Server) handleCSS(w http.ResponseWriter, r *http.Request) {

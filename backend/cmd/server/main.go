@@ -9,21 +9,22 @@ import (
 )
 
 func main() {
-	srv, err := site.New(site.RootFromEnv())
+	root := "."
+	if v := os.Getenv("SITE_ROOT"); v != "" {
+		root = v
+	}
+
+	srv, err := site.New(root)
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	logger := log.New(os.Stdout, "http: ", log.LstdFlags)
-	handler := site.Logging(logger, srv.Handler())
 
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
 	}
+
+	logger := log.New(os.Stdout, "http: ", log.LstdFlags)
 	logger.Println("listening on http://localhost:" + port)
-	if err := http.ListenAndServe(":"+port, handler); err != nil {
-		logger.Println("http.ListenAndServe():", err)
-		os.Exit(1)
-	}
+	log.Fatal(http.ListenAndServe(":"+port, site.Logging(logger, srv.Handler())))
 }

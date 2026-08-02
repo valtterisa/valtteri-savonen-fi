@@ -28,11 +28,6 @@ type Tag struct {
 	Slug string `json:"slug"`
 }
 
-type Category struct {
-	Name string `json:"name"`
-	Slug string `json:"slug"`
-}
-
 type Post struct {
 	ID          string   `json:"id"`
 	Slug        string   `json:"slug"`
@@ -43,16 +38,7 @@ type Post struct {
 	PublishedAt string   `json:"publishedAt"`
 	UpdatedAt   string   `json:"updatedAt"`
 	Authors     []Author `json:"authors"`
-	Category    Category `json:"category"`
 	Tags        []Tag    `json:"tags"`
-}
-
-type listResponse struct {
-	Posts []Post `json:"posts"`
-}
-
-type getResponse struct {
-	Post *Post `json:"post"`
 }
 
 func apiGet(path string) ([]byte, error) {
@@ -90,15 +76,12 @@ func ListPosts() []Post {
 		log.Printf("marble ListPosts: %v", err)
 		return nil
 	}
-
-	var parsed listResponse
+	var parsed struct {
+		Posts []Post `json:"posts"`
+	}
 	if err := json.Unmarshal(body, &parsed); err != nil {
-		var posts []Post
-		if err2 := json.Unmarshal(body, &posts); err2 != nil {
-			log.Printf("marble ListPosts: decode: %v", err2)
-			return nil
-		}
-		return posts
+		log.Printf("marble ListPosts: decode: %v", err)
+		return nil
 	}
 	return parsed.Posts
 }
@@ -109,23 +92,19 @@ func GetPost(slug string) *Post {
 		log.Printf("marble GetPost %q: %v", slug, err)
 		return nil
 	}
-
-	var wrapped getResponse
-	if err := json.Unmarshal(body, &wrapped); err == nil && wrapped.Post != nil {
-		return wrapped.Post
+	var parsed struct {
+		Post *Post `json:"post"`
 	}
-
-	var post Post
-	if err := json.Unmarshal(body, &post); err != nil || post.Slug == "" {
-		log.Printf("marble GetPost %q: decode failed or empty slug", slug)
+	if err := json.Unmarshal(body, &parsed); err != nil || parsed.Post == nil {
+		log.Printf("marble GetPost %q: decode failed", slug)
 		return nil
 	}
-	return &post
+	return parsed.Post
 }
 
 func VerifySignature(secret, signatureHeader, bodyText string) bool {
-	expectedHex := strings.TrimPrefix(signatureHeader, "sha256=")
+	expected := strings.TrimPrefix(signatureHeader, "sha256=")
 	mac := hmac.New(sha256.New, []byte(secret))
 	_, _ = mac.Write([]byte(bodyText))
-	return expectedHex == hex.EncodeToString(mac.Sum(nil))
+	return expected == hex.EncodeToString(mac.Sum(nil))
 }

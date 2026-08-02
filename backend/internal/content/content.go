@@ -17,12 +17,6 @@ type Experience struct {
 	Technologies []string
 }
 
-type BlogPostSummary struct {
-	Title       string
-	PublishedAt string
-	Slug        string
-}
-
 var Projects = []Project{
 	{
 		Title:        "quickshops.app",
