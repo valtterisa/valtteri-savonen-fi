@@ -3,7 +3,6 @@ package marble
 import (
 	"crypto/hmac"
 	"crypto/sha256"
-	"crypto/subtle"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
@@ -12,26 +11,12 @@ import (
 	"net/http"
 	"os"
 	"strings"
-	"sync"
 	"time"
 )
 
-const (
-	baseURL = "https://api.marblecms.com"
-	ttl     = 24 * time.Hour
-)
+const baseURL = "https://api.marblecms.com"
 
 var httpClient = &http.Client{Timeout: 10 * time.Second}
-
-type cacheEntry struct {
-	value     any
-	expiresAt time.Time
-}
-
-var (
-	cache   = map[string]cacheEntry{}
-	cacheMu sync.RWMutex
-)
 
 type Author struct {
 	Name  string `json:"name"`
@@ -70,39 +55,6 @@ type getResponse struct {
 	Post *Post `json:"post"`
 }
 
-func getCached[T any](key string) (T, bool) {
-	cacheMu.RLock()
-	defer cacheMu.RUnlock()
-	var zero T
-	entry, ok := cache[key]
-	if !ok || time.Now().After(entry.expiresAt) {
-		return zero, false
-	}
-	val, ok := entry.value.(T)
-	if !ok {
-		return zero, false
-	}
-	return val, true
-}
-
-func setCached(key string, value any) {
-	cacheMu.Lock()
-	defer cacheMu.Unlock()
-	cache[key] = cacheEntry{value: value, expiresAt: time.Now().Add(ttl)}
-}
-
-func InvalidatePostsList() {
-	cacheMu.Lock()
-	defer cacheMu.Unlock()
-	delete(cache, "posts:list")
-}
-
-func InvalidatePost(slug string) {
-	cacheMu.Lock()
-	defer cacheMu.Unlock()
-	delete(cache, "posts:"+slug)
-}
-
 func apiGet(path string) ([]byte, error) {
 	key := os.Getenv("MARBLE_API_KEY")
 	if key == "" {
@@ -133,10 +85,6 @@ func apiGet(path string) ([]byte, error) {
 }
 
 func ListPosts() []Post {
-	if cached, ok := getCached[[]Post]("posts:list"); ok {
-		return cached
-	}
-
 	body, err := apiGet("/v1/posts")
 	if err != nil {
 		log.Printf("marble ListPosts: %v", err)
@@ -150,20 +98,12 @@ func ListPosts() []Post {
 			log.Printf("marble ListPosts: decode: %v", err2)
 			return nil
 		}
-		setCached("posts:list", posts)
 		return posts
 	}
-
-	setCached("posts:list", parsed.Posts)
 	return parsed.Posts
 }
 
 func GetPost(slug string) *Post {
-	cacheKey := "posts:" + slug
-	if cached, ok := getCached[*Post](cacheKey); ok {
-		return cached
-	}
-
 	body, err := apiGet("/v1/posts/" + slug)
 	if err != nil {
 		log.Printf("marble GetPost %q: %v", slug, err)
@@ -172,7 +112,6 @@ func GetPost(slug string) *Post {
 
 	var wrapped getResponse
 	if err := json.Unmarshal(body, &wrapped); err == nil && wrapped.Post != nil {
-		setCached(cacheKey, wrapped.Post)
 		return wrapped.Post
 	}
 
@@ -181,7 +120,6 @@ func GetPost(slug string) *Post {
 		log.Printf("marble GetPost %q: decode failed or empty slug", slug)
 		return nil
 	}
-	setCached(cacheKey, &post)
 	return &post
 }
 
@@ -189,12 +127,5 @@ func VerifySignature(secret, signatureHeader, bodyText string) bool {
 	expectedHex := strings.TrimPrefix(signatureHeader, "sha256=")
 	mac := hmac.New(sha256.New, []byte(secret))
 	_, _ = mac.Write([]byte(bodyText))
-	computedHex := hex.EncodeToString(mac.Sum(nil))
-
-	expected, err1 := hex.DecodeString(expectedHex)
-	computed, err2 := hex.DecodeString(computedHex)
-	if err1 != nil || err2 != nil || len(expected) != len(computed) {
-		return false
-	}
-	return subtle.ConstantTimeCompare(expected, computed) == 1
+	return expectedHex == hex.EncodeToString(mac.Sum(nil))
 }

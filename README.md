@@ -28,7 +28,7 @@ backend/
   cmd/server/           # entrypoint
   internal/
     content/            # projects + experience
-    marble/             # CMS client + cache
+    marble/             # CMS client
     site/               # HTTP handlers
 scripts/                # local start script
 package.json go.mod Dockerfile railway.toml

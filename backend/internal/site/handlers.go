@@ -286,14 +286,10 @@ func (s *Server) handleRevalidate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if strings.HasPrefix(payload.Event, "post") {
-		marble.InvalidatePostsList()
-		if payload.Data.Slug != "" {
-			marble.InvalidatePost(payload.Data.Slug)
-		}
 		writeJSON(w, http.StatusOK, map[string]any{
 			"revalidated": true,
 			"now":         time.Now().UnixMilli(),
-			"message":     "Post cache invalidated",
+			"message":     "ok",
 		})
 		return
 	}
