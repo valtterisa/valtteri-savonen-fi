@@ -8,3 +8,5 @@ node_modules
 *.exe
 *.test
 .vercel
+.output
+.vinxi

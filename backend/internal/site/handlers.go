@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/valtterisa/valtteri-savonen-fi/backend/internal/content"
+	"github.com/valtterisa/valtteri-savonen-fi/backend/internal/contrib"
 	"github.com/valtterisa/valtteri-savonen-fi/backend/internal/marble"
 )
 
@@ -40,6 +41,7 @@ type PageData struct {
 	PublishedAt      string
 	PublishedDisplay string
 	NotFound         bool
+	Graph            contrib.Graph
 }
 
 func normalizeTab(tab string) string {
@@ -103,7 +105,12 @@ func writeJSON(w http.ResponseWriter, status int, v any) {
 
 func (s *Server) handleIndex(w http.ResponseWriter, r *http.Request) {
 	tab := normalizeTab(r.URL.Query().Get("tab"))
-	data := PageData{SEO: homeSEO(), ActiveTab: tab}
+	w.Header().Set("Vary", "HX-Request")
+	if r.Header.Get("HX-Request") == "true" {
+		s.writeTab(w, tab)
+		return
+	}
+	data := PageData{SEO: homeSEO(), ActiveTab: tab, Graph: contrib.Get()}
 	switch tab {
 	case "blog":
 		data.Posts = marble.ListPosts()
@@ -117,7 +124,10 @@ func (s *Server) handleIndex(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) handleTab(w http.ResponseWriter, r *http.Request) {
-	tab := normalizeTab(r.PathValue("tab"))
+	s.writeTab(w, normalizeTab(r.PathValue("tab")))
+}
+
+func (s *Server) writeTab(w http.ResponseWriter, tab string) {
 	data := PageData{ActiveTab: tab}
 	tmpl := "tab-projects.html"
 	switch tab {
@@ -130,7 +140,7 @@ func (s *Server) handleTab(w http.ResponseWriter, r *http.Request) {
 	default:
 		data.Projects = content.Projects
 	}
-	w.Header().Set("Cache-Control", "public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400")
+	w.Header().Set("Cache-Control", "no-store")
 	s.render(w, tmpl, data)
 }
 

@@ -30,7 +30,7 @@
           </div>
         </div>
 
-        <div class="flex items-center gap-4 mb-8">
+        <div class="flex items-center gap-4 mb-6">
           <a
             href="https://cal.com/valtterisa/15min"
             target="_blank"
@@ -57,6 +57,24 @@
           </a>
         </div>
 
+        {{if .Graph.Days}}
+        <div class="contrib-block">
+          <div class="contrib-frame">
+            <div class="contrib-scroll">
+              <div class="contrib">
+                {{range .Graph.Days}}
+                <span class="l{{.Level}}" data-tip="{{.Tip}}"></span>
+                {{end}}
+              </div>
+            </div>
+            <div class="contrib-fade contrib-fade-left"></div>
+            <div class="contrib-fade contrib-fade-right"></div>
+          </div>
+          <p class="contrib-caption">{{.Graph.Caption}} · <a href="https://github.com/valtterisa" target="_blank" rel="noopener noreferrer" class="contrib-source">source</a></p>
+        </div>
+        <div id="contrib-tip" class="contrib-tip" hidden></div>
+        {{end}}
+
         <nav class="flex gap-6 border-b border-gray-800">
           <a
             href="/?tab=projects"
@@ -64,6 +82,7 @@
             hx-target="#tab-panel"
             hx-swap="innerHTML"
             hx-push-url="/?tab=projects"
+            hx-history="false"
             class="pb-3 text-sm font-medium transition-colors {{if eq .ActiveTab "projects"}}text-white border-b-2 border-white -mb-[2px]{{else}}text-gray-500 hover:text-gray-300{{end}}"
           >projects</a>
           <a
@@ -72,6 +91,7 @@
             hx-target="#tab-panel"
             hx-swap="innerHTML"
             hx-push-url="/?tab=experience"
+            hx-history="false"
             class="pb-3 text-sm font-medium transition-colors {{if eq .ActiveTab "experience"}}text-white border-b-2 border-white -mb-[2px]{{else}}text-gray-500 hover:text-gray-300{{end}}"
           >experience</a>
           <a
@@ -80,6 +100,7 @@
             hx-target="#tab-panel"
             hx-swap="innerHTML"
             hx-push-url="/?tab=blog"
+            hx-history="false"
             hx-indicator="#blog-spinner"
             class="pb-3 text-sm font-medium transition-colors inline-flex items-center gap-2 {{if eq .ActiveTab "blog"}}text-white border-b-2 border-white -mb-[2px]{{else}}text-gray-500 hover:text-gray-300{{end}}"
           >
@@ -106,12 +127,127 @@
   <style>
     .htmx-indicator { display: none; }
     .htmx-request .htmx-indicator, .htmx-request.htmx-indicator { display: inline-block; }
+    .contrib-block { margin-bottom: 2rem; position: relative; z-index: 1; }
+    .contrib-frame { position: relative; }
+    .contrib-scroll {
+      overflow-x: auto;
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior-x: contain;
+      touch-action: pan-x;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    .contrib-scroll::-webkit-scrollbar { display: none; }
+    .contrib-fade {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 40px;
+      pointer-events: none;
+      z-index: 2;
+      opacity: 1;
+      transition: opacity .15s;
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+    }
+    .contrib-fade-left {
+      left: 0;
+      background: linear-gradient(to right, #0a0a0a 0%, rgba(10,10,10,.55) 45%, transparent 100%);
+      -webkit-mask-image: linear-gradient(to right, black 30%, transparent);
+      mask-image: linear-gradient(to right, black 30%, transparent);
+    }
+    .contrib-fade-right {
+      right: 0;
+      background: linear-gradient(to left, #0a0a0a 0%, rgba(10,10,10,.55) 45%, transparent 100%);
+      -webkit-mask-image: linear-gradient(to left, black 30%, transparent);
+      mask-image: linear-gradient(to left, black 30%, transparent);
+    }
+    .contrib-frame.at-start .contrib-fade-left,
+    .contrib-frame.at-end .contrib-fade-right { opacity: 0; }
+    .contrib {
+      display: grid;
+      grid-auto-flow: column;
+      grid-template-rows: repeat(7, 10px);
+      grid-auto-columns: 10px;
+      gap: 3px;
+      width: max-content;
+    }
+    .contrib span { width: 10px; height: 10px; border-radius: 2px; }
+    .contrib span:hover { outline: 1px solid rgba(255,255,255,.4); outline-offset: -1px; }
+    .contrib-tip {
+      position: fixed;
+      z-index: 100;
+      transform: translate(-50%, calc(-100% - 6px));
+      background: #1a1a1a;
+      color: #fff;
+      border: 1px solid #333;
+      font-size: 11px;
+      line-height: 1.2;
+      padding: 4px 8px;
+      border-radius: 4px;
+      white-space: nowrap;
+      pointer-events: none;
+    }
+    .contrib-caption { margin-top: 8px; font-size: 14px; color: #6b7280; }
+    .contrib-source { color: #9ca3af; }
+    .contrib-source:hover { color: #fff; }
+    .l0 { background: #161b22; }
+    .l1 { background: #0e4429; }
+    .l2 { background: #006d32; }
+    .l3 { background: #26a641; }
+    .l4 { background: #39d353; }
   </style>
   <script>
+    (function () {
+      var el = document.querySelector('.contrib-scroll');
+      var frame = document.querySelector('.contrib-frame');
+      var tip = document.getElementById('contrib-tip');
+      if (!el) return;
+      function syncFade() {
+        if (!frame) return;
+        var noScroll = el.scrollWidth <= el.clientWidth + 2;
+        var atStart = noScroll || el.scrollLeft <= 2;
+        var atEnd = noScroll || el.scrollLeft + el.clientWidth >= el.scrollWidth - 2;
+        frame.classList.toggle('at-start', atStart);
+        frame.classList.toggle('at-end', atEnd);
+      }
+      el.scrollLeft = el.scrollWidth;
+      syncFade();
+      el.addEventListener('wheel', function (e) {
+        if (el.scrollWidth <= el.clientWidth) return;
+        el.scrollLeft += e.deltaY + e.deltaX;
+        e.preventDefault();
+      }, { passive: false });
+      el.addEventListener('mouseover', function (e) {
+        var s = e.target.closest('[data-tip]');
+        if (!s || !tip) return;
+        var r = s.getBoundingClientRect();
+        tip.textContent = s.getAttribute('data-tip');
+        tip.style.left = (r.left + r.width / 2) + 'px';
+        tip.style.top = r.top + 'px';
+        tip.hidden = false;
+      });
+      el.addEventListener('mouseout', function (e) {
+        if (!tip) return;
+        if (e.relatedTarget && el.contains(e.relatedTarget)) return;
+        tip.hidden = true;
+      });
+      el.addEventListener('scroll', function () {
+        if (tip) tip.hidden = true;
+        syncFade();
+      });
+    })();
     document.body.addEventListener('htmx:afterSettle', function (e) {
-      var url = e.detail.pathInfo && e.detail.pathInfo.requestPath;
-      if (!url || url.indexOf('/tabs/') !== 0) return;
-      var tab = url.replace('/tabs/', '');
+      var path = (e.detail.pathInfo && e.detail.pathInfo.requestPath) || '';
+      var tab = '';
+      if (path.indexOf('/tabs/') !== -1) tab = path.split('/tabs/')[1];
+      else if (e.detail.elt) {
+        var hxget = e.detail.elt.getAttribute('hx-get') || '';
+        if (hxget.indexOf('/tabs/') === 0) tab = hxget.replace('/tabs/', '');
+      }
+      if (!tab) return;
+      tab = tab.split('?')[0];
       document.querySelectorAll('nav a[hx-get^="/tabs/"]').forEach(function (a) {
         var active = a.getAttribute('hx-get') === '/tabs/' + tab;
         a.className = 'pb-3 text-sm font-medium transition-colors' +

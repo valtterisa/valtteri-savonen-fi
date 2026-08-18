@@ -1,6 +1,6 @@
 {
   "private": true,
-  "packageManager": "pnpm@9.15.9",
+  "packageManager": "pnpm@11.22.0",
   "scripts": {
     "start": "bash scripts/dev.sh",
     "build": "pnpm css && mkdir -p bin && go build -o bin/server ./backend/cmd/server",
