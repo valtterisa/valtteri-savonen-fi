@@ -105,11 +105,6 @@ func writeJSON(w http.ResponseWriter, status int, v any) {
 
 func (s *Server) handleIndex(w http.ResponseWriter, r *http.Request) {
 	tab := normalizeTab(r.URL.Query().Get("tab"))
-	w.Header().Set("Vary", "HX-Request")
-	if r.Header.Get("HX-Request") == "true" {
-		s.writeTab(w, tab)
-		return
-	}
 	data := PageData{SEO: homeSEO(), ActiveTab: tab, Graph: contrib.Get()}
 	switch tab {
 	case "blog":
