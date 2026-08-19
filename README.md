@@ -22,15 +22,20 @@ export MARBLE_WEBHOOK_SECRET=...
 
 ```
 src/
-  components/           # UI components
-  layouts/              # page layouts
+  components/
+    ui/                 # composable primitives (SiteShell, Profile, Tabs, Article, ...)
+    home/               # composed homepage panels
+    blog/               # composed blog views
+  layouts/              # Astro layouts (SEO shell)
   lib/                  # content, marble CMS, contributions
-  pages/                # routes + API endpoints
+  pages/                # Astro routes + API endpoints
   styles/               # Tailwind CSS
 public/                 # static assets
 astro.config.mjs
 package.json
 ```
+
+UI is built with **React compound components** (composition pattern) — e.g. `SiteShell.Root`, `Profile.Avatar`, `Tabs.List`, `Article.Header` — composed into page-level views like `HomePage` and `BlogPostPage`.
 
 ## Deploy (Vercel)
 
