@@ -1,50 +1,45 @@
 ---
 import type { SeoData } from "../lib/seo";
+import { SITE_HANDLE, SITE_NAME } from "../lib/site";
 
 interface Props {
   seo: SeoData;
 }
 
 const { seo } = Astro.props;
+const robots = seo.noindex ? "noindex, follow" : "index, follow";
 ---
 
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="generator" content={Astro.generator} />
+<meta name="theme-color" content="#0a0a0a" />
 <title>{seo.title}</title>
-{seo.description && <meta name="description" content={seo.description} />}
+<meta name="description" content={seo.description} />
 {seo.keywords && <meta name="keywords" content={seo.keywords} />}
-<meta name="author" content="Valtteri Savonen" />
-<meta name="robots" content="index, follow" />
+<meta name="author" content={SITE_NAME} />
+<meta name="robots" content={robots} />
 <meta name="language" content="English" />
-<meta name="revisit-after" content="7 days" />
-<meta property="og:site_name" content="Valtteri Savonen" />
+<link rel="alternate" hreflang="en" href={seo.canonical} />
+<link rel="alternate" hreflang="x-default" href={seo.canonical} />
+<meta property="og:site_name" content={SITE_NAME} />
 <meta property="og:title" content={seo.title} />
-{seo.description && (
-  <meta property="og:description" content={seo.description} />
-)}
+<meta property="og:description" content={seo.description} />
 <meta property="og:url" content={seo.url} />
 <meta property="og:type" content={seo.type} />
 <meta property="og:locale" content="en_US" />
+<meta property="og:image" content={seo.image} />
+<meta property="og:image:secure_url" content={seo.image} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content={seo.title} />
+<meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content={seo.title} />
-{seo.description && (
-  <meta name="twitter:description" content={seo.description} />
-)}
-<meta name="twitter:creator" content="@valtterisavonen" />
-<meta name="twitter:site" content="@valtterisavonen" />
-{
-  seo.image ? (
-    <>
-      <meta property="og:image" content={seo.image} />
-      <meta property="og:image:width" content="1200" />
-      <meta property="og:image:height" content="630" />
-      <meta property="og:image:alt" content={seo.title} />
-      <meta name="twitter:image" content={seo.image} />
-      <meta name="twitter:card" content="summary_large_image" />
-    </>
-  ) : (
-    <meta name="twitter:card" content="summary" />
-  )
-}
+<meta name="twitter:description" content={seo.description} />
+<meta name="twitter:image" content={seo.image} />
+<meta name="twitter:image:alt" content={seo.title} />
+<meta name="twitter:creator" content={SITE_HANDLE} />
+<meta name="twitter:site" content={SITE_HANDLE} />
 {
   seo.articlePublished && (
     <>
@@ -53,7 +48,7 @@ const { seo } = Astro.props;
     </>
   )
 }
-{seo.canonical && <link rel="canonical" href={seo.canonical} />}
+<link rel="canonical" href={seo.canonical} />
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />

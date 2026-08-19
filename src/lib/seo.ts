@@ -1,42 +1,108 @@
+import type { Tab } from "./content";
+import {
+  DEFAULT_DESCRIPTION,
+  SITE_NAME,
+  SITE_URL,
+  absoluteUrl,
+  ogImageUrl,
+} from "./site";
+
 export type SeoData = {
   title: string;
-  description?: string;
+  description: string;
   keywords?: string;
-  image?: string;
+  image: string;
   url: string;
   type: "website" | "article";
-  canonical?: string;
+  canonical: string;
   jsonLd?: Record<string, unknown>;
   articlePublished?: string;
   articleAuthor?: string;
+  noindex?: boolean;
 };
+
+function personJsonLd() {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    name: SITE_NAME,
+    jobTitle: "Software Engineer",
+    url: SITE_URL,
+    sameAs: [
+      "https://cal.com/valtterisa/15min",
+      "https://github.com/valtterisa",
+      "https://x.com/vvaltterisa",
+      "https://linkedin.com/in/valtterisavonen",
+    ],
+    address: {
+      "@type": "PostalAddress",
+      addressCountry: "FI",
+    },
+  };
+}
 
 export function homeSeo(): SeoData {
   return {
-    title: "Valtteri Savonen - Software Engineer",
-    description:
-      "Full Stack Engineer from Finland. Working for myself, looking for startup ideas, building and doing work for clients. Specializing in Next.js, TypeScript, and modern web technologies.",
+    title: `${SITE_NAME} - Software Engineer`,
+    description: DEFAULT_DESCRIPTION,
     keywords:
-      "Valtteri Savonen, full stack engineer, software engineer, web development, Next.js, TypeScript, Finland, floras.app",
-    image: "https://valtterisavonen.fi/og-image.png",
-    url: "https://valtterisavonen.fi",
+      "Valtteri Savonen, full stack engineer, software engineer, web development, Next.js, TypeScript, Finland, quickshops.app, drophost.space, floras.app",
+    image: ogImageUrl("/og/home.png"),
+    url: SITE_URL,
     type: "website",
-    canonical: "https://valtterisavonen.fi",
+    canonical: SITE_URL,
+    jsonLd: personJsonLd(),
+  };
+}
+
+export function tabSeo(tab: Tab): SeoData {
+  if (tab === "blog") {
+    return blogTabSeo();
+  }
+
+  if (tab === "experience") {
+    return {
+      title: `Experience - ${SITE_NAME}`,
+      description:
+        "Work experience and background of Valtteri Savonen, full stack software engineer from Finland.",
+      image: ogImageUrl("/og/home.png"),
+      url: absoluteUrl("/?tab=experience"),
+      type: "website",
+      canonical: absoluteUrl("/?tab=experience"),
+      jsonLd: personJsonLd(),
+    };
+  }
+
+  return {
+    ...homeSeo(),
+    title: `Projects - ${SITE_NAME}`,
+    description:
+      "Projects by Valtteri Savonen including quickshops.app, drophost.space, floras.app, and haalarikone.fi.",
+    url: absoluteUrl("/?tab=projects"),
+    canonical: absoluteUrl("/?tab=projects"),
+  };
+}
+
+export function blogTabSeo(): SeoData {
+  return {
+    title: `Blog - ${SITE_NAME}`,
+    description:
+      "Blog posts by Valtteri Savonen about software engineering, products, and building on the web.",
+    keywords:
+      "Valtteri Savonen blog, software engineering blog, web development, TypeScript, Next.js",
+    image: ogImageUrl("/og/blog.png"),
+    url: absoluteUrl("/?tab=blog"),
+    type: "website",
+    canonical: absoluteUrl("/?tab=blog"),
     jsonLd: {
       "@context": "https://schema.org",
-      "@type": "Person",
-      name: "Valtteri Savonen",
-      jobTitle: "Software Engineer",
-      url: "https://valtterisavonen.fi",
-      sameAs: [
-        "https://cal.com/valtterisa/15min",
-        "https://github.com/valtterisa",
-        "https://x.com/vvaltterisa",
-        "https://linkedin.com/in/valtterisavonen",
-      ],
-      address: {
-        "@type": "PostalAddress",
-        addressCountry: "FI",
+      "@type": "Blog",
+      name: `${SITE_NAME} Blog`,
+      url: absoluteUrl("/?tab=blog"),
+      author: {
+        "@type": "Person",
+        name: SITE_NAME,
+        url: SITE_URL,
       },
     },
   };
@@ -47,39 +113,43 @@ export function blogPostSeo(
   post: {
     title: string;
     description: string;
-    coverImage: string;
     publishedAt: string;
   },
   authorName: string,
 ): SeoData {
-  const title = post.title.toLowerCase();
-  const description = (post.description || post.title).toLowerCase();
-  const image = post.coverImage || "https://valtterisavonen.fi/og-image.png";
-  const url = `https://valtterisavonen.fi/blog/${slug}`;
+  const description =
+    post.description ||
+    `Read "${post.title}" on ${SITE_NAME}'s blog.`;
+  const url = absoluteUrl(`/blog/${slug}`);
 
   const jsonLd = post.publishedAt
     ? {
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         headline: post.title,
+        description,
         author: {
           "@type": "Person",
           name: authorName,
-          url: "https://valtterisavonen.fi",
+          url: SITE_URL,
         },
         datePublished: post.publishedAt,
+        dateModified: post.publishedAt,
         url,
+        mainEntityOfPage: url,
+        image: ogImageUrl(`/og/blog/${slug}.png`),
         publisher: {
           "@type": "Person",
-          name: "Valtteri Savonen",
+          name: SITE_NAME,
+          url: SITE_URL,
         },
       }
     : undefined;
 
   return {
-    title,
+    title: `${post.title} - ${SITE_NAME}`,
     description,
-    image,
+    image: ogImageUrl(`/og/blog/${slug}.png`),
     url,
     type: "article",
     canonical: url,
@@ -91,21 +161,24 @@ export function blogPostSeo(
 
 export function notFoundSeo(path: string): SeoData {
   return {
-    title: "Not Found",
-    description: "Page not found",
-    url: `https://valtterisavonen.fi${path}`,
+    title: `Not Found - ${SITE_NAME}`,
+    description: "The page you are looking for could not be found.",
+    url: absoluteUrl(path),
     type: "website",
-    image: "https://valtterisavonen.fi/og-image.png",
+    canonical: absoluteUrl(path),
+    image: ogImageUrl("/og/home.png"),
+    noindex: true,
   };
 }
 
 export function blogNotFoundSeo(slug: string): SeoData {
   return {
-    title: "Post Not Found",
+    title: `Post Not Found - ${SITE_NAME}`,
     description: "The requested blog post could not be found.",
-    url: `https://valtterisavonen.fi/blog/${slug}`,
+    url: absoluteUrl(`/blog/${slug}`),
     type: "website",
-    canonical: `https://valtterisavonen.fi/blog/${slug}`,
-    image: "https://valtterisavonen.fi/og-image.png",
+    canonical: absoluteUrl(`/blog/${slug}`),
+    image: ogImageUrl("/og/blog.png"),
+    noindex: true,
   };
 }
