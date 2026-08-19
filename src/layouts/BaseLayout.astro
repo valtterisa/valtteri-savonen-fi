@@ -1,0 +1,21 @@
+---
+import "../styles/global.css";
+import SEOHead from "../components/SEOHead.astro";
+import type { SeoData } from "../lib/seo";
+
+interface Props {
+  seo: SeoData;
+}
+
+const { seo } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <SEOHead seo={seo} />
+  </head>
+  <body class="bg-black text-white">
+    <slot />
+  </body>
+</html>

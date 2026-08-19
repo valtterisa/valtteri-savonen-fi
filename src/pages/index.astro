@@ -1,0 +1,75 @@
+---
+export const prerender = false;
+
+import BaseLayout from "../layouts/BaseLayout.astro";
+import SocialLinks from "../components/SocialLinks.astro";
+import ContributionGraph from "../components/ContributionGraph.astro";
+import TabNav from "../components/TabNav.astro";
+import ProjectsTab from "../components/ProjectsTab.astro";
+import ExperienceTab from "../components/ExperienceTab.astro";
+import BlogTab from "../components/BlogTab.astro";
+import {
+  projects,
+  experiences,
+  normalizeTab,
+} from "../lib/content";
+import { getContributionGraph } from "../lib/contrib";
+import { listPosts } from "../lib/marble";
+import { homeSeo } from "../lib/seo";
+
+const activeTab = normalizeTab(Astro.url.searchParams.get("tab"));
+const graph = await getContributionGraph();
+const posts = activeTab === "blog" ? await listPosts() : [];
+
+Astro.response.headers.set(
+  "Cache-Control",
+  "public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400",
+);
+---
+
+<BaseLayout seo={homeSeo()}>
+  <div class="min-h-screen bg-[#0a0a0a] text-gray-100">
+    <div class="max-w-xl mx-auto px-6 py-12 md:py-16">
+      <header class="mb-8">
+        <div class="flex items-center gap-6 mb-6">
+          <img
+            src="/my-x-profile-pic.jpg"
+            alt="Valtteri Savonen"
+            class="w-20 h-20 rounded-full object-cover flex-shrink-0"
+          />
+          <div class="flex-1">
+            <h1 class="text-xl md:text-2xl font-bold mb-3">
+              hey, i'm valtteri!
+            </h1>
+            <p class="text-gray-400 text-sm">
+              currently building
+              <a
+                href="https://quickshops.app"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-gray-300 hover:text-white transition-colors underline underline-offset-2"
+                >quickshops.app</a
+              >.
+            </p>
+          </div>
+        </div>
+
+        <SocialLinks />
+        <ContributionGraph graph={graph} />
+        <TabNav activeTab={activeTab} />
+      </header>
+
+      <main class="mt-8">
+        {
+          activeTab === "experience" ? (
+            <ExperienceTab experiences={experiences} />
+          ) : activeTab === "blog" ? (
+            <BlogTab posts={posts} />
+          ) : (
+            <ProjectsTab projects={projects} />
+          )
+        }
+      </main>
+    </div>
+  </div>
+</BaseLayout>

@@ -1,0 +1,33 @@
+---
+import type { Tab } from "../lib/content";
+
+interface Props {
+  activeTab: Tab;
+}
+
+const { activeTab } = Astro.props;
+
+const tabs: Array<{ id: Tab; label: string; href: string }> = [
+  { id: "projects", label: "projects", href: "/?tab=projects" },
+  { id: "experience", label: "experience", href: "/?tab=experience" },
+  { id: "blog", label: "blog", href: "/?tab=blog" },
+];
+
+function tabClass(tab: Tab): string {
+  const base = "pb-3 text-sm font-medium transition-colors";
+  if (activeTab === tab) {
+    return `${base} text-white border-b-2 border-white -mb-[2px]`;
+  }
+  return `${base} text-gray-500 hover:text-gray-300`;
+}
+---
+
+<nav class="flex gap-6 border-b border-gray-800">
+  {
+    tabs.map((tab) => (
+      <a href={tab.href} class={tabClass(tab.id)}>
+        {tab.label}
+      </a>
+    ))
+  }
+</nav>

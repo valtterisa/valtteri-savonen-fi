@@ -3,8 +3,9 @@
 .vscode
 .DS_Store
 node_modules
-bin
-app
+dist
+.vercel
+.output
+.astro
 .env
 .env.*
-*.md
