@@ -1,5 +1,9 @@
 import { useEffect, useRef } from "react";
 import type { ContributionGraph as ContributionGraphData } from "../../lib/contrib";
+import {
+  hideContributionTip,
+  positionContributionTip,
+} from "../../lib/contribTip";
 import { ExternalLink } from "./ExternalLink";
 
 type ContributionGraphRootProps = {
@@ -11,21 +15,20 @@ function Root({ graph }: ContributionGraphRootProps) {
     return null;
   }
 
-  return (
-    <ContributionGraphFrame graph={graph} />
-  );
+  return <ContributionGraphFrame graph={graph} />;
 }
 
 function ContributionGraphFrame({ graph }: ContributionGraphRootProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const frameRef = useRef<HTMLDivElement>(null);
   const tipRef = useRef<HTMLDivElement>(null);
+  const activeDayRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     const el = scrollRef.current;
     const frame = frameRef.current;
     const tip = tipRef.current;
-    if (!el || !frame) return;
+    if (!el || !frame || !tip) return;
 
     function syncFade() {
       const noScroll = el!.scrollWidth <= el!.clientWidth + 2;
@@ -34,6 +37,19 @@ function ContributionGraphFrame({ graph }: ContributionGraphRootProps) {
         noScroll || el!.scrollLeft + el!.clientWidth >= el!.scrollWidth - 2;
       frame!.classList.toggle("at-start", atStart);
       frame!.classList.toggle("at-end", atEnd);
+    }
+
+    function showTip(target: HTMLElement) {
+      const label = target.getAttribute("data-tip");
+      if (!label) return;
+
+      tip!.textContent = label;
+      activeDayRef.current = target;
+
+      const position = positionContributionTip(tip!, target.getBoundingClientRect());
+      tip!.style.left = `${position.left}px`;
+      tip!.style.top = `${position.top}px`;
+      tip!.style.transform = position.transform;
     }
 
     el.scrollLeft = el.scrollWidth;
@@ -45,38 +61,65 @@ function ContributionGraphFrame({ graph }: ContributionGraphRootProps) {
       event.preventDefault();
     }
 
-    function onMouseOver(event: MouseEvent) {
+    function onPointerOver(event: PointerEvent) {
+      if (event.pointerType === "touch") return;
       const target = (event.target as HTMLElement | null)?.closest("[data-tip]");
-      if (!target || !tip) return;
-      const rect = target.getBoundingClientRect();
-      tip.textContent = target.getAttribute("data-tip");
-      tip.style.left = `${rect.left + rect.width / 2}px`;
-      tip.style.top = `${rect.top}px`;
-      tip.hidden = false;
+      if (!target || !(target instanceof HTMLElement)) return;
+      showTip(target);
     }
 
-    function onMouseOut(event: MouseEvent) {
-      if (!tip) return;
+    function onPointerOut(event: PointerEvent) {
+      if (event.pointerType === "touch") return;
       const related = event.relatedTarget as Node | null;
       if (related && el!.contains(related)) return;
-      tip.hidden = true;
+      hideContributionTip(tip!);
+      activeDayRef.current = null;
+    }
+
+    function onPointerDown(event: PointerEvent) {
+      const target = (event.target as HTMLElement | null)?.closest("[data-tip]");
+      if (!target || !(target instanceof HTMLElement) || !el!.contains(target)) {
+        hideContributionTip(tip!);
+        activeDayRef.current = null;
+        return;
+      }
+
+      event.preventDefault();
+
+      if (activeDayRef.current === target && !tip!.hidden) {
+        hideContributionTip(tip!);
+        activeDayRef.current = null;
+        return;
+      }
+
+      showTip(target);
     }
 
     function onScroll() {
-      if (tip) tip.hidden = true;
+      hideContributionTip(tip!);
+      activeDayRef.current = null;
       syncFade();
     }
 
+    function onResize() {
+      if (!activeDayRef.current || tip!.hidden) return;
+      showTip(activeDayRef.current);
+    }
+
     el.addEventListener("wheel", onWheel, { passive: false });
-    el.addEventListener("mouseover", onMouseOver);
-    el.addEventListener("mouseout", onMouseOut);
+    el.addEventListener("pointerover", onPointerOver);
+    el.addEventListener("pointerout", onPointerOut);
+    el.addEventListener("pointerdown", onPointerDown);
     el.addEventListener("scroll", onScroll);
+    window.addEventListener("resize", onResize);
 
     return () => {
       el.removeEventListener("wheel", onWheel);
-      el.removeEventListener("mouseover", onMouseOver);
-      el.removeEventListener("mouseout", onMouseOut);
+      el.removeEventListener("pointerover", onPointerOver);
+      el.removeEventListener("pointerout", onPointerOut);
+      el.removeEventListener("pointerdown", onPointerDown);
       el.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onResize);
     };
   }, [graph.days.length]);
 
@@ -122,6 +165,8 @@ function Day({ level, tip }: DayProps) {
       className={`l${level}`}
       data-tip={tip}
       aria-label={tip}
+      role="button"
+      tabIndex={0}
     />
   );
 }

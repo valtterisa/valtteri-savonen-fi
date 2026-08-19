@@ -10,39 +10,44 @@ function Root({ children }: TabsRootProps) {
 }
 
 type TabsTriggerProps = {
-  href: string;
   active: boolean;
+  onSelect: () => void;
   children: ReactNode;
 };
 
-function Trigger({ href, active, children }: TabsTriggerProps) {
+function Trigger({ active, onSelect, children }: TabsTriggerProps) {
   const base = "pb-3 text-sm font-medium transition-colors";
   const className = active
     ? `${base} text-white border-b-2 border-white -mb-[2px]`
     : `${base} text-gray-500 hover:text-gray-300`;
 
   return (
-    <a href={href} className={className}>
+    <button type="button" onClick={onSelect} className={className}>
       {children}
-    </a>
+    </button>
   );
 }
 
 type TabsListProps = {
   activeTab: Tab;
+  onTabChange: (tab: Tab) => void;
 };
 
-function List({ activeTab }: TabsListProps) {
-  const tabs: Array<{ id: Tab; label: string; href: string }> = [
-    { id: "projects", label: "projects", href: "/?tab=projects" },
-    { id: "experience", label: "experience", href: "/?tab=experience" },
-    { id: "blog", label: "blog", href: "/?tab=blog" },
+function List({ activeTab, onTabChange }: TabsListProps) {
+  const tabs: Array<{ id: Tab; label: string }> = [
+    { id: "projects", label: "projects" },
+    { id: "experience", label: "experience" },
+    { id: "blog", label: "blog" },
   ];
 
   return (
     <>
       {tabs.map((tab) => (
-        <Trigger key={tab.id} href={tab.href} active={activeTab === tab.id}>
+        <Trigger
+          key={tab.id}
+          active={activeTab === tab.id}
+          onSelect={() => onTabChange(tab.id)}
+        >
           {tab.label}
         </Trigger>
       ))}

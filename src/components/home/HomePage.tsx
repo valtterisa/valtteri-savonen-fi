@@ -1,3 +1,4 @@
+import { useTabState } from "../../hooks/useTabState";
 import type { Tab } from "../../lib/content";
 import type { Project, Experience } from "../../lib/content";
 import type { Post } from "../../lib/marble";
@@ -37,12 +38,14 @@ function TabPanel({
 }
 
 export function HomePage({
-  activeTab,
+  activeTab: initialTab,
   graph,
   projects,
   experiences,
   posts,
 }: HomePageProps) {
+  const { activeTab, setActiveTab } = useTabState(initialTab);
+
   return (
     <SiteShell.Root>
       <SiteShell.Container>
@@ -68,7 +71,7 @@ export function HomePage({
           <ContributionGraph.Root graph={graph} />
 
           <Tabs.Root>
-            <Tabs.List activeTab={activeTab} />
+            <Tabs.List activeTab={activeTab} onTabChange={setActiveTab} />
           </Tabs.Root>
         </SiteShell.Header>
 
