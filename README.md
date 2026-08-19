@@ -1,15 +1,15 @@
 # valtterisavonen.fi
 
-Personal site — templates + Tailwind at the root, Go server under `backend/`.
+Personal site built with Astro 7, Tailwind CSS v4, and server-rendered blog + GitHub contribution data.
 
-## Run
+## Run locally
 
 ```sh
 pnpm install
-pnpm start
+pnpm dev
 ```
 
-Opens [http://localhost:8080](http://localhost:8080).
+Opens [http://localhost:4321](http://localhost:4321).
 
 Optional env for blog:
 
@@ -21,35 +21,33 @@ export MARBLE_WEBHOOK_SECRET=...
 ## Layout
 
 ```
-templates/              # HTML + HTMX (UI)
-css/                    # Tailwind v4
-static/                 # images, favicons, og
-backend/
-  cmd/server/           # entrypoint
-  internal/
-    content/            # projects + experience
-    marble/             # CMS client
-    site/               # HTTP handlers
-scripts/                # local start script
-package.json go.mod Dockerfile Dockerfile.vercel
+src/
+  components/
+    ui/                 # composable primitives (SiteShell, Profile, Tabs, Article, ...)
+    home/               # composed homepage panels
+    blog/               # composed blog views
+  layouts/              # Astro layouts (SEO shell)
+  lib/                  # content, marble CMS, contributions
+  pages/                # Astro routes + API endpoints
+  styles/               # Tailwind CSS
+public/                 # static assets
+astro.config.mjs
+package.json
 ```
+
+UI is built with **React compound components** (composition pattern) — e.g. `SiteShell.Root`, `Profile.Avatar`, `Tabs.List`, `Article.Header` — composed into page-level views like `HomePage` and `BlogPostPage`.
 
 ## Deploy (Vercel)
 
-Vercel picks up `Dockerfile.vercel`, builds the image, and runs it on Fluid compute. The server listens on `$PORT` (defaults to `80`).
+Connect this repo in the Vercel dashboard. Astro is detected automatically.
 
-```sh
-vercel deploy
-```
-
-Or connect the repo in the Vercel dashboard. Set project env:
+Set project env:
 
 - `MARBLE_API_KEY`
 - `MARBLE_WEBHOOK_SECRET`
 
-## Deploy (Railway)
+The site uses on-demand rendering for the homepage (contribution graph + blog tab), blog posts, and the Marble revalidate webhook. Static assets are served from `public/`.
 
-1. Connect this repo on [Railway](https://railway.app)
-2. Builds via `Dockerfile`
-3. Set `MARBLE_API_KEY` and `MARBLE_WEBHOOK_SECRET`
-4. Point `valtterisavonen.fi` at the service
+```sh
+vercel deploy
+```

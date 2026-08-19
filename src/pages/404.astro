@@ -1,0 +1,9 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { NotFoundPage } from "../components/NotFoundPage";
+import { notFoundSeo } from "../lib/seo";
+---
+
+<BaseLayout seo={notFoundSeo(Astro.url.pathname)}>
+  <NotFoundPage />
+</BaseLayout>

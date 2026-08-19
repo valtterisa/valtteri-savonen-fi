@@ -1,0 +1,14 @@
+{
+  "extends": "astro/tsconfigs/strict",
+  "compilerOptions": {
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "forceConsistentCasingInFileNames": true,
+    "noExplicitAny": true,
+    "useUnknownInCatchVariables": false
+  },
+  "include": [".astro/types.d.ts", "**/*"],
+  "exclude": ["dist", ".vercel"]
+}

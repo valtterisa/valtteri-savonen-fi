@@ -1,0 +1,49 @@
+---
+export const prerender = false;
+
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import {
+  BlogPostPage,
+  BlogPostNotFound,
+} from "../../components/blog/BlogPostPage";
+import {
+  getPost,
+  getAuthor,
+  formatPublished,
+} from "../../lib/marble";
+import { blogPostSeo, blogNotFoundSeo } from "../../lib/seo";
+
+const slug = Astro.params.slug;
+const post = slug ? await getPost(slug) : null;
+
+if (!post) {
+  Astro.response.status = 404;
+}
+
+const author = post ? getAuthor(post) : { name: "Valtteri Savonen", image: "" };
+const seo = post
+  ? blogPostSeo(slug!, post, author.name)
+  : blogNotFoundSeo(slug ?? "");
+
+if (post) {
+  Astro.response.headers.set(
+    "Cache-Control",
+    "public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400",
+  );
+}
+---
+
+<BaseLayout seo={seo}>
+  {
+    post ? (
+      <BlogPostPage
+        post={post}
+        authorName={author.name}
+        authorImage={author.image}
+        publishedDisplay={formatPublished(post.publishedAt)}
+      />
+    ) : (
+      <BlogPostNotFound />
+    )
+  }
+</BaseLayout>

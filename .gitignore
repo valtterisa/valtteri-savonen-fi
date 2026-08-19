@@ -2,11 +2,8 @@
 .env
 .env.*
 .cache
-bin/
-app
 node_modules
-*.exe
-*.test
+dist
 .vercel
 .output
-.vinxi
+.astro
