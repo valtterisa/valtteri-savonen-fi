@@ -60,6 +60,7 @@ const { seo } = Astro.props;
 <link rel="manifest" href="/site.webmanifest" />
 <link rel="icon" href="/favicon.ico" />
 <script
+  is:inline
   src="https://cdn.databuddy.cc/databuddy.js"
   async
   crossorigin="anonymous"
@@ -69,6 +70,10 @@ const { seo } = Astro.props;
   data-enable-batching="true"></script>
 {
   seo.jsonLd && (
-    <script type="application/ld+json" set:html={JSON.stringify(seo.jsonLd)} />
+    <script
+      is:inline
+      type="application/ld+json"
+      set:html={JSON.stringify(seo.jsonLd)}
+    />
   )
 }

@@ -3,6 +3,16 @@ export const prerender = false;
 import type { APIRoute } from "astro";
 import { verifySignature } from "../../lib/marble";
 
+export const GET: APIRoute = () => {
+  return new Response(JSON.stringify({ error: "Method not allowed" }), {
+    status: 405,
+    headers: {
+      "Content-Type": "application/json",
+      Allow: "POST",
+    },
+  });
+};
+
 export const POST: APIRoute = async ({ request }) => {
   const signature = request.headers.get("x-marble-signature");
   const secret = import.meta.env.MARBLE_WEBHOOK_SECRET;

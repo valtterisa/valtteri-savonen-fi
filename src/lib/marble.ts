@@ -23,10 +23,10 @@ export type Post = {
 
 const baseUrl = "https://api.marblecms.com";
 
-async function apiGet(path: string): Promise<Response> {
+async function apiGet(path: string): Promise<Response | null> {
   const key = import.meta.env.MARBLE_API_KEY;
   if (!key) {
-    throw new Error("MARBLE_API_KEY not set");
+    return null;
   }
 
   return fetch(`${baseUrl}${path}`, {
@@ -40,6 +40,9 @@ async function apiGet(path: string): Promise<Response> {
 export async function listPosts(): Promise<Post[]> {
   try {
     const response = await apiGet("/v1/posts");
+    if (!response) {
+      return [];
+    }
     if (!response.ok) {
       console.error("marble ListPosts:", response.status, await response.text());
       return [];
@@ -56,6 +59,9 @@ export async function listPosts(): Promise<Post[]> {
 export async function getPost(slug: string): Promise<Post | null> {
   try {
     const response = await apiGet(`/v1/posts/${slug}`);
+    if (!response) {
+      return null;
+    }
     if (!response.ok) {
       console.error(
         "marble GetPost:",
@@ -74,28 +80,32 @@ export async function getPost(slug: string): Promise<Post | null> {
   }
 }
 
-export function verifySignature(
+export async function verifySignature(
   secret: string,
   signatureHeader: string,
   bodyText: string,
-): boolean {
+): Promise<boolean> {
   const expected = signatureHeader.replace(/^sha256=/, "");
   const encoder = new TextEncoder();
   const keyData = encoder.encode(secret);
   const messageData = encoder.encode(bodyText);
 
-  return crypto.subtle
-    .importKey("raw", keyData, { name: "HMAC", hash: "SHA-256" }, false, [
-      "sign",
-    ])
-    .then((key) => crypto.subtle.sign("HMAC", key, messageData))
-    .then((signature) => {
-      const hash = Array.from(new Uint8Array(signature))
-        .map((byte) => byte.toString(16).padStart(2, "0"))
-        .join("");
-      return hash === expected;
-    })
-    .catch(() => false);
+  try {
+    const key = await crypto.subtle.importKey(
+      "raw",
+      keyData,
+      { name: "HMAC", hash: "SHA-256" },
+      false,
+      ["sign"],
+    );
+    const signature = await crypto.subtle.sign("HMAC", key, messageData);
+    const hash = Array.from(new Uint8Array(signature))
+      .map((byte) => byte.toString(16).padStart(2, "0"))
+      .join("");
+    return hash === expected;
+  } catch {
+    return false;
+  }
 }
 
 export function formatPublished(raw: string): string {
