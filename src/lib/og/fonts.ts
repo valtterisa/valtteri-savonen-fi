@@ -1,9 +1,6 @@
-type OgFont = {
-  name: string;
-  data: ArrayBuffer;
-  weight: 400 | 600 | 700;
-  style: "normal";
-};
+import type { Font } from "satori";
+
+export type OgFont = Font;
 
 const FONT_URLS = {
   regular:
@@ -18,7 +15,7 @@ let cachedFonts: OgFont[] | null = null;
 
 async function loadFont(
   url: string,
-  weight: OgFont["weight"],
+  weight: 400 | 600 | 700,
 ): Promise<OgFont> {
   const response = await fetch(url);
   if (!response.ok) {

@@ -1,4 +1,10 @@
 import type { Tab } from "./content";
+import type { JsonLd } from "./jsonLd";
+import {
+  createBlogJsonLd,
+  createBlogPostingJsonLd,
+  createPersonJsonLd,
+} from "./jsonLd";
 import {
   DEFAULT_DESCRIPTION,
   SITE_NAME,
@@ -15,31 +21,11 @@ export type SeoData = {
   url: string;
   type: "website" | "article";
   canonical: string;
-  jsonLd?: Record<string, unknown>;
+  jsonLd?: JsonLd;
   articlePublished?: string;
   articleAuthor?: string;
   noindex?: boolean;
 };
-
-function personJsonLd() {
-  return {
-    "@context": "https://schema.org",
-    "@type": "Person",
-    name: SITE_NAME,
-    jobTitle: "Software Engineer",
-    url: SITE_URL,
-    sameAs: [
-      "https://cal.com/valtterisa/15min",
-      "https://github.com/valtterisa",
-      "https://x.com/vvaltterisa",
-      "https://linkedin.com/in/valtterisavonen",
-    ],
-    address: {
-      "@type": "PostalAddress",
-      addressCountry: "FI",
-    },
-  };
-}
 
 export function homeSeo(): SeoData {
   return {
@@ -51,7 +37,7 @@ export function homeSeo(): SeoData {
     url: SITE_URL,
     type: "website",
     canonical: SITE_URL,
-    jsonLd: personJsonLd(),
+    jsonLd: createPersonJsonLd(),
   };
 }
 
@@ -69,7 +55,7 @@ export function tabSeo(tab: Tab): SeoData {
       url: absoluteUrl("/?tab=experience"),
       type: "website",
       canonical: absoluteUrl("/?tab=experience"),
-      jsonLd: personJsonLd(),
+      jsonLd: createPersonJsonLd(),
     };
   }
 
@@ -84,6 +70,8 @@ export function tabSeo(tab: Tab): SeoData {
 }
 
 export function blogTabSeo(): SeoData {
+  const blogUrl = absoluteUrl("/?tab=blog");
+
   return {
     title: `Blog - ${SITE_NAME}`,
     description:
@@ -91,65 +79,44 @@ export function blogTabSeo(): SeoData {
     keywords:
       "Valtteri Savonen blog, software engineering blog, web development, TypeScript, Next.js",
     image: ogImageUrl("/og/blog.png"),
-    url: absoluteUrl("/?tab=blog"),
+    url: blogUrl,
     type: "website",
-    canonical: absoluteUrl("/?tab=blog"),
-    jsonLd: {
-      "@context": "https://schema.org",
-      "@type": "Blog",
-      name: `${SITE_NAME} Blog`,
-      url: absoluteUrl("/?tab=blog"),
-      author: {
-        "@type": "Person",
-        name: SITE_NAME,
-        url: SITE_URL,
-      },
-    },
+    canonical: blogUrl,
+    jsonLd: createBlogJsonLd(blogUrl),
   };
 }
 
+export type BlogPostSeoInput = {
+  title: string;
+  description: string;
+  publishedAt: string;
+};
+
 export function blogPostSeo(
   slug: string,
-  post: {
-    title: string;
-    description: string;
-    publishedAt: string;
-  },
+  post: BlogPostSeoInput,
   authorName: string,
 ): SeoData {
   const description =
-    post.description ||
-    `Read "${post.title}" on ${SITE_NAME}'s blog.`;
+    post.description || `Read "${post.title}" on ${SITE_NAME}'s blog.`;
   const url = absoluteUrl(`/blog/${slug}`);
+  const image = ogImageUrl(`/og/blog/${slug}.png`);
 
   const jsonLd = post.publishedAt
-    ? {
-        "@context": "https://schema.org",
-        "@type": "BlogPosting",
-        headline: post.title,
+    ? createBlogPostingJsonLd({
+        title: post.title,
         description,
-        author: {
-          "@type": "Person",
-          name: authorName,
-          url: SITE_URL,
-        },
-        datePublished: post.publishedAt,
-        dateModified: post.publishedAt,
+        authorName,
+        publishedAt: post.publishedAt,
         url,
-        mainEntityOfPage: url,
-        image: ogImageUrl(`/og/blog/${slug}.png`),
-        publisher: {
-          "@type": "Person",
-          name: SITE_NAME,
-          url: SITE_URL,
-        },
-      }
+        image,
+      })
     : undefined;
 
   return {
     title: `${post.title} - ${SITE_NAME}`,
     description,
-    image: ogImageUrl(`/og/blog/${slug}.png`),
+    image,
     url,
     type: "article",
     canonical: url,

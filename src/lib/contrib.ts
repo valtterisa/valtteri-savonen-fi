@@ -1,3 +1,13 @@
+import {
+  isJsonArray,
+  isJsonObject,
+  isNumber,
+  isString,
+  readJsonValue,
+  type JsonObject,
+  type JsonValue,
+} from "./json";
+
 export type ContributionDay = {
   date: string;
   count: number;
@@ -10,6 +20,12 @@ export type ContributionGraph = {
   caption: string;
 };
 
+type RawContributionDay = {
+  date: string;
+  count: number;
+  level: number;
+};
+
 const apiUrl =
   "https://github-contributions-api.jogruber.de/v4/valtterisa?y=last";
 
@@ -18,7 +34,7 @@ const cacheTtlMs = 24 * 60 * 60 * 1000;
 let cachedGraph: ContributionGraph | null = null;
 let cachedAt = 0;
 
-function formatTip(day: { date: string; count: number }): string {
+function formatTip(day: Pick<RawContributionDay, "date" | "count">): string {
   const date = new Date(`${day.date}T00:00:00Z`);
   const formatted = date.toLocaleDateString("en-US", {
     month: "short",
@@ -31,15 +47,38 @@ function formatTip(day: { date: string; count: number }): string {
     return `No contributions on ${formatted}`;
   }
   if (day.count === 1) {
-    return `1 contribution on ${formatted}`;
+    return "1 contribution on " + formatted;
   }
   return `${day.count} contributions on ${formatted}`;
 }
 
-function lastMonths(
-  days: Array<{ date: string; count: number; level: number }>,
-  months: number,
-): Array<{ date: string; count: number; level: number }> {
+function parseContributionDay(value: JsonObject): RawContributionDay | null {
+  if (
+    !isString(value.date) ||
+    !isNumber(value.count) ||
+    !isNumber(value.level)
+  ) {
+    return null;
+  }
+
+  return {
+    date: value.date,
+    count: value.count,
+    level: value.level,
+  };
+}
+
+function parseContributionsResponse(value: JsonValue | null): RawContributionDay[] {
+  if (!isJsonObject(value) || !isJsonArray(value.contributions)) {
+    return [];
+  }
+
+  return value.contributions
+    .map((entry) => (isJsonObject(entry) ? parseContributionDay(entry) : null))
+    .filter((day): day is RawContributionDay => day !== null);
+}
+
+function lastMonths(days: RawContributionDay[], months: number): RawContributionDay[] {
   const cutoff = new Date();
   cutoff.setUTCMonth(cutoff.getUTCMonth() - months);
   while (cutoff.getUTCDay() !== 0) {
@@ -67,11 +106,9 @@ async function fetchContributions(): Promise<ContributionDay[] | null> {
       return null;
     }
 
-    const data = (await response.json()) as {
-      contributions: Array<{ date: string; count: number; level: number }>;
-    };
+    const data = await readJsonValue(response);
+    const trimmed = lastMonths(parseContributionsResponse(data), 12);
 
-    const trimmed = lastMonths(data.contributions ?? [], 12);
     return trimmed.map((day) => ({
       ...day,
       tip: formatTip(day),

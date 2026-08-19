@@ -5,7 +5,9 @@
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "noExplicitAny": true,
+    "useUnknownInCatchVariables": false
   },
   "include": [".astro/types.d.ts", "**/*"],
   "exclude": ["dist", ".vercel"]

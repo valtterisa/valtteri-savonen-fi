@@ -1,3 +1,13 @@
+import {
+  getErrorMessage,
+  isJsonArray,
+  isJsonObject,
+  isString,
+  readJsonValue,
+  type JsonObject,
+  type JsonValue,
+} from "./json";
+
 export type Author = {
   name: string;
   image: string;
@@ -21,6 +31,11 @@ export type Post = {
   tags: Tag[];
 };
 
+export type AuthorInfo = {
+  name: string;
+  image: string;
+};
+
 const baseUrl = "https://api.marblecms.com";
 
 async function apiGet(path: string): Promise<Response | null> {
@@ -37,6 +52,98 @@ async function apiGet(path: string): Promise<Response | null> {
   });
 }
 
+function parseAuthor(value: JsonObject): Author | null {
+  if (!isString(value.name) || !isString(value.image)) {
+    return null;
+  }
+
+  return {
+    name: value.name,
+    image: value.image,
+  };
+}
+
+function parseTag(value: JsonObject): Tag | null {
+  if (!isString(value.name) || !isString(value.slug)) {
+    return null;
+  }
+
+  return {
+    name: value.name,
+    slug: value.slug,
+  };
+}
+
+function parseAuthors(value: JsonValue): Author[] {
+  if (!isJsonArray(value)) {
+    return [];
+  }
+
+  return value
+    .map((entry) => (isJsonObject(entry) ? parseAuthor(entry) : null))
+    .filter((author): author is Author => author !== null);
+}
+
+function parseTags(value: JsonValue): Tag[] {
+  if (!isJsonArray(value)) {
+    return [];
+  }
+
+  return value
+    .map((entry) => (isJsonObject(entry) ? parseTag(entry) : null))
+    .filter((tag): tag is Tag => tag !== null);
+}
+
+function parsePost(value: JsonObject): Post | null {
+  if (
+    !isString(value.id) ||
+    !isString(value.slug) ||
+    !isString(value.title) ||
+    !isString(value.description) ||
+    !isString(value.content) ||
+    !isString(value.coverImage) ||
+    !isString(value.publishedAt) ||
+    !isString(value.updatedAt)
+  ) {
+    return null;
+  }
+
+  return {
+    id: value.id,
+    slug: value.slug,
+    title: value.title,
+    description: value.description,
+    content: value.content,
+    coverImage: value.coverImage,
+    publishedAt: value.publishedAt,
+    updatedAt: value.updatedAt,
+    authors: parseAuthors(value.authors),
+    tags: parseTags(value.tags),
+  };
+}
+
+function parsePostsResponse(value: JsonValue | null): Post[] {
+  if (!isJsonObject(value) || !isJsonArray(value.posts)) {
+    return [];
+  }
+
+  return value.posts
+    .map((entry) => (isJsonObject(entry) ? parsePost(entry) : null))
+    .filter((post): post is Post => post !== null);
+}
+
+function parsePostResponse(value: JsonValue | null): Post | null {
+  if (!isJsonObject(value) || value.post === null) {
+    return null;
+  }
+
+  if (!isJsonObject(value.post)) {
+    return null;
+  }
+
+  return parsePost(value.post);
+}
+
 export async function listPosts(): Promise<Post[]> {
   try {
     const response = await apiGet("/v1/posts");
@@ -48,10 +155,13 @@ export async function listPosts(): Promise<Post[]> {
       return [];
     }
 
-    const parsed = (await response.json()) as { posts: Post[] };
-    return parsed.posts ?? [];
-  } catch (error) {
-    console.error("marble ListPosts:", error);
+    const parsed = await readJsonValue(response);
+    return parsePostsResponse(parsed);
+  } catch (caught) {
+    console.error(
+      "marble ListPosts:",
+      getErrorMessage(caught instanceof Error ? caught : String(caught)),
+    );
     return [];
   }
 }
@@ -72,10 +182,14 @@ export async function getPost(slug: string): Promise<Post | null> {
       return null;
     }
 
-    const parsed = (await response.json()) as { post: Post | null };
-    return parsed.post ?? null;
-  } catch (error) {
-    console.error("marble GetPost:", slug, error);
+    const parsed = await readJsonValue(response);
+    return parsePostResponse(parsed);
+  } catch (caught) {
+    console.error(
+      "marble GetPost:",
+      slug,
+      getErrorMessage(caught instanceof Error ? caught : String(caught)),
+    );
     return null;
   }
 }
@@ -125,7 +239,7 @@ export function formatPublished(raw: string): string {
   });
 }
 
-export function getAuthor(post: Post): { name: string; image: string } {
+export function getAuthor(post: Post): AuthorInfo {
   const author = post.authors[0];
   return {
     name: author?.name || "Valtteri Savonen",
