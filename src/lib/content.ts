@@ -31,6 +31,13 @@ export const projects: Project[] = [
     active: true,
   },
   {
+    title: "drophost.space",
+    description: "Drop a file or a static site. Get a live URL.",
+    technologies: ["Next.js", "PostgreSQL", "Drizzle", "Clerk", "Autumn"],
+    liveUrl: "https://drophost.space",
+    active: true,
+  },
+  {
     title: "floras.app",
     description: "AI website generator for Astro sites.",
     technologies: ["Astro", "TypeScript", "Convex", "Box", "Cloudflare"],
