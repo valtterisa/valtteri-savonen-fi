@@ -6,7 +6,6 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "forceConsistentCasingInFileNames": true,
-    "noExplicitAny": true,
     "useUnknownInCatchVariables": false
   },
   "include": [".astro/types.d.ts", "**/*"],
