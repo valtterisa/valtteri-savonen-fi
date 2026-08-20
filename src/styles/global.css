@@ -2,6 +2,34 @@
 @plugin "@tailwindcss/typography";
 @source "../**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}";
 
+html {
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  scrollbar-color: #333 #0a0a0a;
+}
+
+html::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+html::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+html::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 999px;
+}
+
+html::-webkit-scrollbar-thumb:hover {
+  background: #39d353;
+}
+
+html::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
 .contrib-block {
   margin-bottom: 2rem;
   position: relative;

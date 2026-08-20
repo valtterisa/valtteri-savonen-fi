@@ -11,7 +11,7 @@ pnpm dev
 
 Opens [http://localhost:4321](http://localhost:4321).
 
-Optional env for blog:
+Optional env for blog / ISR:
 
 ```sh
 export MARBLE_API_KEY=...
@@ -46,7 +46,7 @@ Set project env:
 - `MARBLE_API_KEY`
 - `MARBLE_WEBHOOK_SECRET`
 
-The site uses on-demand rendering for the homepage (contribution graph + blog tab), blog posts, and the Marble revalidate webhook. Static assets are served from `public/`.
+ISR pages stay cached until Marble hits `POST /api/revalidate` (or you redeploy). Static assets are served from `public/`.
 
 ```sh
 vercel deploy

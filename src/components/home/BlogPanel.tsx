@@ -1,8 +1,13 @@
-import type { Post } from "../../lib/marble";
 import { Stack } from "../ui/Stack";
 
+export type BlogPostSummary = {
+  id: string;
+  slug: string;
+  title: string;
+};
+
 type BlogPostLinkProps = {
-  post: Post;
+  post: BlogPostSummary;
 };
 
 function BlogPostLink({ post }: BlogPostLinkProps) {
@@ -25,10 +30,15 @@ function BlogPostLink({ post }: BlogPostLinkProps) {
 }
 
 type BlogPanelProps = {
-  posts: Post[];
+  posts: BlogPostSummary[];
+  failed: boolean;
 };
 
-export function BlogPanel({ posts }: BlogPanelProps) {
+export function BlogPanel({ posts, failed }: BlogPanelProps) {
+  if (failed) {
+    return <div className="text-gray-400">couldn’t load blog posts.</div>;
+  }
+
   if (posts.length === 0) {
     return <div className="text-gray-400">no blog posts, yet.</div>;
   }

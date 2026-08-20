@@ -1,7 +1,7 @@
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useTabState } from "../../hooks/useTabState";
 import type { Tab } from "../../lib/content";
 import type { Project, Experience } from "../../lib/content";
-import type { Post } from "../../lib/marble";
 import type { ContributionGraph as ContributionGraphData } from "../../lib/contrib";
 import { SiteShell } from "../ui/SiteShell";
 import { Profile } from "../ui/Profile";
@@ -11,14 +11,13 @@ import { ContributionGraph } from "../ui/ContributionGraph";
 import { Tabs } from "../ui/Tabs";
 import { ProjectsPanel } from "./ProjectsPanel";
 import { ExperiencePanel } from "./ExperiencePanel";
-import { BlogPanel } from "./BlogPanel";
+import { BlogPanel, type BlogPostSummary } from "./BlogPanel";
 
 type HomePageProps = {
   activeTab: Tab;
   graph: ContributionGraphData;
   projects: Project[];
   experiences: Experience[];
-  posts: Post[];
 };
 
 function TabPanel({
@@ -26,15 +25,28 @@ function TabPanel({
   projects,
   experiences,
   posts,
-}: Pick<HomePageProps, "activeTab" | "projects" | "experiences" | "posts">) {
+  postsFailed,
+}: Pick<HomePageProps, "activeTab" | "projects" | "experiences"> & {
+  posts: BlogPostSummary[];
+  postsFailed: boolean;
+}) {
   switch (activeTab) {
     case "experience":
       return <ExperiencePanel experiences={experiences} />;
     case "blog":
-      return <BlogPanel posts={posts} />;
+      return <BlogPanel posts={posts} failed={postsFailed} />;
     default:
       return <ProjectsPanel projects={projects} />;
   }
+}
+
+async function fetchPosts(): Promise<BlogPostSummary[]> {
+  const response = await fetch("/api/posts");
+  if (!response.ok) {
+    throw new Error(`posts ${response.status}`);
+  }
+  const data = (await response.json()) as { posts?: BlogPostSummary[] };
+  return Array.isArray(data.posts) ? data.posts : [];
 }
 
 export function HomePage({
@@ -42,9 +54,66 @@ export function HomePage({
   graph,
   projects,
   experiences,
-  posts,
 }: HomePageProps) {
-  const { activeTab, setActiveTab } = useTabState(initialTab);
+  const { activeTab, setActiveTab } = useTabState(
+    initialTab === "blog" ? "projects" : initialTab,
+  );
+  const [posts, setPosts] = useState<BlogPostSummary[] | null>(null);
+  const [postsFailed, setPostsFailed] = useState(false);
+  const [blogLoading, setBlogLoading] = useState(initialTab === "blog");
+  const blogRequestRef = useRef(0);
+
+  const loadBlog = useCallback(async () => {
+    const requestId = ++blogRequestRef.current;
+    setBlogLoading(true);
+
+    try {
+      const nextPosts = await fetchPosts();
+      if (blogRequestRef.current !== requestId) {
+        return;
+      }
+      setPosts(nextPosts);
+    } catch {
+      if (blogRequestRef.current !== requestId) {
+        return;
+      }
+      setPostsFailed(true);
+    }
+
+    if (blogRequestRef.current !== requestId) {
+      return;
+    }
+    setBlogLoading(false);
+    setActiveTab("blog");
+  }, [setActiveTab]);
+
+  useEffect(() => {
+    if (initialTab !== "blog") {
+      return;
+    }
+
+    void loadBlog();
+
+    return () => {
+      blogRequestRef.current += 1;
+    };
+  }, [initialTab, loadBlog]);
+
+  const handleTabChange = (tab: Tab) => {
+    if (tab !== "blog") {
+      blogRequestRef.current += 1;
+      setBlogLoading(false);
+      setActiveTab(tab);
+      return;
+    }
+
+    if (posts !== null || postsFailed) {
+      setActiveTab("blog");
+      return;
+    }
+
+    void loadBlog();
+  };
 
   return (
     <SiteShell.Root>
@@ -71,7 +140,11 @@ export function HomePage({
           <ContributionGraph.Root graph={graph} />
 
           <Tabs.Root>
-            <Tabs.List activeTab={activeTab} onTabChange={setActiveTab} />
+            <Tabs.List
+              activeTab={activeTab}
+              onTabChange={handleTabChange}
+              blogLoading={blogLoading}
+            />
           </Tabs.Root>
         </SiteShell.Header>
 
@@ -80,7 +153,8 @@ export function HomePage({
             activeTab={activeTab}
             projects={projects}
             experiences={experiences}
-            posts={posts}
+            posts={posts ?? []}
+            postsFailed={postsFailed}
           />
         </SiteShell.Main>
       </SiteShell.Container>

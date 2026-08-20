@@ -25,12 +25,6 @@ const seo = post
   ? blogPostSeo(slug!, post, author.name)
   : blogNotFoundSeo(slug ?? "");
 
-if (post) {
-  Astro.response.headers.set(
-    "Cache-Control",
-    "public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400",
-  );
-}
 ---
 
 <BaseLayout seo={seo}>

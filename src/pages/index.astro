@@ -9,18 +9,11 @@ import {
   normalizeTab,
 } from "../lib/content";
 import { getContributionGraph } from "../lib/contrib";
-import { listPosts } from "../lib/marble";
 import { tabSeo } from "../lib/seo";
 
 const activeTab = normalizeTab(Astro.url.searchParams.get("tab"));
 const graph = await getContributionGraph();
-const posts = await listPosts();
 const seo = tabSeo(activeTab);
-
-Astro.response.headers.set(
-  "Cache-Control",
-  "public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400",
-);
 ---
 
 <BaseLayout seo={seo}>
@@ -30,6 +23,5 @@ Astro.response.headers.set(
     graph={graph}
     projects={projects}
     experiences={experiences}
-    posts={posts}
   />
 </BaseLayout>
