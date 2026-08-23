@@ -46,7 +46,7 @@ type ProfileSubtitleProps = {
 };
 
 function Subtitle({ children }: ProfileSubtitleProps) {
-  return <p className="text-muted-foreground text-sm">{children}</p>;
+  return <p className="text-foreground text-sm">{children}</p>;
 }
 
 export const Profile = {

@@ -130,7 +130,7 @@ function ExperienceItem({
       </div>
 
       {summary ? (
-        <p className="max-w-[65ch] pt-2 pl-9 text-sm leading-relaxed text-muted-foreground">
+        <p className="max-w-[65ch] pt-2 pl-9 text-sm leading-relaxed text-foreground">
           {summary}
         </p>
       ) : null}
@@ -296,9 +296,9 @@ function Prose({ className, ...props }: ComponentProps<"div">) {
     <div
       className={cn(
         "prose prose-sm max-w-[65ch] dark:prose-invert",
-        "prose-p:my-2 prose-p:leading-relaxed prose-p:text-muted-foreground",
-        "prose-ul:my-1 prose-ul:pl-4 prose-ul:text-muted-foreground",
-        "prose-li:my-1 prose-li:leading-relaxed prose-li:text-muted-foreground",
+        "prose-p:my-2 prose-p:leading-relaxed prose-p:text-foreground",
+        "prose-ul:my-1 prose-ul:pl-4 prose-ul:text-foreground",
+        "prose-li:my-1 prose-li:leading-relaxed prose-li:text-foreground",
         "prose-strong:text-foreground",
         className,
       )}

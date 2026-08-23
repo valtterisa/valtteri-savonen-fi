@@ -243,7 +243,7 @@ html::-webkit-scrollbar-corner {
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
   --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
+  --muted-foreground: oklch(0.22 0 0);
   --accent: oklch(0.97 0 0);
   --accent-foreground: oklch(0.205 0 0);
   --destructive: oklch(0.577 0.245 27.325);
@@ -317,4 +317,22 @@ html::-webkit-scrollbar-corner {
   html {
     @apply font-sans;
   }
+}
+
+.prose {
+  --tw-prose-body: var(--foreground);
+  --tw-prose-lead: var(--foreground);
+  --tw-prose-headings: var(--foreground);
+  --tw-prose-bold: var(--foreground);
+  --tw-prose-counters: var(--foreground);
+  --tw-prose-bullets: var(--foreground);
+  --tw-prose-quotes: var(--foreground);
+  --tw-prose-captions: var(--foreground);
+  --tw-prose-code: var(--foreground);
+  --tw-prose-links: var(--muted-foreground);
+  color: var(--foreground);
+}
+
+.prose :where(p, li, ul, ol):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  color: var(--foreground);
 }
