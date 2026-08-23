@@ -1,4 +1,20 @@
-import { SITE_NAME, SITE_URL } from "./site";
+import {
+  BIO,
+  JOB_TITLE,
+  LANGUAGES,
+  LOCATION_COUNTRY,
+  LOCATION_COUNTRY_CODE,
+  SKILLS,
+  getProjectCards,
+} from "./profile";
+import {
+  PERSON_ID,
+  PROFILE_IMAGE_PATH,
+  SAME_AS,
+  SITE_NAME,
+  SITE_URL,
+  absoluteUrl,
+} from "./site";
 
 type SchemaContext = "https://schema.org";
 
@@ -7,20 +23,71 @@ export type PostalAddressJsonLd = {
   addressCountry: string;
 };
 
+export type LanguageJsonLd = {
+  "@type": "Language";
+  name: string;
+  alternateName: string;
+};
+
+export type CountryJsonLd = {
+  "@type": "Country";
+  name: string;
+};
+
 export type PersonRefJsonLd = {
   "@type": "Person";
+  "@id": string;
   name: string;
   url: string;
 };
 
 export type PersonJsonLd = {
-  "@context": SchemaContext;
+  "@context"?: SchemaContext;
   "@type": "Person";
+  "@id": string;
   name: string;
-  jobTitle: string;
   url: string;
-  sameAs: string[];
+  image: string;
+  description: string;
+  jobTitle: string;
+  knowsAbout: string[];
+  knowsLanguage: LanguageJsonLd[];
+  nationality: CountryJsonLd;
   address: PostalAddressJsonLd;
+  sameAs: string[];
+};
+
+export type ProfilePageJsonLd = {
+  "@type": "ProfilePage";
+  "@id": string;
+  url: string;
+  name: string;
+  mainEntity: { "@id": string };
+};
+
+export type SoftwareApplicationJsonLd = {
+  "@type": "SoftwareApplication";
+  name: string;
+  url?: string;
+  description: string;
+  applicationCategory: "WebApplication";
+};
+
+export type ListItemJsonLd = {
+  "@type": "ListItem";
+  position: number;
+  item: SoftwareApplicationJsonLd;
+};
+
+export type ItemListJsonLd = {
+  "@type": "ItemList";
+  name: string;
+  itemListElement: ListItemJsonLd[];
+};
+
+export type JsonLdGraph = {
+  "@context": SchemaContext;
+  "@graph": Array<ProfilePageJsonLd | PersonJsonLd | ItemListJsonLd>;
 };
 
 export type BlogJsonLd = {
@@ -45,25 +112,80 @@ export type BlogPostingJsonLd = {
   publisher: PersonRefJsonLd;
 };
 
-export type JsonLd = PersonJsonLd | BlogJsonLd | BlogPostingJsonLd;
+export type JsonLd = PersonJsonLd | BlogJsonLd | BlogPostingJsonLd | JsonLdGraph;
+
+function personRef(): PersonRefJsonLd {
+  return {
+    "@type": "Person",
+    "@id": PERSON_ID,
+    name: SITE_NAME,
+    url: SITE_URL,
+  };
+}
 
 export function createPersonJsonLd(): PersonJsonLd {
   return {
     "@context": "https://schema.org",
     "@type": "Person",
+    "@id": PERSON_ID,
     name: SITE_NAME,
-    jobTitle: "Software Engineer",
     url: SITE_URL,
-    sameAs: [
-      "https://cal.com/valtterisa/15min",
-      "https://github.com/valtterisa",
-      "https://x.com/vvaltterisa",
-      "https://linkedin.com/in/valtterisavonen",
-    ],
+    image: absoluteUrl(PROFILE_IMAGE_PATH),
+    description: BIO,
+    jobTitle: JOB_TITLE,
+    knowsAbout: [...SKILLS],
+    knowsLanguage: LANGUAGES.map((language) => ({
+      "@type": "Language",
+      name: language.name,
+      alternateName: language.code,
+    })),
+    nationality: {
+      "@type": "Country",
+      name: LOCATION_COUNTRY,
+    },
     address: {
       "@type": "PostalAddress",
-      addressCountry: "FI",
+      addressCountry: LOCATION_COUNTRY_CODE,
     },
+    sameAs: SAME_AS,
+  };
+}
+
+function createProjectListJsonLd(): ItemListJsonLd {
+  return {
+    "@type": "ItemList",
+    name: "Projects",
+    itemListElement: getProjectCards().map((project, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      item: {
+        "@type": "SoftwareApplication",
+        name: project.name,
+        url: project.url,
+        description: project.blurb,
+        applicationCategory: "WebApplication",
+      },
+    })),
+  };
+}
+
+export function createHomeJsonLd(): JsonLdGraph {
+  const person = createPersonJsonLd();
+  const { "@context": _context, ...personNode } = person;
+
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "ProfilePage",
+        "@id": `${SITE_URL}/#profile`,
+        url: SITE_URL,
+        name: SITE_NAME,
+        mainEntity: { "@id": PERSON_ID },
+      },
+      personNode,
+      createProjectListJsonLd(),
+    ],
   };
 }
 
@@ -73,11 +195,7 @@ export function createBlogJsonLd(blogUrl: string): BlogJsonLd {
     "@type": "Blog",
     name: `${SITE_NAME} Blog`,
     url: blogUrl,
-    author: {
-      "@type": "Person",
-      name: SITE_NAME,
-      url: SITE_URL,
-    },
+    author: personRef(),
   };
 }
 
@@ -86,28 +204,26 @@ export function createBlogPostingJsonLd(input: {
   description: string;
   authorName: string;
   publishedAt: string;
+  updatedAt?: string;
   url: string;
   image: string;
 }): BlogPostingJsonLd {
+  const author = personRef();
+  if (input.authorName !== SITE_NAME) {
+    author.name = input.authorName;
+  }
+
   return {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
     headline: input.title,
     description: input.description,
-    author: {
-      "@type": "Person",
-      name: input.authorName,
-      url: SITE_URL,
-    },
+    author,
     datePublished: input.publishedAt,
-    dateModified: input.publishedAt,
+    dateModified: input.updatedAt || input.publishedAt,
     url: input.url,
     mainEntityOfPage: input.url,
     image: input.image,
-    publisher: {
-      "@type": "Person",
-      name: SITE_NAME,
-      url: SITE_URL,
-    },
+    publisher: personRef(),
   };
 }

@@ -3,7 +3,7 @@ import type { JsonLd } from "./jsonLd";
 import {
   createBlogJsonLd,
   createBlogPostingJsonLd,
-  createPersonJsonLd,
+  createHomeJsonLd,
 } from "./jsonLd";
 import {
   DEFAULT_DESCRIPTION,
@@ -24,6 +24,7 @@ export type SeoData = {
   jsonLd?: JsonLd;
   articlePublished?: string;
   articleAuthor?: string;
+  markdownUrl?: string;
   noindex?: boolean;
 };
 
@@ -32,12 +33,13 @@ export function homeSeo(): SeoData {
     title: `${SITE_NAME} - Software Engineer`,
     description: DEFAULT_DESCRIPTION,
     keywords:
-      "Valtteri Savonen, full stack engineer, software engineer, web development, Next.js, TypeScript, Finland, quickshops.app, drophost.space, floras.app",
+      "Valtteri Savonen, full stack engineer, software engineer, web development, Next.js, TypeScript, Finland, quickshops.app, drophost.space, floras.app, haalarikone.fi",
     image: ogImageUrl("/og/home.png"),
     url: SITE_URL,
     type: "website",
     canonical: SITE_URL,
-    jsonLd: createPersonJsonLd(),
+    jsonLd: createHomeJsonLd(),
+    markdownUrl: "/index.md",
   };
 }
 
@@ -55,7 +57,8 @@ export function tabSeo(tab: Tab): SeoData {
       url: absoluteUrl("/?tab=experience"),
       type: "website",
       canonical: absoluteUrl("/?tab=experience"),
-      jsonLd: createPersonJsonLd(),
+      jsonLd: createHomeJsonLd(),
+      markdownUrl: "/index.md",
     };
   }
 
@@ -66,6 +69,7 @@ export function tabSeo(tab: Tab): SeoData {
       "Projects by Valtteri Savonen including quickshops.app, drophost.space, floras.app, and haalarikone.fi.",
     url: absoluteUrl("/?tab=projects"),
     canonical: absoluteUrl("/?tab=projects"),
+    markdownUrl: "/index.md",
   };
 }
 
@@ -83,6 +87,7 @@ export function blogTabSeo(): SeoData {
     type: "website",
     canonical: blogUrl,
     jsonLd: createBlogJsonLd(blogUrl),
+    markdownUrl: "/index.md",
   };
 }
 
@@ -90,6 +95,7 @@ export type BlogPostSeoInput = {
   title: string;
   description: string;
   publishedAt: string;
+  updatedAt?: string;
 };
 
 export function blogPostSeo(
@@ -108,6 +114,7 @@ export function blogPostSeo(
         description,
         authorName,
         publishedAt: post.publishedAt,
+        updatedAt: post.updatedAt,
         url,
         image,
       })
@@ -123,6 +130,7 @@ export function blogPostSeo(
     jsonLd,
     articlePublished: post.publishedAt,
     articleAuthor: authorName,
+    markdownUrl: `/blog/${slug}.md`,
   };
 }
 

@@ -1,8 +1,9 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { useTabState } from "../../hooks/useTabState";
 import type { Tab } from "../../lib/content";
-import type { Project, Experience } from "../../lib/content";
 import type { ContributionGraph as ContributionGraphData } from "../../lib/contrib";
+import { CURRENT_FOCUS_NAME, CURRENT_FOCUS_URL } from "../../lib/profile";
+import { PROFILE_IMAGE_PATH, socialHref } from "../../lib/site";
 import { SiteShell } from "../ui/SiteShell";
 import { Profile } from "../ui/Profile";
 import { InlineExternalLink } from "../ui/ExternalLink";
@@ -16,103 +17,37 @@ import { BlogPanel, type BlogPostSummary } from "./BlogPanel";
 type HomePageProps = {
   activeTab: Tab;
   graph: ContributionGraphData;
-  projects: Project[];
-  experiences: Experience[];
+  initialPosts: BlogPostSummary[];
 };
 
 function TabPanel({
   activeTab,
-  projects,
-  experiences,
   posts,
   postsFailed,
-}: Pick<HomePageProps, "activeTab" | "projects" | "experiences"> & {
+}: Pick<HomePageProps, "activeTab"> & {
   posts: BlogPostSummary[];
   postsFailed: boolean;
 }) {
   switch (activeTab) {
     case "experience":
-      return <ExperiencePanel experiences={experiences} />;
+      return <ExperiencePanel />;
     case "blog":
       return <BlogPanel posts={posts} failed={postsFailed} />;
     default:
-      return <ProjectsPanel projects={projects} />;
+      return <ProjectsPanel />;
   }
-}
-
-async function fetchPosts(): Promise<BlogPostSummary[]> {
-  const response = await fetch("/api/posts");
-  if (!response.ok) {
-    throw new Error(`posts ${response.status}`);
-  }
-  const data = (await response.json()) as { posts?: BlogPostSummary[] };
-  return Array.isArray(data.posts) ? data.posts : [];
 }
 
 export function HomePage({
   activeTab: initialTab,
   graph,
-  projects,
-  experiences,
+  initialPosts,
 }: HomePageProps) {
-  const { activeTab, setActiveTab } = useTabState(
-    initialTab === "blog" ? "projects" : initialTab,
-  );
-  const [posts, setPosts] = useState<BlogPostSummary[] | null>(null);
-  const [postsFailed, setPostsFailed] = useState(false);
-  const [blogLoading, setBlogLoading] = useState(initialTab === "blog");
-  const blogRequestRef = useRef(0);
-
-  const loadBlog = useCallback(async () => {
-    const requestId = ++blogRequestRef.current;
-    setBlogLoading(true);
-
-    try {
-      const nextPosts = await fetchPosts();
-      if (blogRequestRef.current !== requestId) {
-        return;
-      }
-      setPosts(nextPosts);
-    } catch {
-      if (blogRequestRef.current !== requestId) {
-        return;
-      }
-      setPostsFailed(true);
-    }
-
-    if (blogRequestRef.current !== requestId) {
-      return;
-    }
-    setBlogLoading(false);
-    setActiveTab("blog");
-  }, [setActiveTab]);
-
-  useEffect(() => {
-    if (initialTab !== "blog") {
-      return;
-    }
-
-    void loadBlog();
-
-    return () => {
-      blogRequestRef.current += 1;
-    };
-  }, [initialTab, loadBlog]);
+  const { activeTab, setActiveTab } = useTabState(initialTab);
+  const [posts] = useState(initialPosts);
 
   const handleTabChange = (tab: Tab) => {
-    if (tab !== "blog") {
-      blogRequestRef.current += 1;
-      setBlogLoading(false);
-      setActiveTab(tab);
-      return;
-    }
-
-    if (posts !== null || postsFailed) {
-      setActiveTab("blog");
-      return;
-    }
-
-    void loadBlog();
+    setActiveTab(tab);
   };
 
   return (
@@ -120,13 +55,17 @@ export function HomePage({
       <SiteShell.Container>
         <SiteShell.Header>
           <Profile.Root>
-            <Profile.Avatar src="/my-x-profile-pic.jpg" alt="Valtteri Savonen" />
+            <Profile.Avatar src={PROFILE_IMAGE_PATH} alt="Valtteri Savonen" />
             <Profile.Content>
               <Profile.Title>hey, i'm valtteri!</Profile.Title>
               <Profile.Subtitle>
                 currently building{" "}
-                <InlineExternalLink href="https://quickshops.app">
-                  quickshops.app
+                <InlineExternalLink href={CURRENT_FOCUS_URL}>
+                  {CURRENT_FOCUS_NAME}
+                </InlineExternalLink>
+                . full-stack engineer in Finland. freelance via{" "}
+                <InlineExternalLink href={socialHref("cal")}>
+                  cal.com
                 </InlineExternalLink>
                 .
               </Profile.Subtitle>
@@ -143,7 +82,7 @@ export function HomePage({
             <Tabs.List
               activeTab={activeTab}
               onTabChange={handleTabChange}
-              blogLoading={blogLoading}
+              blogLoading={false}
             />
           </Tabs.Root>
         </SiteShell.Header>
@@ -151,10 +90,8 @@ export function HomePage({
         <SiteShell.Main>
           <TabPanel
             activeTab={activeTab}
-            projects={projects}
-            experiences={experiences}
-            posts={posts ?? []}
-            postsFailed={postsFailed}
+            posts={posts}
+            postsFailed={false}
           />
         </SiteShell.Main>
       </SiteShell.Container>

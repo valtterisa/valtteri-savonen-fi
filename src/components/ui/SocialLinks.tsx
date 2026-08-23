@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { SOCIAL_LINKS, type SocialLinkId } from "../../lib/site";
 import { ExternalLink } from "./ExternalLink";
 
 type SocialLinkProps = {
@@ -99,24 +100,21 @@ function Root({ children }: { children?: ReactNode }) {
   return <div className="flex items-center gap-4 mb-6">{children}</div>;
 }
 
+const SOCIAL_ICONS: Record<SocialLinkId, ReactNode> = {
+  cal: <CalIcon />,
+  github: <GitHubIcon />,
+  x: <XIcon />,
+  linkedin: <LinkedInIcon />,
+};
+
 function Links() {
   return (
     <>
-      <SocialLink href="https://cal.com/valtterisa/15min" ariaLabel="Book a meeting">
-        <CalIcon />
-      </SocialLink>
-      <SocialLink href="https://github.com/valtterisa" ariaLabel="GitHub">
-        <GitHubIcon />
-      </SocialLink>
-      <SocialLink href="https://x.com/vvaltterisa" ariaLabel="X (Twitter)">
-        <XIcon />
-      </SocialLink>
-      <SocialLink
-        href="https://linkedin.com/in/valtterisavonen"
-        ariaLabel="LinkedIn"
-      >
-        <LinkedInIcon />
-      </SocialLink>
+      {SOCIAL_LINKS.map((link) => (
+        <SocialLink key={link.id} href={link.href} ariaLabel={link.ariaLabel}>
+          {SOCIAL_ICONS[link.id]}
+        </SocialLink>
+      ))}
     </>
   );
 }
