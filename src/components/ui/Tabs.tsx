@@ -6,13 +6,13 @@ type TabsRootProps = {
 };
 
 function Root({ children }: TabsRootProps) {
-  return <nav className="flex gap-6 border-b border-gray-800">{children}</nav>;
+  return <nav className="flex gap-6 border-b border-border">{children}</nav>;
 }
 
 function Spinner() {
   return (
     <span
-      className="inline-block h-3.5 w-3.5 shrink-0 rounded-full border-2 border-gray-500 border-t-white animate-spin"
+      className="inline-block h-3.5 w-3.5 shrink-0 rounded-full border-2 border-muted-foreground border-t-foreground animate-spin"
       aria-hidden="true"
     />
   );
@@ -29,8 +29,8 @@ function Trigger({ active, onSelect, loading = false, children }: TabsTriggerPro
   const base = "pb-3 text-sm font-medium transition-colors";
   const layout = loading ? " inline-flex items-center gap-2" : "";
   const className = active
-    ? `${base}${layout} text-white border-b-2 border-white -mb-[2px]`
-    : `${base}${layout} text-gray-500 hover:text-gray-300`;
+    ? `${base}${layout} text-foreground border-b-2 border-foreground -mb-[2px]`
+    : `${base}${layout} text-muted-foreground hover:text-foreground`;
 
   return (
     <button

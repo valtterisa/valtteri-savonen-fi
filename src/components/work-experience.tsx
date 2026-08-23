@@ -12,12 +12,7 @@ import {
 } from "react";
 import ReactMarkdown from "react-markdown";
 import type { Components } from "react-markdown";
-
-function cn(
-  ...classes: Array<string | false | null | undefined>
-): string {
-  return classes.filter(Boolean).join(" ");
-}
+import { cn } from "@/lib/utils";
 
 export type ExperiencePositionItemType = {
   id: string;
@@ -60,7 +55,7 @@ export function WorkExperience({
   experiences,
 }: WorkExperienceProps) {
   return (
-    <div className={cn("divide-y divide-gray-900 text-gray-100", className)}>
+    <div className={cn("divide-y divide-border text-foreground", className)}>
       {experiences.map((experience) => (
         <ExperienceItem key={experience.id} experience={experience} />
       ))}
@@ -101,17 +96,17 @@ function ExperienceItem({
         {hasDescription ? (
           <button
             type="button"
-            className="flex min-h-6 min-w-0 flex-1 items-center gap-2 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-gray-500"
+            className="flex min-h-6 min-w-0 flex-1 items-center gap-2 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
             aria-expanded={open}
             onClick={() => setOpen((current) => !current)}
           >
-            <h3 className="min-w-0 truncate text-lg font-semibold leading-none text-white">
+            <h3 className="min-w-0 truncate text-lg font-semibold leading-none text-foreground">
               {experience.companyName}
             </h3>
             {experience.isCurrentEmployer ? <CurrentDot /> : null}
             <ChevronDownIcon
               className={cn(
-                "ml-auto size-4 shrink-0 text-gray-500 motion-safe:transition-transform motion-safe:duration-200 motion-safe:ease-out",
+                "ml-auto size-4 shrink-0 text-muted-foreground motion-safe:transition-transform motion-safe:duration-200 motion-safe:ease-out",
                 open && "rotate-180",
               )}
               strokeWidth={1.75}
@@ -120,7 +115,7 @@ function ExperienceItem({
           </button>
         ) : (
           <div className="flex min-h-6 min-w-0 flex-1 items-center gap-2">
-            <h3 className="min-w-0 truncate text-lg font-semibold leading-none text-white">
+            <h3 className="min-w-0 truncate text-lg font-semibold leading-none text-foreground">
               {experience.companyName}
             </h3>
             {experience.isCurrentEmployer ? <CurrentDot /> : null}
@@ -129,7 +124,7 @@ function ExperienceItem({
       </div>
 
       {summary ? (
-        <p className="max-w-[65ch] pt-2 pl-9 text-sm leading-relaxed text-gray-400">
+        <p className="max-w-[65ch] pt-2 pl-9 text-sm leading-relaxed text-muted-foreground">
           {summary}
         </p>
       ) : null}
@@ -155,7 +150,7 @@ function ExperienceItem({
       )}
 
       {skills.length > 0 ? (
-        <p className="pt-3 pl-9 font-mono text-xs leading-relaxed text-gray-500">
+        <p className="pt-3 pl-9 font-mono text-xs leading-relaxed text-muted-foreground">
           {skills.join(" / ")}
         </p>
       ) : null}
@@ -244,7 +239,7 @@ function ExperienceLinks({ links }: { links?: ExperienceLink[] }) {
             href={link.href}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 text-sm text-gray-300 underline-offset-4 transition-colors hover:text-white hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-gray-500"
+            className="inline-flex items-center gap-1.5 text-sm text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
           >
             {link.icon}
             <span>{link.label}</span>
@@ -261,8 +256,8 @@ function PositionIcon({ icon }: { icon?: ReactElement }) {
     <div
       className={cn(
         "flex size-6 shrink-0 items-center justify-center rounded-md",
-        "bg-[#141414] text-gray-400",
-        "border border-gray-800",
+        "bg-muted text-muted-foreground",
+        "border border-border",
         "[&_svg]:size-4 [&_svg]:shrink-0",
       )}
     >
@@ -282,7 +277,7 @@ const markdownComponents: Components = {
         href={href}
         target="_blank"
         rel="noopener noreferrer"
-        className="text-gray-300 underline underline-offset-2 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-500"
+        className="text-muted-foreground underline underline-offset-2 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
       >
         {children}
       </a>
@@ -294,11 +289,11 @@ function Prose({ className, ...props }: ComponentProps<"div">) {
   return (
     <div
       className={cn(
-        "prose prose-invert prose-sm max-w-[65ch]",
-        "prose-p:my-2 prose-p:leading-relaxed prose-p:text-gray-400",
-        "prose-ul:my-1 prose-ul:pl-4 prose-ul:text-gray-400",
-        "prose-li:my-1 prose-li:leading-relaxed prose-li:text-gray-400",
-        "prose-strong:text-gray-200",
+        "prose prose-sm max-w-[65ch] dark:prose-invert",
+        "prose-p:my-2 prose-p:leading-relaxed prose-p:text-muted-foreground",
+        "prose-ul:my-1 prose-ul:pl-4 prose-ul:text-muted-foreground",
+        "prose-li:my-1 prose-li:leading-relaxed prose-li:text-muted-foreground",
+        "prose-strong:text-foreground",
         className,
       )}
       {...props}

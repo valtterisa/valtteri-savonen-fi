@@ -6,7 +6,7 @@ type SiteShellRootProps = {
 
 function Root({ children }: SiteShellRootProps) {
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-gray-100">{children}</div>
+    <div className="min-h-screen bg-background text-foreground">{children}</div>
   );
 }
 

@@ -35,7 +35,7 @@ export function InlineExternalLink({ href, children }: InlineExternalLinkProps) 
   return (
     <ExternalLink
       href={href}
-      className="text-gray-300 hover:text-white transition-colors underline underline-offset-2"
+      className="text-muted-foreground hover:text-foreground transition-colors underline underline-offset-2"
     >
       {children}
     </ExternalLink>

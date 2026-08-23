@@ -4,16 +4,17 @@ import { SITE_HANDLE, SITE_NAME, absoluteUrl } from "../lib/site";
 
 interface Props {
   seo: SeoData;
+  themeColor?: string;
 }
 
-const { seo } = Astro.props;
+const { seo, themeColor = "#0a0a0a" } = Astro.props;
 const robots = seo.noindex ? "noindex, follow" : "index, follow";
 ---
 
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="generator" content={Astro.generator} />
-<meta name="theme-color" content="#0a0a0a" />
+<meta name="theme-color" content={themeColor} />
 <title>{seo.title}</title>
 <meta name="description" content={seo.description} />
 {seo.keywords && <meta name="keywords" content={seo.keywords} />}

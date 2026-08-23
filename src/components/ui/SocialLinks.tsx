@@ -13,7 +13,7 @@ function SocialLink({ href, ariaLabel, children }: SocialLinkProps) {
     <ExternalLink
       href={href}
       ariaLabel={ariaLabel}
-      className="text-gray-400 hover:text-white transition-colors"
+      className="text-muted-foreground hover:text-foreground transition-colors"
     >
       {children}
     </ExternalLink>

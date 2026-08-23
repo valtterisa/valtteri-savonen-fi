@@ -1,21 +1,52 @@
 ---
 import "../styles/global.css";
 import SEOHead from "../components/SEOHead.astro";
+import { ThemeSwitcher } from "../components/ThemeSwitcher";
 import type { SeoData } from "../lib/seo";
+import {
+  parseTheme,
+  themeClass,
+  themeColor,
+  THEME_COOKIE,
+} from "../lib/theme";
 
 interface Props {
   seo: SeoData;
 }
 
 const { seo } = Astro.props;
+const theme = parseTheme(Astro.cookies.get(THEME_COOKIE)?.value);
+const htmlClass = themeClass(theme);
+const color = themeColor(theme);
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" class={htmlClass}>
   <head>
-    <SEOHead seo={seo} />
+    <SEOHead seo={seo} themeColor={color} />
+    <script is:inline>
+      (function () {
+        var match = document.cookie.match(/(?:^|; )theme=(light|dark)/);
+        var theme = match ? match[1] : null;
+        if (!theme) {
+          try {
+            theme = localStorage.getItem("theme");
+          } catch (_) {}
+          theme = theme === "light" || theme === "dark" ? theme : "dark";
+          document.cookie =
+            "theme=" +
+            theme +
+            "; path=/; max-age=31536000; SameSite=Lax";
+        }
+        var isDark = theme === "dark";
+        document.documentElement.classList.toggle("dark", isDark);
+        var meta = document.querySelector('meta[name="theme-color"]');
+        if (meta) meta.setAttribute("content", isDark ? "#0a0a0a" : "#ffffff");
+      })();
+    </script>
   </head>
-  <body class="bg-black text-white">
+  <body class="bg-background text-foreground">
+    <ThemeSwitcher client:load />
     <slot />
   </body>
 </html>

@@ -26,7 +26,7 @@ type TechStackProps = {
 
 export function TechStack({ items }: TechStackProps) {
   return (
-    <div className="flex flex-wrap gap-2 text-sm text-gray-500">
+    <div className="flex flex-wrap gap-2 text-sm text-muted-foreground">
       {items.map((item, index) => (
         <span key={item}>
           {item}

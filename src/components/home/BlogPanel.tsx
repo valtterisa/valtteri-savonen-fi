@@ -15,13 +15,13 @@ function BlogPostLink({ post }: BlogPostLinkProps) {
     <Stack.Item className="flex items-start gap-3">
       <span
         aria-hidden="true"
-        className="mt-[0.55rem] h-1.5 w-1.5 shrink-0 rounded-full bg-gray-500"
+        className="mt-[0.55rem] h-1.5 w-1.5 shrink-0 rounded-full bg-muted-foreground"
       />
       <a
         href={`/blog/${post.slug}`}
-        className="text-gray-400 hover:text-white transition-colors"
+        className="text-muted-foreground hover:text-foreground transition-colors"
       >
-        <span className="text-base font-medium text-white lowercase">
+        <span className="text-base font-medium text-foreground lowercase">
           {post.title || "Untitled Post"}
         </span>
       </a>
@@ -36,11 +36,11 @@ type BlogPanelProps = {
 
 export function BlogPanel({ posts, failed }: BlogPanelProps) {
   if (failed) {
-    return <div className="text-gray-400">couldn’t load blog posts.</div>;
+    return <div className="text-muted-foreground">couldn’t load blog posts.</div>;
   }
 
   if (posts.length === 0) {
-    return <div className="text-gray-400">no blog posts, yet.</div>;
+    return <div className="text-muted-foreground">no blog posts, yet.</div>;
   }
 
   return (

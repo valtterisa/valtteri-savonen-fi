@@ -32,7 +32,7 @@ function ActionLink({ href, label, icon }: ActionLinkProps) {
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="text-gray-400 hover:text-white transition-colors flex items-center gap-1"
+      className="text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1"
     >
       {icon}
       <span className="text-sm">{label}</span>

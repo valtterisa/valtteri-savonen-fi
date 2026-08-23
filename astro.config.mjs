@@ -1,7 +1,11 @@
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { defineConfig } from "astro/config";
 import vercel from "@astrojs/vercel";
 import react from "@astrojs/react";
 import tailwindcss from "@tailwindcss/vite";
+
+const rootDir = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
   site: "https://valtterisavonen.fi",
@@ -16,5 +20,10 @@ export default defineConfig({
   }),
   vite: {
     plugins: [tailwindcss()],
+    resolve: {
+      alias: {
+        "@": path.resolve(rootDir, "src"),
+      },
+    },
   },
 });

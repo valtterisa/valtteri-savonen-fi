@@ -18,7 +18,7 @@ export function BlogPostPage({
     <div className="w-full py-10 sm:py-12 px-4 sm:px-8 md:px-16 relative">
       <a
         href="/?tab=blog"
-        className="absolute top-6 left-6 text-gray-400 text-sm hover:text-white transition-colors"
+        className="absolute top-6 left-6 text-muted-foreground text-sm hover:text-foreground transition-colors"
       >
         ← Back to homepage
       </a>
@@ -67,12 +67,12 @@ export function BlogPostNotFound({
     <div className="w-full py-10 sm:py-12 px-4 sm:px-8 md:px-16 relative">
       <a
         href="/?tab=blog"
-        className="absolute top-6 left-6 text-gray-400 text-sm hover:text-white transition-colors"
+        className="absolute top-6 left-6 text-muted-foreground text-sm hover:text-foreground transition-colors"
       >
         ← Back to homepage
       </a>
       <div className="max-w-3xl mx-auto pt-8">
-        <p className="text-gray-400">{message}</p>
+        <p className="text-muted-foreground">{message}</p>
       </div>
     </div>
   );

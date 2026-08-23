@@ -37,6 +37,12 @@ export const onRequest = defineMiddleware(async (context, next) => {
     existing ? `${existing}, ${links.join(", ")}` : links.join(", "),
   );
 
+  const contentType = headers.get("content-type") ?? "";
+  if (contentType.includes("text/html")) {
+    const vary = headers.get("Vary");
+    headers.set("Vary", vary ? `${vary}, Cookie` : "Cookie");
+  }
+
   return new Response(response.body, {
     status: response.status,
     statusText: response.statusText,

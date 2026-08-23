@@ -22,7 +22,7 @@ type ArticleTitleProps = {
 
 function Title({ children }: ArticleTitleProps) {
   return (
-    <h1 className="text-3xl sm:text-4xl font-bold text-white mb-4 leading-tight lowercase">
+    <h1 className="text-3xl sm:text-4xl font-bold text-foreground mb-4 leading-tight lowercase">
       {children}
     </h1>
   );
@@ -34,7 +34,7 @@ type ArticleMetaProps = {
 
 function Meta({ children }: ArticleMetaProps) {
   return (
-    <div className="flex items-center gap-3 text-sm text-gray-500 mb-4">
+    <div className="flex items-center gap-3 text-sm text-muted-foreground mb-4">
       {children}
     </div>
   );
@@ -64,7 +64,7 @@ type ArticleAuthorProps = {
 };
 
 function Author({ children }: ArticleAuthorProps) {
-  return <div className="text-white">{children}</div>;
+  return <div className="text-foreground">{children}</div>;
 }
 
 type ArticleDateProps = {
@@ -90,7 +90,7 @@ type ArticleTagProps = {
 
 function Tag({ children }: ArticleTagProps) {
   return (
-    <span className="px-2 py-0.5 text-xs text-gray-400 bg-gray-800 rounded-full">
+    <span className="px-2 py-0.5 text-xs text-muted-foreground bg-muted rounded-full">
       {children}
     </span>
   );
@@ -101,22 +101,22 @@ type ArticleContentProps = {
 };
 
 const proseClassName = [
-  "prose prose-invert prose-base max-w-none",
-  "prose-headings:text-white prose-headings:font-bold prose-headings:mt-8 prose-headings:mb-4",
+  "prose prose-base max-w-none dark:prose-invert",
+  "prose-headings:text-foreground prose-headings:font-bold prose-headings:mt-8 prose-headings:mb-4",
   "prose-h1:text-3xl prose-h1:font-bold prose-h1:mt-10 prose-h1:mb-5",
   "prose-h2:text-2xl prose-h2:font-bold prose-h2:mt-8 prose-h2:mb-4",
   "prose-h3:text-xl prose-h3:font-semibold prose-h3:mt-6 prose-h3:mb-3",
-  "prose-p:text-gray-300 prose-p:leading-relaxed prose-p:mb-6 prose-p:text-base",
-  "prose-a:text-blue-400 prose-a:no-underline hover:prose-a:underline prose-a:font-medium",
-  "prose-strong:text-white prose-strong:font-semibold",
-  "prose-code:text-gray-300 prose-code:bg-gray-800 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm prose-code:font-mono",
-  "prose-pre:bg-gray-900 prose-pre:border prose-pre:border-gray-800 prose-pre:rounded-lg prose-pre:p-3 prose-pre:overflow-x-auto prose-pre:my-4",
-  "prose-blockquote:border-l-4 prose-blockquote:border-l-gray-700 prose-blockquote:text-gray-400 prose-blockquote:pl-4 prose-blockquote:italic prose-blockquote:my-4",
+  "prose-p:text-muted-foreground prose-p:leading-relaxed prose-p:mb-6 prose-p:text-base",
+  "prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-a:no-underline hover:prose-a:underline prose-a:font-medium",
+  "prose-strong:text-foreground prose-strong:font-semibold",
+  "prose-code:text-foreground prose-code:bg-muted prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm prose-code:font-mono",
+  "prose-pre:bg-muted prose-pre:border prose-pre:border-border prose-pre:rounded-lg prose-pre:p-3 prose-pre:overflow-x-auto prose-pre:my-4",
+  "prose-blockquote:border-l-4 prose-blockquote:border-border prose-blockquote:text-muted-foreground prose-blockquote:pl-4 prose-blockquote:italic prose-blockquote:my-4",
   "prose-img:rounded-lg prose-img:my-5 prose-img:w-full prose-img:h-auto",
-  "prose-ul:text-gray-300 prose-ul:my-4 prose-ul:pl-5",
-  "prose-ol:text-gray-300 prose-ol:my-4 prose-ol:pl-5",
-  "prose-li:text-gray-300 prose-li:my-1.5 prose-li:leading-relaxed",
-  "prose-hr:border-gray-800 prose-hr:my-5",
+  "prose-ul:text-muted-foreground prose-ul:my-4 prose-ul:pl-5",
+  "prose-ol:text-muted-foreground prose-ol:my-4 prose-ol:pl-5",
+  "prose-li:text-muted-foreground prose-li:my-1.5 prose-li:leading-relaxed",
+  "prose-hr:border-border prose-hr:my-5",
 ].join(" ");
 
 function Content({ html }: ArticleContentProps) {
