@@ -5,7 +5,7 @@ type ArticleRootProps = {
 };
 
 function Root({ children }: ArticleRootProps) {
-  return <article className="max-w-3xl mx-auto pt-8">{children}</article>;
+  return <article>{children}</article>;
 }
 
 type ArticleHeaderProps = {

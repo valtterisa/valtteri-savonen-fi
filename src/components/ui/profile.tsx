@@ -5,7 +5,9 @@ type ProfileRootProps = {
 };
 
 function Root({ children }: ProfileRootProps) {
-  return <div className="flex items-center gap-6 mb-6">{children}</div>;
+  return (
+    <div className="flex items-center gap-6 mb-6 w-full">{children}</div>
+  );
 }
 
 type ProfileAvatarProps = {

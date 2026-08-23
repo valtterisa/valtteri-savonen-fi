@@ -6,6 +6,7 @@ import {
   BlogPostPage,
   BlogPostNotFound,
 } from "../../components/blog/blog-post-page";
+import { ThemeSwitcher } from "../../components/theme-switcher";
 import {
   getPost,
   getAuthor,
@@ -35,9 +36,13 @@ const seo = post
         authorName={author.name}
         authorImage={author.image}
         publishedDisplay={formatPublished(post.publishedAt)}
-      />
+      >
+        <ThemeSwitcher client:load />
+      </BlogPostPage>
     ) : (
-      <BlogPostNotFound />
+      <BlogPostNotFound>
+        <ThemeSwitcher client:load />
+      </BlogPostNotFound>
     )
   }
 </BaseLayout>

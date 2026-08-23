@@ -1,9 +1,15 @@
 ---
 import BaseLayout from "../layouts/base-layout.astro";
 import { NotFoundPage } from "../components/not-found-page";
+import { ThemeSwitcher } from "../components/theme-switcher";
 import { notFoundSeo } from "../lib/seo";
 ---
 
 <BaseLayout seo={notFoundSeo(Astro.url.pathname)}>
-  <NotFoundPage />
+  <div class="relative min-h-screen">
+    <div class="absolute top-4 right-4 z-10">
+      <ThemeSwitcher client:load />
+    </div>
+    <NotFoundPage />
+  </div>
 </BaseLayout>

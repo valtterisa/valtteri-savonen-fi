@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Kbd } from "@/components/ui/kbd";
 import {
   Tooltip,
   TooltipContent,
@@ -9,6 +10,7 @@ import {
 } from "@/components/ui/tooltip";
 import { useSound } from "@/hooks/use-sound";
 import { clickSoftSound } from "@/lib/click-soft";
+import { cn } from "@/lib/utils";
 import {
   setThemeCookie,
   themeColor,
@@ -44,7 +46,7 @@ function isTypingTarget(target: EventTarget | null) {
   return tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT";
 }
 
-export function ThemeSwitcher() {
+export function ThemeSwitcher({ className }: { className?: string }) {
   const [theme, setTheme] = useState<Theme>(() =>
     typeof document === "undefined" ? "dark" : readTheme(),
   );
@@ -101,7 +103,7 @@ export function ThemeSwitcher() {
             variant="ghost"
             size="icon"
             onClick={toggleTheme}
-            className="relative fixed top-4 right-4 z-50"
+            className={cn("relative shrink-0", className)}
             aria-label={label}
           >
             <Sun className="size-4 scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
@@ -110,7 +112,7 @@ export function ThemeSwitcher() {
           </Button>
         </TooltipTrigger>
         <TooltipContent side="bottom" align="end">
-          Toggle theme · D
+          Toggle theme <Kbd>D</Kbd>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>

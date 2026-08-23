@@ -2,11 +2,10 @@ import { useState } from "react";
 import { useTabState } from "../../hooks/use-tab-state";
 import type { Tab } from "../../lib/content";
 import type { ContributionGraph as ContributionGraphData } from "../../lib/contrib";
-import { CURRENT_FOCUS_NAME, CURRENT_FOCUS_URL } from "../../lib/profile";
-import { PROFILE_IMAGE_PATH, socialHref } from "../../lib/site";
+import { PROFILE_IMAGE_PATH } from "../../lib/site";
 import { SiteShell } from "../ui/site-shell";
 import { Profile } from "../ui/profile";
-import { InlineExternalLink } from "../ui/external-link";
+import { ThemeSwitcher } from "../theme-switcher";
 import { SocialLinks } from "../ui/social-links";
 import { ContributionGraph } from "../ui/contribution-graph";
 import { Tabs } from "../ui/tabs";
@@ -58,18 +57,9 @@ export function HomePage({
             <Profile.Avatar src={PROFILE_IMAGE_PATH} alt="Valtteri Savonen" />
             <Profile.Content>
               <Profile.Title>hey, i'm valtteri!</Profile.Title>
-              <Profile.Subtitle>
-                currently building{" "}
-                <InlineExternalLink href={CURRENT_FOCUS_URL}>
-                  {CURRENT_FOCUS_NAME}
-                </InlineExternalLink>
-                . full-stack engineer in Finland. freelance via{" "}
-                <InlineExternalLink href={socialHref("cal")}>
-                  cal.com
-                </InlineExternalLink>
-                .
-              </Profile.Subtitle>
+              <Profile.Subtitle>building stuff</Profile.Subtitle>
             </Profile.Content>
+            <ThemeSwitcher className="ml-auto" />
           </Profile.Root>
 
           <SocialLinks.Root>

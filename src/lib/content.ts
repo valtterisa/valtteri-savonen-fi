@@ -45,12 +45,12 @@ export const projects: Project[] = [
         id: "quickshops-product",
         title: "quickshops.app",
         summary:
-          "a chat-operated store for digital and physical products. update the catalog by talking, take payments, and ship a storefront - or plug the same store into your own next.js site.",
+          "chat-operated ecommerce for digital and physical goods, with a headless api for custom storefronts.",
         icon: "code",
-        description: `- Wrote a single mutation bus: dashboard chat, MCP tools, and Telegram all enqueue catalog/page patches; a commit step applies them to Convex.
-- Modeled digital (signed blob URLs) and physical SKUs in one catalog schema. Checkout is Stripe Checkout against the connected account.
-- Extracted the dashboard's Convex queries/mutations into \`@quickshops/sdk\` and a \`useStore()\` hook used by custom Next.js storefronts.
-- Backend is Convex plus an Elysia.js worker on Vercel.`,
+        description: `- Designed the UI and system architecture.
+- Full commerce surface: products/SKUs, inventory, Stripe Checkout (connected accounts), orders, digital delivery (signed blob URLs), and physical fulfillment state.
+- Agentic ops layer: natural-language chat drives catalog, pages, pricing, and order actions through a shared mutation bus (dashboard chat, Telegram, MCP tools enqueue the same patches; a commit step applies them to Convex).
+- Headless API for custom storefronts, plus HTTP API and MCP so external agents/tools can manage the same backend.`,
         skills: [
           "Next.js",
           "TypeScript",
@@ -58,6 +58,7 @@ export const projects: Project[] = [
           "Elysia.js",
           "Stripe",
           "MCP",
+          "SDK",
           "Tailwind CSS",
           "Vercel",
         ],
@@ -75,14 +76,13 @@ export const projects: Project[] = [
         id: "drophost-product",
         title: "drophost.space",
         summary:
-          "the fastest way to put a file or a static site on the internet. drop a zip or an html file, get a live https url you can share or point a domain at.",
+          "file and static site hosting. drop a file, get a stable https url.",
         icon: "code",
-        description: `- Built an ingest path that writes a file or an \`index.html\` zip tree to object storage and serves it on \`{slug}.drophost.space\` over TLS.
-- Re-publish overwrites the same object prefix so the hostname does not change. Custom domains are CNAME to that prefix.
-- Password gate is a project-row flag checked in the edge handler before the object is streamed.
-- Dashboard upload and MCP \`publish\` call the same ingest function. Project rows live in Postgres (Drizzle); ACL via Clerk; entitlements via Autumn.`,
+        description: `- Upload files or an \`index.html\` zip to Cloudflare R2 and serve them from a custom page (\`{slug}.drophost.space\`), including custom domains.
+- MCP so AI agents can use the app alongside a real user. Same publish path as the dashboard.`,
         skills: [
           "Next.js",
+          "Cloudflare R2",
           "PostgreSQL",
           "Drizzle",
           "Clerk",
@@ -106,12 +106,11 @@ export const projects: Project[] = [
         id: "floras-product",
         title: "floras.app",
         summary:
-          "an ai website builder that turns a description into a real site. preview it live, then publish to your own subdomain.",
+          "ai agent that builds and deploys real websites in chat.",
         icon: "code",
-        description: `- Constrained codegen to a Zod \`SitePlan\`. An AI SDK \`ToolLoopAgent\` fills it; a pure scaffolder maps \`SitePlan\` to Astro files. Model text is never treated as a filesystem.
-- Each session gets a Blaxel sandbox running \`astro dev\`; the preview URL is stored on the Convex project document.
-- Tool-call traces are written to Convex so the chat UI is a query subscription.
-- Publish runs \`wrangler pages deploy\` and creates \`{slug}.floras.app\` via the Cloudflare DNS API. Auth is Convex Auth; generation is metered with Autumn.`,
+        description: `- Chat with an AI agent that designs and builds the site as a real project (Astro), not a one-shot prompt dump.
+- Production sandbox: each session gets an isolated environment running the live site so you can preview and iterate before go-live.
+- Deploy to Cloudflare Pages + DNS for \`{slug}.floras.app\`.`,
         skills: [
           "Next.js",
           "TypeScript",
@@ -142,12 +141,11 @@ export const projects: Project[] = [
         id: "haalarikone-product",
         title: "haalarikone.fi",
         summary:
-          "the search engine for finnish student overalls. look up colors, schools, and cities across 500+ records - in finnish, english, and swedish.",
+          "search over 500+ finnish student overalls. localized fi/en/sv.",
         icon: "code",
-        description: `- Normalized 500+ overall records into \`overall_data.json\`. next-intl owns fi/en/sv, including translated route segments and slugs.
-- Search is a local pipeline: parse color/area/school/field tokens, subset the JSON, then Fuse.js rank. Claude Haiku is a fallback that only runs on an empty subset.
-- Finnish color inflections collapse to a canonical key (\`valkoinen\` / \`valkoiset\`) before matching.
-- Vitest runs against that JSON. AGPL. CI on non-draft PRs.`,
+        description: `- Normalized catalog in \`overall_data.json\`. next-intl owns fi/en/sv, including translated route segments and slugs.
+- Search pipeline: parse color/area/school/field tokens → subset JSON → Fuse.js rank. Claude Haiku is a fallback that only runs on an empty subset.
+- Finnish color morphology collapsed to a canonical key (\`valkoinen\` / \`valkoiset\`) before matching.`,
         skills: [
           "Next.js",
           "TypeScript",
@@ -167,6 +165,13 @@ export const experiences: Experience[] = [
     id: "self-employed",
     companyName: "self-employed",
     isCurrentEmployer: true,
+    links: [
+      {
+        label: "freedomly",
+        href: "https://freedomly.io/u/6790f803-65f2-45e9-ad42-4e3d843d98ae",
+      },
+      { label: "bittive", href: "https://bittive.com" },
+    ],
     positions: [
       {
         id: "self-employed-engineer",
@@ -199,25 +204,6 @@ export const experiences: Experience[] = [
         employmentType: "full-time",
         icon: "lightbulb",
         skills: ["Business Ownership", "Product", "Freelance"],
-      },
-    ],
-  },
-  {
-    id: "luxmarketfin",
-    companyName: "luxmarketfin clothing & accessories",
-    positions: [
-      {
-        id: "luxmarketfin-cofounder",
-        title: "co-founder",
-        summary: "co-founder. 05.2024 - present.",
-        employmentPeriod: {
-          start: "05.2024",
-        },
-        employmentType: "part-time",
-        icon: "lightbulb",
-        description: `- Stood up the storefront, catalog, and order flow for a pre-loved clothing shop.`,
-        skills: ["E-commerce", "Operations", "Digital Presence"],
-        isExpanded: true,
       },
     ],
   },

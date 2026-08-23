@@ -19,7 +19,7 @@ export const CITATION = `${SITE_NAME}, full-stack engineer (${SITE_URL.replace("
 export const SHORT_SUMMARY =
   "Full-stack engineer from Finland. Builds products, freelances, and writes about software. Currently building quickshops.app.";
 
-export const BIO = `${SITE_NAME} is a full-stack engineer from Finland. He builds products, does freelance work, and writes about software. He is currently building ${CURRENT_FOCUS_NAME}, a chat-operated store for digital products.`;
+export const BIO = `${SITE_NAME} is a full-stack engineer from Finland. He builds products, does freelance work, and writes about software. He is currently building ${CURRENT_FOCUS_NAME}, a full ecommerce platform with chat-native agentic store ops, plus SDK/API/MCP for custom tools.`;
 
 export const SKILLS = [
   "TypeScript",
@@ -31,6 +31,7 @@ export const SKILLS = [
   "Astro",
   "Elysia.js",
   "Stripe",
+  "MCP",
   "Tailwind CSS",
 ] as const;
 
@@ -55,7 +56,7 @@ export const AGENT_FAQS: AgentFaq[] = [
   },
   {
     question: `What is ${SITE_NAME} building right now?`,
-    answer: `He is currently building ${CURRENT_FOCUS_NAME} (${CURRENT_FOCUS_URL}), a chat-operated store for digital products.`,
+    answer: `He is currently building ${CURRENT_FOCUS_NAME} (${CURRENT_FOCUS_URL}): full ecommerce (catalog, checkout, orders, fulfillment) operated through a chat-based agentic system, with SDK/HTTP API/MCP so external tools can run the same store backend.`,
   },
   {
     question: `How can I hire ${SITE_NAME}?`,
@@ -69,13 +70,13 @@ export const AGENT_FAQS: AgentFaq[] = [
 
 const PROJECT_BLURBS: Record<string, string> = {
   quickshops:
-    "A chat-operated store for digital and physical products. Update the catalog by talking, take payments, and ship a storefront - or plug the same store into your own Next.js site.",
+    "Chat-operated ecommerce for digital and physical goods, with a headless API for custom storefronts.",
   drophost:
-    "The fastest way to put a file or a static site on the internet. Drop a zip or an HTML file, get a live HTTPS URL you can share or point a domain at.",
+    "File and static site hosting. Drop a file, get a stable HTTPS URL.",
   floras:
-    "An AI website builder that turns a description into a real site. Preview it live, then publish to your own subdomain.",
+    "AI agent that builds and deploys real websites in chat.",
   haalarikone:
-    "The search engine for Finnish student overalls. Look up colors, schools, and cities across 500+ records - in Finnish, English, and Swedish.",
+    "Search over 500+ Finnish student overalls. Localized fi/en/sv.",
 };
 
 export type AgentPost = Pick<

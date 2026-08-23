@@ -56,8 +56,12 @@ export function WorkExperience({
 }: WorkExperienceProps) {
   return (
     <div className={cn("divide-y divide-border text-foreground", className)}>
-      {experiences.map((experience) => (
-        <ExperienceItem key={experience.id} experience={experience} />
+      {experiences.map((experience, index) => (
+        <ExperienceItem
+          key={experience.id}
+          experience={experience}
+          defaultOpen={index === 0}
+        />
       ))}
     </div>
   );
@@ -65,15 +69,17 @@ export function WorkExperience({
 
 function ExperienceItem({
   experience,
+  defaultOpen,
 }: {
   experience: ExperienceItemType;
+  defaultOpen: boolean;
 }) {
   const description = experience.positions
     .map((position) => position.description)
     .filter(Boolean)
     .join("\n");
   const hasDescription = description.length > 0;
-  const [open, setOpen] = useState(hasDescription);
+  const [open, setOpen] = useState(hasDescription && defaultOpen);
   const icon = experience.positions.find((position) => position.icon)?.icon;
   const summary =
     experience.positions.find((position) => position.summary)?.summary ??
