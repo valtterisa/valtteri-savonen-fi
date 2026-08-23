@@ -1,6 +1,6 @@
 import type { APIRoute } from "astro";
 import { createElement } from "react";
-import { BlogIndexOgImage } from "../../components/og/BlogIndexOgImage";
+import { BlogIndexOgImage } from "../../components/og/blog-index-og-image";
 import { ogImageHeaders, renderOgImage } from "../../lib/og/render";
 
 export const prerender = true;

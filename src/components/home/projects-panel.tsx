@@ -1,6 +1,6 @@
 import { projects } from "../../lib/content";
 import { WorkExperience } from "../work-experience";
-import { toWorkExperience } from "./mapWorkExperience";
+import { toWorkExperience } from "./map-work-experience";
 
 export function ProjectsPanel() {
   return (

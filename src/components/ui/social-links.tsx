@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { SOCIAL_LINKS, type SocialLinkId } from "../../lib/site";
-import { ExternalLink } from "./ExternalLink";
+import { ExternalLink } from "./external-link";
 
 type SocialLinkProps = {
   href: string;

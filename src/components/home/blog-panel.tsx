@@ -1,4 +1,4 @@
-import { Stack } from "../ui/Stack";
+import { Stack } from "../ui/stack";
 
 export type BlogPostSummary = {
   id: string;

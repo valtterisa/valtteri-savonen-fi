@@ -1,18 +1,18 @@
 import { useState } from "react";
-import { useTabState } from "../../hooks/useTabState";
+import { useTabState } from "../../hooks/use-tab-state";
 import type { Tab } from "../../lib/content";
 import type { ContributionGraph as ContributionGraphData } from "../../lib/contrib";
 import { CURRENT_FOCUS_NAME, CURRENT_FOCUS_URL } from "../../lib/profile";
 import { PROFILE_IMAGE_PATH, socialHref } from "../../lib/site";
-import { SiteShell } from "../ui/SiteShell";
-import { Profile } from "../ui/Profile";
-import { InlineExternalLink } from "../ui/ExternalLink";
-import { SocialLinks } from "../ui/SocialLinks";
-import { ContributionGraph } from "../ui/ContributionGraph";
-import { Tabs } from "../ui/Tabs";
-import { ProjectsPanel } from "./ProjectsPanel";
-import { ExperiencePanel } from "./ExperiencePanel";
-import { BlogPanel, type BlogPostSummary } from "./BlogPanel";
+import { SiteShell } from "../ui/site-shell";
+import { Profile } from "../ui/profile";
+import { InlineExternalLink } from "../ui/external-link";
+import { SocialLinks } from "../ui/social-links";
+import { ContributionGraph } from "../ui/contribution-graph";
+import { Tabs } from "../ui/tabs";
+import { ProjectsPanel } from "./projects-panel";
+import { ExperiencePanel } from "./experience-panel";
+import { BlogPanel, type BlogPostSummary } from "./blog-panel";
 
 type HomePageProps = {
   activeTab: Tab;

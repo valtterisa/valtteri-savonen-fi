@@ -1,10 +1,10 @@
 import type { Tab } from "./content";
-import type { JsonLd } from "./jsonLd";
+import type { JsonLd } from "./json-ld";
 import {
   createBlogJsonLd,
   createBlogPostingJsonLd,
   createHomeJsonLd,
-} from "./jsonLd";
+} from "./json-ld";
 import {
   DEFAULT_DESCRIPTION,
   SITE_NAME,

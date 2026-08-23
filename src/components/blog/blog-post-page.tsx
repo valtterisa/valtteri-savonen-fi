@@ -1,5 +1,5 @@
 import type { Post } from "../../lib/marble";
-import { Article } from "../ui/Article";
+import { Article } from "../ui/article";
 
 type BlogPostPageProps = {
   post: Post;

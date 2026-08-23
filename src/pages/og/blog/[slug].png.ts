@@ -2,7 +2,7 @@ export const prerender = false;
 
 import type { APIRoute } from "astro";
 import { createElement } from "react";
-import { BlogPostOgImage } from "../../../components/og/BlogPostOgImage";
+import { BlogPostOgImage } from "../../../components/og/blog-post-og-image";
 import { formatPublished, getAuthor, getPost } from "../../../lib/marble";
 import { ogImageHeaders, renderOgImage } from "../../../lib/og/render";
 

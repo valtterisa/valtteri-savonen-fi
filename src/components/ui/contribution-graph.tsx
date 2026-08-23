@@ -3,8 +3,8 @@ import type { ContributionGraph as ContributionGraphData } from "../../lib/contr
 import {
   hideContributionTip,
   positionContributionTip,
-} from "../../lib/contribTip";
-import { ExternalLink } from "./ExternalLink";
+} from "../../lib/contrib-tip";
+import { ExternalLink } from "./external-link";
 
 type ContributionGraphRootProps = {
   graph: ContributionGraphData;

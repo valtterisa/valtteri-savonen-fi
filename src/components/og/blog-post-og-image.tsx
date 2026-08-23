@@ -1,4 +1,4 @@
-import { OgLayout } from "./OgLayout";
+import { OgLayout } from "./og-layout";
 import { absoluteUrl, SITE_NAME } from "../../lib/site";
 
 type BlogPostOgImageProps = {
