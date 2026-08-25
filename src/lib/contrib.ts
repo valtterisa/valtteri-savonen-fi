@@ -139,3 +139,34 @@ export async function getContributionGraph(): Promise<ContributionGraph> {
 
   return cachedGraph ?? { days: [], caption: "" };
 }
+
+export function parseContributionGraph(
+  value: JsonValue | null,
+): ContributionGraph | null {
+  if (!isJsonObject(value) || !isJsonArray(value.days) || !isString(value.caption)) {
+    return null;
+  }
+
+  const days: ContributionDay[] = [];
+  for (const entry of value.days) {
+    if (!isJsonObject(entry)) {
+      return null;
+    }
+    if (
+      !isString(entry.date) ||
+      !isNumber(entry.count) ||
+      !isNumber(entry.level) ||
+      !isString(entry.tip)
+    ) {
+      return null;
+    }
+    days.push({
+      date: entry.date,
+      count: entry.count,
+      level: entry.level,
+      tip: entry.tip,
+    });
+  }
+
+  return { days, caption: value.caption };
+}

@@ -1,24 +1,55 @@
-import { useEffect, useRef } from "react";
-import type { ContributionGraph as ContributionGraphData } from "../../lib/contrib";
+import { useEffect, useRef, useState } from "react";
+import {
+  parseContributionGraph,
+  type ContributionGraph as ContributionGraphData,
+} from "../../lib/contrib";
 import {
   hideContributionTip,
   positionContributionTip,
 } from "../../lib/contrib-tip";
+import type { JsonValue } from "../../lib/json";
 import { ExternalLink } from "./external-link";
 
-type ContributionGraphRootProps = {
-  graph: ContributionGraphData;
-};
+function Root() {
+  const [graph, setGraph] = useState<ContributionGraphData | null>(null);
 
-function Root({ graph }: ContributionGraphRootProps) {
-  if (graph.days.length === 0) {
+  useEffect(() => {
+    let cancelled = false;
+
+    async function load() {
+      try {
+        const response = await fetch("/api/contrib");
+        if (!response.ok) {
+          return;
+        }
+        const raw = (await response.json()) as JsonValue;
+        const parsed = parseContributionGraph(raw);
+        if (!cancelled && parsed && parsed.days.length > 0) {
+          setGraph(parsed);
+        }
+      } catch {
+        return;
+      }
+    }
+
+    void load();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  if (!graph) {
     return null;
   }
 
   return <ContributionGraphFrame graph={graph} />;
 }
 
-function ContributionGraphFrame({ graph }: ContributionGraphRootProps) {
+type ContributionGraphFrameProps = {
+  graph: ContributionGraphData;
+};
+
+function ContributionGraphFrame({ graph }: ContributionGraphFrameProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const frameRef = useRef<HTMLDivElement>(null);
   const tipRef = useRef<HTMLDivElement>(null);
