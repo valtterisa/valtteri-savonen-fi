@@ -46,7 +46,7 @@ Set project env:
 - `MARBLE_API_KEY`
 - `MARBLE_WEBHOOK_SECRET`
 
-ISR pages stay cached until Marble hits `POST /api/revalidate` (or you redeploy). The GitHub contribution graph is served from `/api/contrib` with an 8-hour CDN cache, independent of page ISR. Static assets are served from `public/`.
+ISR pages stay cached until Marble hits `POST /api/revalidate` (or you redeploy). The GitHub contribution graph is server-rendered via an Astro server island (`server:defer`) and a dedicated `/fragments/contrib-graph` route; both use `Cache-Control: s-maxage=28800` (8 hours). Static assets are served from `public/`.
 
 ```sh
 vercel deploy

@@ -15,7 +15,7 @@ export default defineConfig({
     isr: {
       expiration: false,
       bypassToken: process.env.MARBLE_WEBHOOK_SECRET,
-      exclude: [/^\/api\/.+/],
+      exclude: [/^\/api\/.+/, /^\/fragments\/contrib-graph$/],
     },
   }),
   vite: {

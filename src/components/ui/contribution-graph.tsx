@@ -1,33 +1,16 @@
 import { useEffect, useRef } from "react";
-import { useQuery } from "@tanstack/react-query";
-import {
-  fetchContributionGraphClient,
-  type ContributionGraph as ContributionGraphData,
-} from "../../lib/contrib";
+import type { ContributionGraph as ContributionGraphData } from "../../lib/contrib";
 import {
   hideContributionTip,
   positionContributionTip,
 } from "../../lib/contrib-tip";
 import { ExternalLink } from "./external-link";
 
-function Root() {
-  const { data: graph } = useQuery({
-    queryKey: ["contribution-graph"],
-    queryFn: fetchContributionGraphClient,
-  });
-
-  if (!graph) {
-    return null;
-  }
-
-  return <ContributionGraphFrame graph={graph} />;
-}
-
 type ContributionGraphFrameProps = {
   graph: ContributionGraphData;
 };
 
-function ContributionGraphFrame({ graph }: ContributionGraphFrameProps) {
+export function ContributionGraphFrame({ graph }: ContributionGraphFrameProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const frameRef = useRef<HTMLDivElement>(null);
   const tipRef = useRef<HTMLDivElement>(null);
@@ -197,10 +180,3 @@ function Caption({ text }: CaptionProps) {
     </p>
   );
 }
-
-export const ContributionGraph = {
-  Root,
-  Grid,
-  Day,
-  Caption,
-};

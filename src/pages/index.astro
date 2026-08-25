@@ -2,6 +2,7 @@
 export const prerender = false;
 
 import BaseLayout from "../layouts/base-layout.astro";
+import ContributionGraphIsland from "../components/contrib/contribution-graph-island.astro";
 import { HomePage } from "../components/home/home-page";
 import { normalizeTab } from "../lib/content";
 import { listPosts } from "../lib/marble";
@@ -22,5 +23,9 @@ const initialPosts = posts.map((post) => ({
     client:load
     activeTab={activeTab}
     initialPosts={initialPosts}
-  />
+  >
+    <ContributionGraphIsland server:defer slot="contrib-graph">
+      <div slot="fallback" class="contrib-block contrib-block--fallback" aria-hidden="true" />
+    </ContributionGraphIsland>
+  </HomePage>
 </BaseLayout>

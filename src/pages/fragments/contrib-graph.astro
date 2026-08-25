@@ -1,0 +1,16 @@
+---
+export const prerender = false;
+
+import { ContributionGraphFrame } from "../../components/ui/contribution-graph";
+import { setContribCacheHeaders } from "../../lib/contrib-cache";
+import { getContributionGraph } from "../../lib/contrib";
+
+const graph = await getContributionGraph();
+setContribCacheHeaders(Astro.response.headers);
+---
+
+{
+  graph.days.length > 0 ? (
+    <ContributionGraphFrame client:load graph={graph} />
+  ) : null
+}

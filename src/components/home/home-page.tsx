@@ -1,14 +1,12 @@
+import type { ReactNode } from "react";
 import { useState } from "react";
-import { QueryClientProvider } from "@tanstack/react-query";
 import { useTabState } from "../../hooks/use-tab-state";
 import type { Tab } from "../../lib/content";
-import { createQueryClient } from "../../lib/query-client";
 import { PROFILE_IMAGE_PATH } from "../../lib/site";
 import { SiteShell } from "../ui/site-shell";
 import { Profile } from "../ui/profile";
 import { ThemeSwitcher } from "../theme-switcher";
 import { SocialLinks } from "../ui/social-links";
-import { ContributionGraph } from "../ui/contribution-graph";
 import { Tabs } from "../ui/tabs";
 import { ProjectsPanel } from "./projects-panel";
 import { ExperiencePanel } from "./experience-panel";
@@ -17,6 +15,7 @@ import { BlogPanel, type BlogPostSummary } from "./blog-panel";
 type HomePageProps = {
   activeTab: Tab;
   initialPosts: BlogPostSummary[];
+  "contrib-graph"?: ReactNode;
 };
 
 function TabPanel({
@@ -37,9 +36,10 @@ function TabPanel({
   }
 }
 
-function HomePageContent({
+export function HomePage({
   activeTab: initialTab,
   initialPosts,
+  "contrib-graph": contribGraph,
 }: HomePageProps) {
   const { activeTab, setActiveTab } = useTabState(initialTab);
   const [posts] = useState(initialPosts);
@@ -65,7 +65,7 @@ function HomePageContent({
             <SocialLinks.Links />
           </SocialLinks.Root>
 
-          <ContributionGraph.Root />
+          {contribGraph}
 
           <Tabs.Root>
             <Tabs.List
@@ -85,15 +85,5 @@ function HomePageContent({
         </SiteShell.Main>
       </SiteShell.Container>
     </SiteShell.Root>
-  );
-}
-
-export function HomePage(props: HomePageProps) {
-  const [queryClient] = useState(createQueryClient);
-
-  return (
-    <QueryClientProvider client={queryClient}>
-      <HomePageContent {...props} />
-    </QueryClientProvider>
   );
 }
