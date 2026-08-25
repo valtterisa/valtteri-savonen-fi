@@ -29,7 +29,7 @@ type RawContributionDay = {
 const apiUrl =
   "https://github-contributions-api.jogruber.de/v4/valtterisa?y=last";
 
-const cacheTtlMs = 24 * 60 * 60 * 1000;
+const cacheTtlMs = 12 * 60 * 60 * 1000;
 
 let cachedGraph: ContributionGraph | null = null;
 let cachedAt = 0;
@@ -101,7 +101,10 @@ function buildCaption(days: ContributionDay[]): string {
 
 async function fetchContributions(): Promise<ContributionDay[] | null> {
   try {
-    const response = await fetch(apiUrl, { signal: AbortSignal.timeout(8000) });
+    const response = await fetch(apiUrl, {
+      cache: "no-store",
+      signal: AbortSignal.timeout(8000),
+    });
     if (!response.ok) {
       return null;
     }

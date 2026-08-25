@@ -13,7 +13,7 @@ export default defineConfig({
   integrations: [react()],
   adapter: vercel({
     isr: {
-      expiration: false,
+      expiration: 60 * 60 * 12,
       bypassToken: process.env.MARBLE_WEBHOOK_SECRET,
       exclude: [/^\/api\/.+/],
     },
