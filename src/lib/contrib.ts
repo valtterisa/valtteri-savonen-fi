@@ -170,3 +170,18 @@ export function parseContributionGraph(
 
   return { days, caption: value.caption };
 }
+
+export async function fetchContributionGraphClient(): Promise<ContributionGraph> {
+  const response = await fetch("/api/contrib");
+  if (!response.ok) {
+    throw new Error("Failed to load contribution graph");
+  }
+
+  const raw = (await response.json()) as JsonValue;
+  const parsed = parseContributionGraph(raw);
+  if (!parsed || parsed.days.length === 0) {
+    throw new Error("Invalid contribution graph");
+  }
+
+  return parsed;
+}

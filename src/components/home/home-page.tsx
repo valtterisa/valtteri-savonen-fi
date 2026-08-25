@@ -1,6 +1,8 @@
 import { useState } from "react";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { useTabState } from "../../hooks/use-tab-state";
 import type { Tab } from "../../lib/content";
+import { createQueryClient } from "../../lib/query-client";
 import { PROFILE_IMAGE_PATH } from "../../lib/site";
 import { SiteShell } from "../ui/site-shell";
 import { Profile } from "../ui/profile";
@@ -35,7 +37,7 @@ function TabPanel({
   }
 }
 
-export function HomePage({
+function HomePageContent({
   activeTab: initialTab,
   initialPosts,
 }: HomePageProps) {
@@ -83,5 +85,15 @@ export function HomePage({
         </SiteShell.Main>
       </SiteShell.Container>
     </SiteShell.Root>
+  );
+}
+
+export function HomePage(props: HomePageProps) {
+  const [queryClient] = useState(createQueryClient);
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <HomePageContent {...props} />
+    </QueryClientProvider>
   );
 }

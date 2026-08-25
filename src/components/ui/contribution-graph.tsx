@@ -1,42 +1,20 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
+import { useQuery } from "@tanstack/react-query";
 import {
-  parseContributionGraph,
+  fetchContributionGraphClient,
   type ContributionGraph as ContributionGraphData,
 } from "../../lib/contrib";
 import {
   hideContributionTip,
   positionContributionTip,
 } from "../../lib/contrib-tip";
-import type { JsonValue } from "../../lib/json";
 import { ExternalLink } from "./external-link";
 
 function Root() {
-  const [graph, setGraph] = useState<ContributionGraphData | null>(null);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    async function load() {
-      try {
-        const response = await fetch("/api/contrib");
-        if (!response.ok) {
-          return;
-        }
-        const raw = (await response.json()) as JsonValue;
-        const parsed = parseContributionGraph(raw);
-        if (!cancelled && parsed && parsed.days.length > 0) {
-          setGraph(parsed);
-        }
-      } catch {
-        return;
-      }
-    }
-
-    void load();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
+  const { data: graph } = useQuery({
+    queryKey: ["contribution-graph"],
+    queryFn: fetchContributionGraphClient,
+  });
 
   if (!graph) {
     return null;
