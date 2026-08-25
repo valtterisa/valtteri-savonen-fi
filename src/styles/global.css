@@ -46,10 +46,6 @@ html::-webkit-scrollbar-corner {
   z-index: 1;
 }
 
-.contrib-block--fallback {
-  min-height: 7.5rem;
-}
-
 .contrib-frame {
   position: relative;
 }

@@ -6,11 +6,19 @@ import {
 } from "../../lib/contrib-tip";
 import { ExternalLink } from "./external-link";
 
-type ContributionGraphFrameProps = {
+type ContributionGraphRootProps = {
   graph: ContributionGraphData;
 };
 
-export function ContributionGraphFrame({ graph }: ContributionGraphFrameProps) {
+function Root({ graph }: ContributionGraphRootProps) {
+  if (graph.days.length === 0) {
+    return null;
+  }
+
+  return <ContributionGraphFrame graph={graph} />;
+}
+
+function ContributionGraphFrame({ graph }: ContributionGraphRootProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const frameRef = useRef<HTMLDivElement>(null);
   const tipRef = useRef<HTMLDivElement>(null);
@@ -180,3 +188,10 @@ function Caption({ text }: CaptionProps) {
     </p>
   );
 }
+
+export const ContributionGraph = {
+  Root,
+  Grid,
+  Day,
+  Caption,
+};

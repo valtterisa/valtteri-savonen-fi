@@ -29,7 +29,7 @@ type RawContributionDay = {
 const apiUrl =
   "https://github-contributions-api.jogruber.de/v4/valtterisa?y=last";
 
-const cacheTtlMs = 8 * 60 * 60 * 1000;
+const cacheTtlMs = 12 * 60 * 60 * 1000;
 
 let cachedGraph: ContributionGraph | null = null;
 let cachedAt = 0;

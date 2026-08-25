@@ -1,12 +1,13 @@
-import type { ReactNode } from "react";
 import { useState } from "react";
 import { useTabState } from "../../hooks/use-tab-state";
 import type { Tab } from "../../lib/content";
+import type { ContributionGraph as ContributionGraphData } from "../../lib/contrib";
 import { PROFILE_IMAGE_PATH } from "../../lib/site";
 import { SiteShell } from "../ui/site-shell";
 import { Profile } from "../ui/profile";
 import { ThemeSwitcher } from "../theme-switcher";
 import { SocialLinks } from "../ui/social-links";
+import { ContributionGraph } from "../ui/contribution-graph";
 import { Tabs } from "../ui/tabs";
 import { ProjectsPanel } from "./projects-panel";
 import { ExperiencePanel } from "./experience-panel";
@@ -14,8 +15,8 @@ import { BlogPanel, type BlogPostSummary } from "./blog-panel";
 
 type HomePageProps = {
   activeTab: Tab;
+  graph: ContributionGraphData;
   initialPosts: BlogPostSummary[];
-  "contrib-graph"?: ReactNode;
 };
 
 function TabPanel({
@@ -38,8 +39,8 @@ function TabPanel({
 
 export function HomePage({
   activeTab: initialTab,
+  graph,
   initialPosts,
-  "contrib-graph": contribGraph,
 }: HomePageProps) {
   const { activeTab, setActiveTab } = useTabState(initialTab);
   const [posts] = useState(initialPosts);
@@ -65,7 +66,7 @@ export function HomePage({
             <SocialLinks.Links />
           </SocialLinks.Root>
 
-          {contribGraph}
+          <ContributionGraph.Root graph={graph} />
 
           <Tabs.Root>
             <Tabs.List
