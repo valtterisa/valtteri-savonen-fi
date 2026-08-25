@@ -46,7 +46,7 @@ Set project env:
 - `MARBLE_API_KEY`
 - `MARBLE_WEBHOOK_SECRET`
 
-ISR pages stay cached until Marble hits `POST /api/revalidate` (or you redeploy). Static assets are served from `public/`.
+ISR pages revalidate every 8 hours (so the GitHub contribution graph stays fresh), and Marble can still hit `POST /api/revalidate` for on-demand updates. Static assets are served from `public/`.
 
 ```sh
 vercel deploy
