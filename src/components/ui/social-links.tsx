@@ -76,6 +76,12 @@ function XIcon() {
   );
 }
 
+function CvLabel() {
+  return (
+    <span className="text-sm font-medium leading-none tracking-wide">CV</span>
+  );
+}
+
 function LinkedInIcon() {
   return (
     <svg
@@ -105,6 +111,7 @@ const SOCIAL_ICONS: Record<SocialLinkId, ReactNode> = {
   github: <GitHubIcon />,
   x: <XIcon />,
   linkedin: <LinkedInIcon />,
+  cv: <CvLabel />,
 };
 
 function Links() {

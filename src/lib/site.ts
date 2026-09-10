@@ -6,7 +6,7 @@ export const DEFAULT_DESCRIPTION =
 export const PERSON_ID = `${SITE_URL}/#person`;
 export const PROFILE_IMAGE_PATH = "/my-x-profile-pic.jpg";
 
-export type SocialLinkId = "cal" | "github" | "x" | "linkedin";
+export type SocialLinkId = "cal" | "github" | "x" | "linkedin" | "cv";
 
 export type SocialLink = {
   id: SocialLinkId;
@@ -40,9 +40,17 @@ export const SOCIAL_LINKS: SocialLink[] = [
     href: "https://linkedin.com/in/valtterisavonen",
     ariaLabel: "LinkedIn",
   },
+  {
+    id: "cv",
+    label: "CV",
+    href: "https://valtteri-savonen-cv.drophost.space/Valtteri_Savonen_CV-2.pdf",
+    ariaLabel: "CV",
+  },
 ];
 
-export const SAME_AS = SOCIAL_LINKS.map((link) => link.href);
+export const SAME_AS = SOCIAL_LINKS.filter((link) => link.id !== "cv").map(
+  (link) => link.href,
+);
 
 export function socialHref(id: SocialLinkId): string {
   const match = SOCIAL_LINKS.find((link) => link.id === id);
