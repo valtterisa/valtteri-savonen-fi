@@ -10,6 +10,7 @@ import { SocialLinks } from "../ui/social-links";
 import { ContributionGraph } from "../ui/contribution-graph";
 import { Tabs } from "../ui/tabs";
 import { ProjectsPanel } from "./projects-panel";
+import { ProductsPanel } from "./products-panel";
 import { ExperiencePanel } from "./experience-panel";
 import { BlogPanel, type BlogPostSummary } from "./blog-panel";
 
@@ -28,12 +29,14 @@ function TabPanel({
   postsFailed: boolean;
 }) {
   switch (activeTab) {
+    case "projects":
+      return <ProjectsPanel />;
     case "experience":
       return <ExperiencePanel />;
     case "blog":
       return <BlogPanel posts={posts} failed={postsFailed} />;
     default:
-      return <ProjectsPanel />;
+      return <ProductsPanel />;
   }
 }
 

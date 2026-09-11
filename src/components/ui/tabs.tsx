@@ -54,6 +54,7 @@ type TabsListProps = {
 
 function List({ activeTab, onTabChange, blogLoading = false }: TabsListProps) {
   const tabs: Array<{ id: Tab; label: string }> = [
+    { id: "products", label: "products" },
     { id: "projects", label: "projects" },
     { id: "experience", label: "experience" },
     { id: "blog", label: "blog" },

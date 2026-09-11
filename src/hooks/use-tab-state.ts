@@ -2,12 +2,12 @@ import { useCallback, useEffect, useState } from "react";
 import { normalizeTab, type Tab } from "../lib/content";
 
 function tabHref(tab: Tab): string {
-  return tab === "projects" ? "/" : `/?tab=${tab}`;
+  return tab === "products" ? "/" : `/?tab=${tab}`;
 }
 
 function readTabFromLocation(): Tab {
   if (typeof window === "undefined") {
-    return "projects";
+    return "products";
   }
   return normalizeTab(new URLSearchParams(window.location.search).get("tab"));
 }

@@ -62,13 +62,25 @@ export function tabSeo(tab: Tab): SeoData {
     };
   }
 
+  if (tab === "projects") {
+    return {
+      ...homeSeo(),
+      title: `Projects - ${SITE_NAME}`,
+      description:
+        "Open-source and side projects by Valtteri Savonen including haalarikone.fi (~10k monthly users), landrr.js, and contributions to MarbleCMS.",
+      url: absoluteUrl("/?tab=projects"),
+      canonical: absoluteUrl("/?tab=projects"),
+      markdownUrl: "/index.md",
+    };
+  }
+
   return {
     ...homeSeo(),
-    title: `Projects - ${SITE_NAME}`,
+    title: `Products - ${SITE_NAME}`,
     description:
-      "Projects by Valtteri Savonen including quickshops.app, drophost.space, floras.app, and haalarikone.fi.",
-    url: absoluteUrl("/?tab=projects"),
-    canonical: absoluteUrl("/?tab=projects"),
+      "Products by Valtteri Savonen including quickshops.app, drophost.space, and floras.app.",
+    url: SITE_URL,
+    canonical: SITE_URL,
     markdownUrl: "/index.md",
   };
 }

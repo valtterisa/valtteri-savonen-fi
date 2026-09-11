@@ -5,7 +5,7 @@ import {
   LOCATION_COUNTRY,
   LOCATION_COUNTRY_CODE,
   SKILLS,
-  getProjectCards,
+  getAllWorkCards,
 } from "./profile";
 import {
   PERSON_ID,
@@ -154,8 +154,8 @@ export function createPersonJsonLd(): PersonJsonLd {
 function createProjectListJsonLd(): ItemListJsonLd {
   return {
     "@type": "ItemList",
-    name: "Projects",
-    itemListElement: getProjectCards().map((project, index) => ({
+    name: "Products & Projects",
+    itemListElement: getAllWorkCards().map((project, index) => ({
       "@type": "ListItem",
       position: index + 1,
       item: {

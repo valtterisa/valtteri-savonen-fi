@@ -33,7 +33,7 @@ export type ExperienceItem = {
 export type Project = ExperienceItem;
 export type Experience = ExperienceItem;
 
-export const projects: Project[] = [
+export const products: Project[] = [
   {
     id: "quickshops",
     companyName: "quickshops.app",
@@ -124,6 +124,9 @@ export const projects: Project[] = [
       },
     ],
   },
+];
+
+export const projects: Project[] = [
   {
     id: "haalarikone",
     companyName: "haalarikone.fi",
@@ -135,15 +138,20 @@ export const projects: Project[] = [
         href: "https://github.com/valtterisa/haalarikone-fi",
       },
       { label: "view", href: "https://haalarikone.fi" },
+      {
+        label: "analytics",
+        href: "https://app.databuddy.cc/public/Uu3N9TuBuUAa3wAS4pHNw",
+      },
     ],
     positions: [
       {
         id: "haalarikone-product",
         title: "haalarikone.fi",
         summary:
-          "search over 500+ finnish student overalls. localized fi/en/sv.",
+          "10k monthly users. search over 500+ finnish student overalls. localized fi/en/sv.",
         icon: "code",
-        description: `- Normalized catalog in \`overall_data.json\`. next-intl owns fi/en/sv, including translated route segments and slugs.
+        description: `- ~10k monthly users searching Finnish student overalls.
+- Normalized catalog in \`overall_data.json\`. next-intl owns fi/en/sv, including translated route segments and slugs.
 - Search pipeline: parse color/area/school/field tokens → subset JSON → Fuse.js rank. Claude Haiku is a fallback that only runs on an empty subset.
 - Finnish color morphology collapsed to a canonical key (\`valkoinen\` / \`valkoiset\`) before matching.`,
         skills: [
@@ -155,6 +163,70 @@ export const projects: Project[] = [
           "Tailwind CSS",
           "Vercel",
         ],
+      },
+    ],
+  },
+  {
+    id: "landrr",
+    companyName: "landrr.js",
+    companyWebsite: "https://valtterisa.github.io/landrr.js/",
+    isCurrentEmployer: true,
+    links: [
+      {
+        label: "github",
+        href: "https://github.com/valtterisa/landrr.js",
+      },
+      { label: "npm", href: "https://www.npmjs.com/org/landrr" },
+      { label: "view", href: "https://valtterisa.github.io/landrr.js/" },
+      { label: "docs", href: "https://valtterisa.github.io/landrr.js/docs/" },
+    ],
+    positions: [
+      {
+        id: "landrr-product",
+        title: "landrr.js",
+        summary:
+          "fullstack react framework for fast, seo-ready client sites. vite, ssr, typescript.",
+        icon: "code",
+        description: `- React 18 + Vite monorepo (\`@landrr/core\`, \`create-landrr-app\`) with SSR for SEO and first paint.
+- Built-in \`Head\` meta helpers, React Router with SSR, and block-based site building.
+- One-command scaffold: \`npx create-landrr-app\`. Packages on [npm/@landrr](https://www.npmjs.com/org/landrr).`,
+        skills: [
+          "React",
+          "TypeScript",
+          "Vite",
+          "SSR",
+          "Elysia.js",
+          "Turborepo",
+        ],
+      },
+    ],
+  },
+];
+
+export const contributions: Project[] = [
+  {
+    id: "marblecms",
+    companyName: "marblecms",
+    companyWebsite: "https://marblecms.com",
+    isCurrentEmployer: true,
+    links: [
+      {
+        label: "github",
+        href: "https://github.com/usemarble/marble",
+      },
+      { label: "view", href: "https://marblecms.com" },
+    ],
+    positions: [
+      {
+        id: "marblecms-contrib",
+        title: "marblecms",
+        summary:
+          "open-source headless cms. bug fixes and prisma → drizzle migration.",
+        icon: "code",
+        description: `- Bug fixes across the [Marble](https://marblecms.com) monorepo.
+- Migrated the data layer from Prisma to Drizzle.
+- This site’s blog runs on Marble’s REST API and webhooks.`,
+        skills: ["TypeScript", "Drizzle", "PostgreSQL", "Next.js", "Hono"],
       },
     ],
   },
@@ -183,8 +255,9 @@ export const experiences: Experience[] = [
         },
         employmentType: "full-time",
         icon: "code",
-        description: `- Designed and shipped [quickshops.app](https://quickshops.app), [drophost.space](https://drophost.space), [floras.app](https://floras.app), and [haalarikone.fi](https://haalarikone.fi).
-- Various web development work for clients.`,
+        description: `- Designed and shipped [quickshops.app](https://quickshops.app), [drophost.space](https://drophost.space), [floras.app](https://floras.app), [haalarikone.fi](https://haalarikone.fi), and [landrr.js](https://github.com/valtterisa/landrr.js).
+- Various web development work for clients.
+- Contributing to [MarbleCMS](https://marblecms.com) (bug fixes, Prisma → Drizzle).`,
         skills: [
           "Next.js",
           "TypeScript",
@@ -231,11 +304,15 @@ export const experiences: Experience[] = [
   },
 ];
 
-export type Tab = "projects" | "experience" | "blog";
+export type Tab = "products" | "projects" | "experience" | "blog";
 
 export function normalizeTab(tab: string | null): Tab {
-  if (tab === "experience" || tab === "blog") {
+  if (
+    tab === "projects" ||
+    tab === "experience" ||
+    tab === "blog"
+  ) {
     return tab;
   }
-  return "projects";
+  return "products";
 }

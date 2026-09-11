@@ -1,4 +1,10 @@
-import { experiences, projects, type ExperienceItem } from "./content";
+import {
+  contributions,
+  experiences,
+  products,
+  projects,
+  type ExperienceItem,
+} from "./content";
 import type { Post } from "./marble";
 import {
   PERSON_ID,
@@ -76,7 +82,11 @@ const PROJECT_BLURBS: Record<string, string> = {
   floras:
     "AI agent that builds and deploys real websites in chat.",
   haalarikone:
-    "Search over 500+ Finnish student overalls. Localized fi/en/sv.",
+    "10k monthly users. Search over 500+ Finnish student overalls. Localized fi/en/sv.",
+  landrr:
+    "Fullstack React framework for fast, SEO-ready client sites. Vite, SSR, TypeScript.",
+  marblecms:
+    "Open-source headless CMS. Bug fixes and Prisma → Drizzle migration.",
 };
 
 export type AgentPost = Pick<
@@ -137,22 +147,36 @@ function formatPeriod(period?: { start: string; end?: string }): string {
   return period.end ? `${period.start} - ${period.end}` : `${period.start} - present`;
 }
 
+function toProjectCard(project: ExperienceItem): ProjectCard {
+  const position = project.positions[0];
+  return {
+    id: project.id,
+    name: project.companyName,
+    url: project.companyWebsite,
+    github: linkByLabel(project, "github"),
+    blurb:
+      PROJECT_BLURBS[project.id] ??
+      markdownToPlain(position?.summary ?? position?.description ?? ""),
+    description: bulletsToMarkdown(position?.description),
+    skills: position?.skills ?? [],
+    active: Boolean(project.isCurrentEmployer),
+  };
+}
+
+export function getProductCards(): ProjectCard[] {
+  return products.map(toProjectCard);
+}
+
 export function getProjectCards(): ProjectCard[] {
-  return projects.map((project) => {
-    const position = project.positions[0];
-    return {
-      id: project.id,
-      name: project.companyName,
-      url: project.companyWebsite,
-      github: linkByLabel(project, "github"),
-      blurb:
-        PROJECT_BLURBS[project.id] ??
-        markdownToPlain(position?.summary ?? position?.description ?? ""),
-      description: bulletsToMarkdown(position?.description),
-      skills: position?.skills ?? [],
-      active: Boolean(project.isCurrentEmployer),
-    };
-  });
+  return projects.map(toProjectCard);
+}
+
+export function getContributionCards(): ProjectCard[] {
+  return contributions.map(toProjectCard);
+}
+
+export function getAllWorkCards(): ProjectCard[] {
+  return [...products, ...projects, ...contributions].map(toProjectCard);
 }
 
 export function getExperienceCards(): ExperienceCard[] {
@@ -242,7 +266,9 @@ export function htmlToMarkdown(html: string): string {
 }
 
 export function buildLlmsTxt(posts: AgentPost[]): string {
+  const productCards = getProductCards();
   const projectCards = getProjectCards();
+  const contributionCards = getContributionCards();
   const hire = socialHref("cal");
   const writing = posts.map((post) =>
     listItem(
@@ -273,17 +299,29 @@ export function buildLlmsTxt(posts: AgentPost[]): string {
     listItem(
       "Home (markdown)",
       absoluteUrl("/index.md"),
-      "Bio, projects, experience, and writing index",
+      "Bio, products, projects, experience, and writing index",
     ),
     listItem(
       "Full profile",
       absoluteUrl("/llms-full.txt"),
-      "Complete identity, projects, work history, and posts in one file",
+      "Complete identity, products, projects, work history, and posts in one file",
+    ),
+    "",
+    "## Products",
+    "",
+    ...productCards.map((project) =>
+      listItem(project.name, project.url ?? SITE_URL, project.blurb),
     ),
     "",
     "## Projects",
     "",
     ...projectCards.map((project) =>
+      listItem(project.name, project.url ?? SITE_URL, project.blurb),
+    ),
+    "",
+    "## Active contributing",
+    "",
+    ...contributionCards.map((project) =>
       listItem(project.name, project.url ?? SITE_URL, project.blurb),
     ),
     "",
@@ -317,28 +355,43 @@ export function buildLlmsTxt(posts: AgentPost[]): string {
   ].join("\n");
 }
 
+function workCardBlock(project: ProjectCard): string {
+  const lines = [`### ${project.name}`, "", project.blurb, ""];
+  if (project.url) {
+    lines.push(`URL: ${project.url}`);
+  }
+  if (project.github) {
+    lines.push(`GitHub: ${project.github}`);
+  }
+  lines.push(`Status: ${project.active ? "active" : "inactive"}`);
+  if (project.skills.length > 0) {
+    lines.push(`Stack: ${project.skills.join(", ")}`);
+  }
+  if (project.description) {
+    lines.push("", project.description);
+  }
+  return lines.join("\n");
+}
+
+function workCardMarkdown(project: ProjectCard): string {
+  const title = project.url
+    ? `### [${project.name}](${project.url})`
+    : `### ${project.name}`;
+  const extra = [
+    project.github ? `GitHub: ${project.github}` : "",
+    project.skills.length > 0 ? `Stack: ${project.skills.join(", ")}` : "",
+  ].filter(Boolean);
+  return [title, "", project.blurb, extra.length > 0 ? `\n${extra.join("\n")}` : ""]
+    .join("\n")
+    .trimEnd();
+}
+
 export function buildLlmsFullTxt(posts: AgentPost[]): string {
+  const productCards = getProductCards();
   const projectCards = getProjectCards();
+  const contributionCards = getContributionCards();
   const experienceCards = getExperienceCards();
   const updated = formatDay(newestTimestamp(posts));
-
-  const projectBlocks = projectCards.map((project) => {
-    const lines = [`### ${project.name}`, "", project.blurb, ""];
-    if (project.url) {
-      lines.push(`URL: ${project.url}`);
-    }
-    if (project.github) {
-      lines.push(`GitHub: ${project.github}`);
-    }
-    lines.push(`Status: ${project.active ? "active" : "inactive"}`);
-    if (project.skills.length > 0) {
-      lines.push(`Stack: ${project.skills.join(", ")}`);
-    }
-    if (project.description) {
-      lines.push("", project.description);
-    }
-    return lines.join("\n");
-  });
 
   const experienceBlocks = experienceCards.map((item) => {
     const header = item.website
@@ -397,9 +450,17 @@ export function buildLlmsFullTxt(posts: AgentPost[]): string {
       "\n",
     ),
     "",
+    "## Products",
+    "",
+    productCards.map(workCardBlock).join("\n\n"),
+    "",
     "## Projects",
     "",
-    projectBlocks.join("\n\n"),
+    projectCards.map(workCardBlock).join("\n\n"),
+    "",
+    "## Active contributing",
+    "",
+    contributionCards.map(workCardBlock).join("\n\n"),
     "",
     "## Experience",
     "",
@@ -424,21 +485,10 @@ export function buildLlmsFullTxt(posts: AgentPost[]): string {
 }
 
 export function buildHomeMarkdown(posts: AgentPost[]): string {
+  const productCards = getProductCards();
   const projectCards = getProjectCards();
+  const contributionCards = getContributionCards();
   const experienceCards = getExperienceCards();
-
-  const projectBlocks = projectCards.map((project) => {
-    const title = project.url
-      ? `### [${project.name}](${project.url})`
-      : `### ${project.name}`;
-    const extra = [
-      project.github ? `GitHub: ${project.github}` : "",
-      project.skills.length > 0 ? `Stack: ${project.skills.join(", ")}` : "",
-    ].filter(Boolean);
-    return [title, "", project.blurb, extra.length > 0 ? `\n${extra.join("\n")}` : ""]
-      .join("\n")
-      .trimEnd();
-  });
 
   const experienceBlocks = experienceCards.map((item) => {
     const header = item.website
@@ -472,9 +522,17 @@ export function buildHomeMarkdown(posts: AgentPost[]): string {
     `Full profile: ${absoluteUrl("/llms-full.txt")}`,
     `Index: ${absoluteUrl("/llms.txt")}`,
     "",
+    "## Products",
+    "",
+    productCards.map(workCardMarkdown).join("\n\n"),
+    "",
     "## Projects",
     "",
-    projectBlocks.join("\n\n"),
+    projectCards.map(workCardMarkdown).join("\n\n"),
+    "",
+    "## Active contributing",
+    "",
+    contributionCards.map(workCardMarkdown).join("\n\n"),
     "",
     "## Experience",
     "",
