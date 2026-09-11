@@ -76,17 +76,16 @@ export const AGENT_FAQS: AgentFaq[] = [
 
 const PROJECT_BLURBS: Record<string, string> = {
   quickshops:
-    "Chat-operated ecommerce for digital and physical goods, with a headless API for custom storefronts.",
+    "Run an online store through chat — products, orders, and fulfillment for digital and physical goods.",
   drophost:
-    "File and static site hosting. Drop a file, get a stable HTTPS URL.",
-  floras:
-    "AI agent that builds and deploys real websites in chat.",
+    "Drop a file or a site, get a stable link. Hosting without the setup.",
+  floras: "Chat with an AI that designs, builds, and deploys a real website.",
   haalarikone:
-    "10k monthly users. Search over 500+ Finnish student overalls. Localized fi/en/sv.",
+    "10k monthly users. Find what someone studies from their student overall colors.",
   landrr:
-    "Fullstack React framework for fast, SEO-ready client sites. Vite, SSR, TypeScript.",
+    "A framework for building fast, SEO-ready websites without the usual boilerplate.",
   marblecms:
-    "Open-source headless CMS. Bug fixes and Prisma → Drizzle migration.",
+    "Open-source headless CMS for publishing. Part of the Vercel OSS Program.",
 };
 
 export type AgentPost = Pick<
@@ -144,7 +143,9 @@ function formatPeriod(period?: { start: string; end?: string }): string {
   if (!period) {
     return "";
   }
-  return period.end ? `${period.start} - ${period.end}` : `${period.start} - present`;
+  return period.end
+    ? `${period.start} - ${period.end}`
+    : `${period.start} - present`;
 }
 
 function toProjectCard(project: ExperienceItem): ProjectCard {
@@ -340,11 +341,7 @@ export function buildLlmsTxt(posts: AgentPost[]): string {
     "## Contact",
     "",
     ...SOCIAL_LINKS.map((link) =>
-      listItem(
-        link.label,
-        link.href,
-        link.id === "cal" ? "15 min" : undefined,
-      ),
+      listItem(link.label, link.href, link.id === "cal" ? "15 min" : undefined),
     ),
     "",
     "## Optional",
@@ -381,7 +378,12 @@ function workCardMarkdown(project: ProjectCard): string {
     project.github ? `GitHub: ${project.github}` : "",
     project.skills.length > 0 ? `Stack: ${project.skills.join(", ")}` : "",
   ].filter(Boolean);
-  return [title, "", project.blurb, extra.length > 0 ? `\n${extra.join("\n")}` : ""]
+  return [
+    title,
+    "",
+    project.blurb,
+    extra.length > 0 ? `\n${extra.join("\n")}` : "",
+  ]
     .join("\n")
     .trimEnd();
 }
@@ -416,7 +418,10 @@ export function buildLlmsFullTxt(posts: AgentPost[]): string {
 
   const writing = posts.map((post) => {
     const date = formatDay(post.publishedAt);
-    const note = [date, post.description ? markdownToPlain(post.description) : ""]
+    const note = [
+      date,
+      post.description ? markdownToPlain(post.description) : "",
+    ]
       .filter(Boolean)
       .join(" - ");
     return listItem(
@@ -495,7 +500,9 @@ export function buildHomeMarkdown(posts: AgentPost[]): string {
       ? `### [${item.company}](${item.website})`
       : `### ${item.company}`;
     const roles = item.roles.map((role) => {
-      const meta = [role.period, role.employmentType].filter(Boolean).join(" · ");
+      const meta = [role.period, role.employmentType]
+        .filter(Boolean)
+        .join(" · ");
       return [`#### ${role.title}`, meta, role.description]
         .filter(Boolean)
         .join("\n\n");

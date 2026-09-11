@@ -45,7 +45,7 @@ export const products: Project[] = [
         id: "quickshops-product",
         title: "quickshops.app",
         summary:
-          "chat-operated ecommerce for digital and physical goods, with a headless api for custom storefronts.",
+          "run an online store through chat — products, orders, and fulfillment for digital and physical goods.",
         icon: "code",
         description: `- Designed the UI and system architecture.
 - Full commerce surface: products/SKUs, inventory, Stripe Checkout (connected accounts), orders, digital delivery (signed blob URLs), and physical fulfillment state.
@@ -76,7 +76,7 @@ export const products: Project[] = [
         id: "drophost-product",
         title: "drophost.space",
         summary:
-          "file and static site hosting. drop a file, get a stable https url.",
+          "drop a file or a site, get a stable link. hosting without the setup.",
         icon: "code",
         description: `- Upload files or an \`index.html\` zip to Cloudflare R2 and serve them from a custom page (\`{slug}.drophost.space\`), including custom domains.
 - MCP so AI agents can use the app alongside a real user. Same publish path as the dashboard.`,
@@ -106,7 +106,7 @@ export const products: Project[] = [
         id: "floras-product",
         title: "floras.app",
         summary:
-          "ai agent that builds and deploys real websites in chat.",
+          "chat with an ai that designs, builds, and deploys a real website.",
         icon: "code",
         description: `- Chat with an AI agent that designs and builds the site as a real project (Astro), not a one-shot prompt dump.
 - Production sandbox: each session gets an isolated environment running the live site so you can preview and iterate before go-live.
@@ -148,7 +148,7 @@ export const projects: Project[] = [
         id: "haalarikone-product",
         title: "haalarikone.fi",
         summary:
-          "10k monthly users. search over 500+ finnish student overalls. localized fi/en/sv.",
+          "10k monthly users. find what someone studies from their student overall colors.",
         icon: "code",
         description: `- ~10k monthly users searching Finnish student overalls.
 - Normalized catalog in \`overall_data.json\`. next-intl owns fi/en/sv, including translated route segments and slugs.
@@ -185,7 +185,7 @@ export const projects: Project[] = [
         id: "landrr-product",
         title: "landrr.js",
         summary:
-          "fullstack react framework for fast, seo-ready client sites. vite, ssr, typescript.",
+          "a framework for building fast, seo-ready websites without the usual boilerplate.",
         icon: "code",
         description: `- React 18 + Vite monorepo (\`@landrr/core\`, \`create-landrr-app\`) with SSR for SEO and first paint.
 - Built-in \`Head\` meta helpers, React Router with SSR, and block-based site building.
@@ -221,11 +221,12 @@ export const contributions: Project[] = [
         id: "marblecms-contrib",
         title: "marblecms",
         summary:
-          "open-source headless cms. bug fixes and prisma → drizzle migration.",
+          "open-source headless cms for publishing. part of the vercel oss program.",
         icon: "code",
         description: `- Bug fixes across the [Marble](https://marblecms.com) monorepo.
 - Migrated the data layer from Prisma to Drizzle.
-- This site’s blog runs on Marble’s REST API and webhooks.`,
+- This site’s blog runs on Marble’s REST API and webhooks.
+- Part of the Vercel OSS Program.`,
         skills: ["TypeScript", "Drizzle", "PostgreSQL", "Next.js", "Hono"],
       },
     ],
@@ -248,8 +249,7 @@ export const experiences: Experience[] = [
       {
         id: "self-employed-engineer",
         title: "full-stack engineer",
-        summary:
-          "full-stack engineer, founder. 09.2024 - present.",
+        summary: "full-stack engineer, founder. 09.2024 - present.",
         employmentPeriod: {
           start: "09.2024",
         },
@@ -307,11 +307,7 @@ export const experiences: Experience[] = [
 export type Tab = "products" | "projects" | "experience" | "blog";
 
 export function normalizeTab(tab: string | null): Tab {
-  if (
-    tab === "projects" ||
-    tab === "experience" ||
-    tab === "blog"
-  ) {
+  if (tab === "projects" || tab === "experience" || tab === "blog") {
     return tab;
   }
   return "products";
