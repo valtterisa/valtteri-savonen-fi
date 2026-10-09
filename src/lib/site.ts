@@ -2,7 +2,7 @@ export const SITE_URL = "https://valtterisavonen.fi";
 export const SITE_NAME = "Valtteri Savonen";
 export const SITE_HANDLE = "@valtterisavonen";
 export const DEFAULT_DESCRIPTION =
-  "Full Stack Engineer from Finland. Building products, freelancing, and writing about software.";
+  "Product Engineer at Trustmary from Finland. Building products and writing about software.";
 export const PERSON_ID = `${SITE_URL}/#person`;
 export const PROFILE_IMAGE_PATH = "/my-x-profile-pic.jpg";
 

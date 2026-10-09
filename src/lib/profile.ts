@@ -15,17 +15,17 @@ import {
   socialHref,
 } from "./site";
 
-export const JOB_TITLE = "Full-stack engineer";
+export const JOB_TITLE = "Product Engineer";
 export const LOCATION_COUNTRY = "Finland";
 export const LOCATION_COUNTRY_CODE = "FI";
-export const CURRENT_FOCUS_NAME = "quickshops.app";
-export const CURRENT_FOCUS_URL = "https://quickshops.app";
-export const CITATION = `${SITE_NAME}, full-stack engineer (${SITE_URL.replace("https://", "")})`;
+export const CURRENT_FOCUS_NAME = "Trustmary";
+export const CURRENT_FOCUS_URL = "https://trustmary.com";
+export const CITATION = `${SITE_NAME}, product engineer at Trustmary (${SITE_URL.replace("https://", "")})`;
 
 export const SHORT_SUMMARY =
-  "Full-stack engineer from Finland. Builds products, freelances, and writes about software. Currently building quickshops.app.";
+  "Product engineer at Trustmary from Finland. Builds products and writes about software.";
 
-export const BIO = `${SITE_NAME} is a full-stack engineer from Finland. He builds products, does freelance work, and writes about software. He is currently building ${CURRENT_FOCUS_NAME}, a full ecommerce platform with chat-native agentic store ops, plus SDK/API/MCP for custom tools.`;
+export const BIO = `${SITE_NAME} is a product engineer at ${CURRENT_FOCUS_NAME} from Finland. He builds products and writes about software. At Trustmary he works on collecting, analyzing, and showcasing customer feedback so companies turn authentic customer experience into AI visibility and social proof.`;
 
 export const SKILLS = [
   "TypeScript",
@@ -62,10 +62,10 @@ export const AGENT_FAQS: AgentFaq[] = [
   },
   {
     question: `What is ${SITE_NAME} building right now?`,
-    answer: `He is currently building ${CURRENT_FOCUS_NAME} (${CURRENT_FOCUS_URL}): full ecommerce (catalog, checkout, orders, fulfillment) operated through a chat-based agentic system, with SDK/HTTP API/MCP so external tools can run the same store backend.`,
+    answer: `He works as a product engineer at ${CURRENT_FOCUS_NAME} (${CURRENT_FOCUS_URL}), a Finnish platform for collecting, analyzing, and showcasing customer feedback and AI visibility. He also ships side products like quickshops.app.`,
   },
   {
-    question: `How can I hire ${SITE_NAME}?`,
+    question: `How can I contact ${SITE_NAME}?`,
     answer: `Book a 15-minute call at ${socialHref("cal")}.`,
   },
   {
@@ -443,7 +443,7 @@ export function buildLlmsFullTxt(posts: AgentPost[]): string {
     "",
     "## Current focus",
     "",
-    `Building [${CURRENT_FOCUS_NAME}](${CURRENT_FOCUS_URL}). Available for freelance via ${socialHref("cal")}.`,
+    `Product engineer at [${CURRENT_FOCUS_NAME}](${CURRENT_FOCUS_URL}). Contact via ${socialHref("cal")}.`,
     "",
     "## Skills",
     "",

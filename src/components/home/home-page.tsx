@@ -5,6 +5,7 @@ import type { ContributionGraph as ContributionGraphData } from "../../lib/contr
 import { PROFILE_IMAGE_PATH } from "../../lib/site";
 import { SiteShell } from "../ui/site-shell";
 import { Profile } from "../ui/profile";
+import { InlineExternalLink } from "../ui/external-link";
 import { ThemeSwitcher } from "../theme-switcher";
 import { SocialLinks } from "../ui/social-links";
 import { ContributionGraph } from "../ui/contribution-graph";
@@ -60,7 +61,12 @@ export function HomePage({
             <Profile.Avatar src={PROFILE_IMAGE_PATH} alt="Valtteri Savonen" />
             <Profile.Content>
               <Profile.Title>hey, i'm valtteri!</Profile.Title>
-              <Profile.Subtitle>building stuff</Profile.Subtitle>
+              <Profile.Subtitle>
+                product engineer{" "}
+                <InlineExternalLink href="https://trustmary.com">
+                  @trustmary
+                </InlineExternalLink>
+              </Profile.Subtitle>
             </Profile.Content>
             <ThemeSwitcher className="ml-auto" />
           </Profile.Root>

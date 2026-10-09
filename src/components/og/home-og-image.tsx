@@ -5,10 +5,10 @@ export function HomeOgImage() {
   return (
     <OgLayout.Root>
       <OgLayout.Main>
-        <OgLayout.Badge>software engineer</OgLayout.Badge>
+        <OgLayout.Badge>product engineer</OgLayout.Badge>
         <OgLayout.Title>hey, i&apos;m valtteri!</OgLayout.Title>
         <OgLayout.Subtitle>
-          building quickshops.app and shipping products from finland.
+          product engineer at trustmary, shipping products from finland.
         </OgLayout.Subtitle>
       </OgLayout.Main>
       <OgLayout.Footer>
@@ -18,7 +18,7 @@ export function HomeOgImage() {
         />
         <OgLayout.Meta>
           <div style={{ color: "#f3f4f6", fontWeight: 600 }}>{SITE_NAME}</div>
-          <div>full stack · next.js · typescript</div>
+          <div>trustmary · next.js · typescript</div>
         </OgLayout.Meta>
       </OgLayout.Footer>
     </OgLayout.Root>

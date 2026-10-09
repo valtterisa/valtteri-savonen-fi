@@ -235,9 +235,31 @@ export const contributions: Project[] = [
 
 export const experiences: Experience[] = [
   {
+    id: "trustmary",
+    companyName: "trustmary",
+    companyWebsite: "https://trustmary.com",
+    isCurrentEmployer: true,
+    links: [{ label: "view", href: "https://trustmary.com" }],
+    positions: [
+      {
+        id: "trustmary-product-engineer",
+        title: "product engineer",
+        summary: "product engineer. 10.2026 - present.",
+        employmentPeriod: {
+          start: "10.2026",
+        },
+        employmentType: "full-time",
+        icon: "code",
+        description: `- Building [Trustmary](https://trustmary.com), a Finnish platform that collects, analyzes, and showcases customer feedback.
+- Helping turn authentic customer experience into AI visibility and social proof for 1800+ companies.`,
+        skills: ["TypeScript", "React", "Next.js", "Product"],
+        isExpanded: true,
+      },
+    ],
+  },
+  {
     id: "self-employed",
     companyName: "self-employed",
-    isCurrentEmployer: true,
     links: [
       {
         label: "freedomly",
@@ -249,9 +271,10 @@ export const experiences: Experience[] = [
       {
         id: "self-employed-engineer",
         title: "full-stack engineer",
-        summary: "full-stack engineer, founder. 09.2024 - present.",
+        summary: "full-stack engineer, founder. 09.2024 - 10.2026.",
         employmentPeriod: {
           start: "09.2024",
+          end: "10.2026",
         },
         employmentType: "full-time",
         icon: "code",
@@ -273,6 +296,7 @@ export const experiences: Experience[] = [
         title: "founder",
         employmentPeriod: {
           start: "09.2024",
+          end: "10.2026",
         },
         employmentType: "full-time",
         icon: "lightbulb",
