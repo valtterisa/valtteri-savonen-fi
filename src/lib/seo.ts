@@ -28,12 +28,14 @@ export type SeoData = {
   noindex?: boolean;
 };
 
+export const HOME_DOCUMENT_TITLE = "Valtteri Savonen - Homepage";
+
 export function homeSeo(): SeoData {
   return {
-    title: `${SITE_NAME} - Software Engineer`,
+    title: HOME_DOCUMENT_TITLE,
     description: DEFAULT_DESCRIPTION,
     keywords:
-      "Valtteri Savonen, full stack engineer, software engineer, web development, Next.js, TypeScript, Finland, quickshops.app, drophost.space, floras.app, haalarikone.fi",
+      "Valtteri Savonen, product engineer, Trustmary, software engineer, web development, Next.js, TypeScript, Finland, quickshops.app, drophost.space, floras.app, haalarikone.fi",
     image: ogImageUrl("/og/home.png"),
     url: SITE_URL,
     type: "website",
@@ -50,56 +52,40 @@ export function tabSeo(tab: Tab): SeoData {
 
   if (tab === "experience") {
     return {
-      title: `Experience - ${SITE_NAME}`,
+      ...homeSeo(),
       description:
-        "Work experience and background of Valtteri Savonen, full stack software engineer from Finland.",
-      image: ogImageUrl("/og/home.png"),
+        "Work experience and background of Valtteri Savonen, product engineer at Trustmary from Finland.",
       url: absoluteUrl("/?tab=experience"),
-      type: "website",
       canonical: absoluteUrl("/?tab=experience"),
-      jsonLd: createHomeJsonLd(),
-      markdownUrl: "/index.md",
     };
   }
 
   if (tab === "projects") {
     return {
       ...homeSeo(),
-      title: `Projects - ${SITE_NAME}`,
       description:
         "Open-source and side projects by Valtteri Savonen including haalarikone.fi (~10k monthly users), landrr.js, and contributions to MarbleCMS.",
       url: absoluteUrl("/?tab=projects"),
       canonical: absoluteUrl("/?tab=projects"),
-      markdownUrl: "/index.md",
     };
   }
 
-  return {
-    ...homeSeo(),
-    title: `Products - ${SITE_NAME}`,
-    description:
-      "Products by Valtteri Savonen including quickshops.app, drophost.space, and floras.app.",
-    url: SITE_URL,
-    canonical: SITE_URL,
-    markdownUrl: "/index.md",
-  };
+  return homeSeo();
 }
 
 export function blogTabSeo(): SeoData {
   const blogUrl = absoluteUrl("/?tab=blog");
 
   return {
-    title: `Blog - ${SITE_NAME}`,
+    ...homeSeo(),
     description:
       "Blog posts by Valtteri Savonen about software engineering, products, and building on the web.",
     keywords:
       "Valtteri Savonen blog, software engineering blog, web development, TypeScript, Next.js",
     image: ogImageUrl("/og/blog.png"),
     url: blogUrl,
-    type: "website",
     canonical: blogUrl,
     jsonLd: createBlogJsonLd(blogUrl),
-    markdownUrl: "/index.md",
   };
 }
 
