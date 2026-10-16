@@ -77,7 +77,8 @@ export const GET: APIRoute = () => {
 
 export const POST: APIRoute = async ({ request }) => {
   const signature = request.headers.get("x-marble-signature");
-  const secret = import.meta.env.MARBLE_WEBHOOK_SECRET;
+  const secret =
+    process.env.MARBLE_WEBHOOK_SECRET || import.meta.env.MARBLE_WEBHOOK_SECRET;
   if (!secret || !signature) {
     return new Response(
       JSON.stringify({ error: "Secret or signature missing" }),

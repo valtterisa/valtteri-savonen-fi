@@ -5,7 +5,7 @@ import BaseLayout from "../layouts/base-layout.astro";
 import { HomePage } from "../components/home/home-page";
 import { normalizeTab } from "../lib/content";
 import { getContributionGraph } from "../lib/contrib";
-import { listPosts } from "../lib/marble";
+import { formatPublished, listPosts } from "../lib/marble";
 import { tabSeo } from "../lib/seo";
 
 const activeTab = normalizeTab(Astro.url.searchParams.get("tab"));
@@ -16,6 +16,11 @@ const initialPosts = posts.map((post) => ({
   id: post.id,
   slug: post.slug,
   title: post.title,
+  description: post.description,
+  coverImage: post.coverImage,
+  publishedAt: post.publishedAt,
+  publishedDisplay: formatPublished(post.publishedAt),
+  tags: post.tags.map((tag) => tag.name || tag.slug),
 }));
 ---
 
