@@ -38,8 +38,24 @@ export type AuthorInfo = {
 
 const baseUrl = "https://api.marblecms.com";
 
+function getMarbleApiKey(): string | undefined {
+  // Prefer process.env: set by the host in prod, and by astro.config in local dev.
+  // import.meta.env alone is unreliable for private keys in Astro 7 `astro dev`.
+  const fromProcess = process.env.MARBLE_API_KEY;
+  if (typeof fromProcess === "string" && fromProcess.length > 0) {
+    return fromProcess;
+  }
+
+  const fromImport = import.meta.env.MARBLE_API_KEY;
+  if (typeof fromImport === "string" && fromImport.length > 0) {
+    return fromImport;
+  }
+
+  return undefined;
+}
+
 async function apiGet(path: string): Promise<Response | null> {
-  const key = import.meta.env.MARBLE_API_KEY;
+  const key = getMarbleApiKey();
   if (!key) {
     return null;
   }

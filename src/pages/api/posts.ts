@@ -1,7 +1,7 @@
 export const prerender = false;
 
 import type { APIRoute } from "astro";
-import { listPosts } from "../../lib/marble";
+import { formatPublished, listPosts } from "../../lib/marble";
 
 export const GET: APIRoute = async () => {
   const posts = await listPosts();
@@ -9,6 +9,11 @@ export const GET: APIRoute = async () => {
     id: post.id,
     slug: post.slug,
     title: post.title,
+    description: post.description,
+    coverImage: post.coverImage,
+    publishedAt: post.publishedAt,
+    publishedDisplay: formatPublished(post.publishedAt),
+    tags: post.tags.map((tag) => tag.name || tag.slug),
   }));
 
   return new Response(JSON.stringify({ posts: items }), {
